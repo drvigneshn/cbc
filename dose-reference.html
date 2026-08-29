@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Blue Companion — Dose Calculation Reference</title>
+<style>
+  body{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; color:#1a2230; max-width:900px; margin:0 auto; padding:24px 20px 60px; line-height:1.5;}
+  h1{font-size:22px; margin:0 0 2px;}
+  .sub{color:#5c6879; font-size:13px; margin-bottom:4px;}
+  .warn{background:#fff4e5; border:1px solid #f0c98a; color:#7a4c00; border-radius:8px; padding:10px 12px; font-size:12.5px; margin:14px 0 20px;}
+  h2{font-size:15px; margin:26px 0 8px; padding-bottom:4px; border-bottom:2px solid #e2e7ee; color:#0e2340;}
+  table{width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:6px;}
+  th,td{border:1px solid #dde3ec; padding:6px 8px; text-align:left; vertical-align:top;}
+  th{background:#f3f6fb; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:#5c6879;}
+  td.d{font-weight:700; white-space:nowrap;}
+  td.ex{background:#f6faf6; font-variant-numeric:tabular-nums;}
+  .note{font-size:11px; color:#5c6879; margin:2px 0 0;}
+  code{background:#eef2f7; padding:1px 5px; border-radius:4px; font-size:12px;}
+  .foot{margin-top:26px; font-size:10.5px; color:#8a93a3; border-top:1px solid #e2e7ee; padding-top:10px;}
+  @media print{ body{padding:0;} .warn{background:#fff;} }
+</style>
+</head>
+<body>
+<h1>Code Blue Companion — Dose Calculation Reference</h1>
+<p class="sub">All formulas used by the app · aligned with AHA PALS 2020/2025 &amp; APLS · created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital · matches app v4.0</p>
+<div class="warn"><b>For verification &amp; teaching.</b> Every dose must be independently confirmed against your unit's protocol before administration. Worked examples use a <b>10&nbsp;kg</b> child. Doses are per actual body weight; the app caps each at the maximum shown.</div>
+
+<h2>1 · Arrest drugs</h2>
+<table>
+<tr><th>Drug</th><th>Dose (per kg)</th><th>Concentration / prep</th><th>Maximum</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">Adrenaline (1:10,000)</td><td>0.01 mg/kg IV/IO, q3–5 min</td><td>0.1 mg/mL → 0.1 mL/kg</td><td>1 mg</td><td class="ex">0.1 mg = 1.0 mL</td></tr>
+<tr><td class="d">Amiodarone</td><td>5 mg/kg bolus (VF/pVT)</td><td>—</td><td>300 mg</td><td class="ex">50 mg</td></tr>
+<tr><td class="d">Atropine (bradycardia)</td><td>0.02 mg/kg</td><td>—</td><td>min 0.1 mg · max 0.5 mg</td><td class="ex">0.2 mg</td></tr>
+<tr><td class="d">Magnesium sulphate</td><td>25–50 mg/kg (torsades)</td><td>—</td><td>2 g</td><td class="ex">250–500 mg</td></tr>
+<tr><td class="d">Calcium gluconate 10%</td><td>0.5 mL/kg (50 mg/kg) slow</td><td>10% (100 mg/mL)</td><td>20 mL (2 g)</td><td class="ex">5 mL (500 mg)</td></tr>
+<tr><td class="d">Sodium bicarbonate 8.4%</td><td>1 mmol/kg (1 mL/kg) slow</td><td>1 mmol/mL · dilute 1:1 with equal-volume D5W</td><td>50 mmol</td><td class="ex">10 mmol (10 mL)</td></tr>
+</table>
+<p class="note">Calcium &amp; bicarbonate are conditional — hyperkalaemia, hypocalcaemia, calcium-channel-blocker or tricyclic overdose, prolonged arrest.</p>
+
+<h2>2 · Electricity</h2>
+<table>
+<tr><th>Item</th><th>Setting (per kg)</th><th>Notes</th><th>Maximum</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">Defibrillation — 1st</td><td>2 J/kg (unsynchronised)</td><td>Resume CPR immediately</td><td>—</td><td class="ex">20 J</td></tr>
+<tr><td class="d">Defibrillation — next</td><td>4 J/kg</td><td>≥4 J/kg thereafter</td><td>10 J/kg (or adult dose)</td><td class="ex">40 J</td></tr>
+<tr><td class="d">Synchronised cardioversion</td><td>0.5–1 J/kg, then 2 J/kg</td><td>SVT/VT with pulse</td><td>—</td><td class="ex">5–10 → 20 J</td></tr>
+<tr><td class="d">Adenosine (SVT)</td><td>0.1 then 0.2 mg/kg, rapid push</td><td>Fast IV + flush</td><td>6 mg → 12 mg</td><td class="ex">1 mg → 2 mg</td></tr>
+</table>
+
+<h2>3 · Airway &amp; circulation</h2>
+<table>
+<tr><th>Item</th><th>Dose / rule (per kg)</th><th>Concentration</th><th>Maximum</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">Fluid bolus</td><td>10–20 mL/kg, reassess</td><td>0.9% saline</td><td>—</td><td class="ex">100–200 mL</td></tr>
+<tr><td class="d">Dextrose 10%</td><td>5 mL/kg (0.5 g/kg)</td><td>10% (0.1 g/mL)</td><td>—</td><td class="ex">50 mL</td></tr>
+<tr><td class="d">Naloxone</td><td>0.1 mg/kg IV/IO</td><td>—</td><td>2 mg</td><td class="ex">1 mg</td></tr>
+</table>
+
+<h2>4 · Equipment sizing (weight bands)</h2>
+<table>
+<tr><th>Item</th><th>Rule</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">ETT (cuffed)</td><td>&lt;3.5 kg 3.0 · &lt;6 3.5 · &lt;10 3.5 · &lt;12 4.0 · &lt;15 4.5 · &lt;19 5.0 · &lt;24 5.5 · &lt;30 6.0 · &lt;37 6.5 · ≥37 7.0 mm. Uncuffed = cuffed + 0.5. Depth ≈ size × 3 cm at lip.</td><td class="ex">4.0 cuffed · uncuffed 4.5 · depth 12 cm</td></tr>
+<tr><td class="d">Laryngoscope blade</td><td>&lt;3.5 kg Miller 0 · &lt;10 Miller 1 · &lt;18 Miller 1–2 · &lt;30 Mac 2 · ≥30 Mac 3</td><td class="ex">Miller 1–2</td></tr>
+<tr><td class="d">LMA (supraglottic)</td><td>&lt;5 kg 1 · &lt;10 1.5 · &lt;20 2 · &lt;30 2.5 · &lt;50 3 · ≥50 4</td><td class="ex">2</td></tr>
+</table>
+
+<h2>5 · Rapid sequence intubation</h2>
+<table>
+<tr><th>Drug</th><th>Dose (per kg)</th><th>Maximum</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">Atropine (premed)</td><td>0.02 mg/kg</td><td>min 0.1 mg</td><td class="ex">0.2 mg</td></tr>
+<tr><td class="d">Fentanyl</td><td>1–2 µg/kg slow IV</td><td>100 µg</td><td class="ex">10–20 µg</td></tr>
+<tr><td class="d">Ketamine</td><td>1–2 mg/kg IV induction</td><td>per kg</td><td class="ex">10–20 mg</td></tr>
+<tr><td class="d">Midazolam</td><td>0.1–0.2 mg/kg IV</td><td>10 mg</td><td class="ex">1–2 mg</td></tr>
+<tr><td class="d">Etomidate</td><td>0.3 mg/kg IV</td><td>per kg</td><td class="ex">3 mg</td></tr>
+<tr><td class="d">Propofol</td><td>1–2 mg/kg (caution: shock)</td><td>per kg</td><td class="ex">10–20 mg</td></tr>
+<tr><td class="d">Rocuronium</td><td>1 mg/kg IV (RSI)</td><td>per kg</td><td class="ex">10 mg</td></tr>
+<tr><td class="d">Vecuronium</td><td>0.1 mg/kg (0.2–0.3 RSI)</td><td>per kg</td><td class="ex">1 mg</td></tr>
+<tr><td class="d">Succinylcholine</td><td>1–2 mg/kg IV</td><td>per kg</td><td class="ex">10–20 mg</td></tr>
+</table>
+<p class="note">Induction agents and paralytics are dosed per actual weight; no fixed single-dose ceiling is applied by the app (verify against your protocol / adult ceiling in large adolescents).</p>
+
+<h2>6 · Post-ROSC infusions — "rule of 6" (50 mL syringe)</h2>
+<table>
+<tr><th>Drug</th><th>Usual range</th><th>Preparation</th><th>Rate mapping</th><th>Example — 10 kg</th></tr>
+<tr><td class="d">Adrenaline</td><td>0.05–1 µg/kg/min</td><td>0.3 × wt (mg) → 50 mL</td><td>1 mL/h = 0.1 µg/kg/min</td><td class="ex">3 mg → 50 mL</td></tr>
+<tr><td class="d">Noradrenaline</td><td>0.05–2 µg/kg/min</td><td>0.3 × wt (mg) → 50 mL</td><td>1 mL/h = 0.1 µg/kg/min</td><td class="ex">3 mg → 50 mL</td></tr>
+<tr><td class="d">Dopamine</td><td>5–20 µg/kg/min</td><td>3 × wt (mg) → 50 mL</td><td>1 mL/h = 1 µg/kg/min</td><td class="ex">30 mg → 50 mL</td></tr>
+<tr><td class="d">Dobutamine</td><td>5–20 µg/kg/min</td><td>3 × wt (mg) → 50 mL</td><td>1 mL/h = 1 µg/kg/min</td><td class="ex">30 mg → 50 mL</td></tr>
+<tr><td class="d">Milrinone</td><td>0.25–0.75 µg/kg/min</td><td>load 50 µg/kg over 30–60 min</td><td>then per unit protocol</td><td class="ex">load 500 µg</td></tr>
+</table>
+<p class="note"><b>Rule of 6:</b> 3 × weight (mg) in 50 mL gives 60 × weight µg/mL, so 1 mL/h = 1 µg/kg/min. The 0.3 × weight version is 10× more dilute (1 mL/h = 0.1 µg/kg/min) for the potent agents. Prefer your unit's standardised concentration where one exists.</p>
+
+<p class="foot">© 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. Reference companion to Code Blue Companion v4.0. Decision-support aid — the treating clinician remains responsible for all dosing decisions.</p>
+</body>
+</html>

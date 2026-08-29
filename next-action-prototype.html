@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<!--
+  Code Blue Companion — NEXT ACTION prototype (Changes 1–9)
+  Standalone proof-of-concept. Does NOT replace the main tool.
+  © 2026 Dr Vignesh N, KKCTH.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Code Blue — NEXT ACTION prototype</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#141e33; --card2:#1b2745; --line:#26355a;
+    --red:#ff4757; --amber:#ffb020; --green:#2ed573; --blue:#4aa3ff; --violet:#8b7cff;
+    --txt:#eef2fb; --dim:#8fa0c2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg); color:var(--txt); font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; padding:0 0 40px; max-width:560px; margin:0 auto;}
+  .proto{background:#3a2600; color:var(--amber); text-align:center; font-size:11px; font-weight:700; padding:5px; letter-spacing:.5px;}
+  .hidden{display:none !important;}
+
+  .top{padding:12px 14px 8px;}
+  .wrow{display:flex; gap:10px; align-items:center;}
+  .wrow label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; flex-shrink:0;}
+  .wrow input{flex:1; background:var(--card2); border:2px solid var(--line); border-radius:10px; color:var(--txt); font-size:26px; font-weight:800; padding:7px 12px; text-align:center; outline:none;}
+  .wrow input:focus{border-color:var(--blue);}
+  .wrow .u{font-size:16px; color:var(--dim); font-weight:700;}
+  .bigbtn{width:100%; margin-top:10px; border:none; border-radius:12px; padding:13px; font-size:15px; font-weight:800; color:#fff; background:var(--green); cursor:pointer; letter-spacing:.4px;}
+  .bigbtn.stop{background:var(--red);}
+
+  /* Change 7 — code header */
+  .codehdr{display:flex; align-items:center; justify-content:center; gap:12px; background:#2a0d12; color:#ffd9dd; font-weight:800; font-size:14px; padding:8px; position:sticky; top:0; z-index:25; letter-spacing:.3px;}
+  .codehdr .dot{width:11px; height:11px; border-radius:50%; background:var(--red); animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  .banner{display:flex; align-items:center; justify-content:center; gap:10px; font-size:14px; font-weight:800; padding:9px; letter-spacing:.4px;}
+  .banner.shock{background:var(--amber); color:#3a2600;}
+  .banner.nonshock{background:#123a63; color:#cfe6ff;}
+  .banner .chg{font-size:10px; font-weight:700; opacity:.85; border:1px solid currentColor; border-radius:20px; padding:2px 9px; cursor:pointer;}
+
+  /* Change 7 — team roles */
+  .team{padding:10px 14px 4px;}
+  .team h3{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:7px;}
+  .roles{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+  .role{background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:7px 6px; cursor:pointer; text-align:center;}
+  .role .rn{font-size:9px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px;}
+  .role .rv{font-size:12px; font-weight:700; margin-top:2px; min-height:15px;}
+  .role.set{border-color:var(--blue);} .role.set .rv{color:var(--blue);}
+
+  /* Rhythm chooser */
+  .rsel{padding:12px 14px; display:grid; gap:10px; grid-template-columns:1fr;}
+  .rsel h2{font-size:14px; color:var(--txt); text-transform:uppercase; letter-spacing:1px; text-align:center;}
+  .rsel h2 small{display:block; font-size:11px; color:var(--dim); letter-spacing:.5px; margin-top:3px; font-weight:600;}
+  .rbig{border:2px solid var(--line); border-radius:16px; padding:18px 14px; text-align:center; cursor:pointer; background:var(--card2); color:var(--txt);}
+  .rbig .em{font-size:30px; display:block;}
+  .rbig .t{font-size:19px; font-weight:800; margin-top:5px;}
+  .rbig .s{font-size:12px; color:var(--dim); margin-top:2px;}
+  .rbig.shock{border-color:var(--amber);} .rbig.shock .t{color:var(--amber);}
+  .rbig.nonshock{border-color:var(--blue);} .rbig.nonshock .t{color:var(--blue);}
+  .rbig.rosc{border-color:var(--green); padding:12px;} .rbig.rosc .t{color:var(--green);}
+
+  /* NEXT ACTION card */
+  .na{margin:12px 14px 4px; border-radius:18px; padding:18px 16px 16px; text-align:center; border:2px solid var(--line);}
+  .na .lbl{font-size:12px; letter-spacing:2px; text-transform:uppercase; font-weight:800; opacity:.85;}
+  .na .verb{font-size:29px; font-weight:900; line-height:1.05; margin-top:6px;}
+  .na .num{font-size:42px; font-weight:900; line-height:1; margin-top:8px; font-variant-numeric:tabular-nums;}
+  .na .num small{font-size:18px; font-weight:800; opacity:.85;}
+  .na .det{font-size:13px; margin-top:6px; opacity:.9; line-height:1.4;}
+  .na .then{font-size:12px; margin-top:10px; padding-top:9px; border-top:1px solid rgba(255,255,255,.2); opacity:.85;}
+  .na .conf{margin-top:13px; width:100%; border:none; border-radius:11px; padding:12px; font-size:15px; font-weight:800; cursor:pointer;}
+  .na .why{margin-top:9px; background:transparent; border:1px solid rgba(255,255,255,.35); color:inherit; border-radius:20px; padding:5px 12px; font-size:11px; font-weight:700; cursor:pointer;}
+  .na.epi{background:#3a1116; border-color:var(--red); color:#ffd9dd;}
+  .na.epi .verb,.na.epi .num{color:#fff;} .na.epi .conf{background:var(--red); color:#fff;}
+  .na.shock{background:#3a2600; border-color:var(--amber); color:#ffe9c2;}
+  .na.shock .verb,.na.shock .num{color:var(--amber);} .na.shock .conf{background:var(--amber); color:#3a2600;}
+  .na.cpr{background:#0e2340; border-color:var(--blue); color:#cfe6ff;}
+  .na.cpr .verb,.na.cpr .num{color:#fff;} .na.cpr .conf{background:var(--blue); color:#fff;}
+
+  /* Change 7 — team reminder */
+  .treminder{margin:6px 14px 2px; background:var(--card2); border:1px dashed var(--amber); color:var(--amber); border-radius:10px; padding:9px; text-align:center; font-size:12.5px; font-weight:700;}
+
+  /* CPR reminder chips */
+  .chips{display:grid; grid-template-columns:repeat(4,1fr); gap:7px; padding:8px 14px 0;}
+  .chip{background:var(--card2); border:1px solid var(--line); border-radius:10px; padding:8px 4px; text-align:center;}
+  .chip .ce{font-size:16px;} .chip b{display:block; font-size:13px; font-variant-numeric:tabular-nums; margin-top:2px;}
+  .chip span{display:block; font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px; margin-top:1px;}
+  .chip.due{background:var(--red); border-color:var(--red);}
+
+  /* Change 8 — CPR quality dashboard */
+  .cprq{margin:10px 14px 0; border:1px solid var(--line); background:var(--card); border-radius:12px; padding:11px;}
+  .cprq h3{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:9px;}
+  .qgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:7px;}
+  .q{background:var(--card2); border-radius:9px; padding:8px 6px; text-align:center;}
+  .q span{font-size:8.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px; display:block;}
+  .q b{font-size:16px; font-variant-numeric:tabular-nums;}
+  .q .g{color:var(--green); font-size:9px; font-weight:700;}
+  .q input{width:100%; background:transparent; border:none; color:var(--txt); font-size:16px; font-weight:800; text-align:center; outline:none; -moz-appearance:textfield;}
+  .q input::-webkit-outer-spin-button,.q input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .q.toggle{cursor:pointer;} .q.bad{background:#3a1116;} .q.bad b, .q.bad .g{color:var(--red);}
+  .pausebox{margin:8px 0 0; text-align:center; background:var(--card2); border-radius:9px; padding:8px;}
+  .pausebox b{font-size:22px; font-variant-numeric:tabular-nums;} .pausebox span{font-size:9px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px;}
+  .pausebox.bad{background:var(--red);} .pausebox.bad b, .pausebox.bad span{color:#fff;}
+
+  .quick{display:grid; grid-template-columns:repeat(2,1fr); gap:7px; padding:12px 14px 4px;}
+  .quick button{background:var(--card2); border:1px solid var(--line); color:var(--txt); border-radius:9px; padding:9px; font-size:12px; font-weight:700; cursor:pointer;}
+  .quick button.rosc{border-color:var(--green); color:var(--green); grid-column:1 / -1; font-size:15px; padding:13px;}
+
+  .logwrap{padding:12px 14px;}
+  .logwrap h3{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;}
+  .exp{background:var(--card2); border:1px solid var(--line); color:var(--blue); border-radius:7px; font-size:10.5px; padding:4px 10px; cursor:pointer;}
+  #log{list-style:none; max-height:200px; overflow-y:auto; font-size:12.5px;}
+  #log li{padding:4px 0; border-bottom:1px dashed var(--line); font-variant-numeric:tabular-nums; display:flex; gap:9px;}
+  #log li b{color:var(--amber); flex-shrink:0;}
+
+  .doses{padding:14px;}
+  .doses h3{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:9px;}
+  .drug{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px 12px; margin-bottom:9px; border-left:4px solid var(--line);}
+  .drug.red{border-left-color:var(--red);} .drug.amber{border-left-color:var(--amber);}
+  .drug .h{display:flex; justify-content:space-between; align-items:center;}
+  .drug .nm{font-size:15px; font-weight:800;}
+  .drug .more{font-size:10px; color:var(--blue); border:1px solid var(--line); border-radius:20px; padding:3px 9px; cursor:pointer;}
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:9px;}
+  .g4{background:var(--card2); border-radius:8px; padding:6px 4px; text-align:center;}
+  .g4 b{font-size:14px; display:block; font-variant-numeric:tabular-nums;}
+  .g4 span{font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px;}
+  .verify{font-size:10.5px; color:var(--amber); margin-top:8px;}
+  .details{display:none; font-size:11.5px; color:var(--dim); line-height:1.6; margin-top:9px; padding-top:9px; border-top:1px dashed var(--line);}
+  .details.show{display:block;} .details b{color:var(--txt);}
+  .empty{color:var(--dim); text-align:center; padding:20px; font-size:13px;}
+
+  .rosc-sum{margin:12px 14px; border:2px solid var(--green); background:#06301a; border-radius:16px; padding:16px;}
+  .rosc-sum h2{font-size:22px; color:var(--green); text-align:center;}
+  .sgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:12px;}
+  .scell{background:rgba(255,255,255,.05); border-radius:9px; padding:9px; text-align:center;}
+  .scell b{font-size:20px; display:block;} .scell span{font-size:9px; color:#a7d9b8; text-transform:uppercase; letter-spacing:.4px;}
+  .pcac{padding:0 14px;}
+  .pcac h3{font-size:12px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin:12px 0 8px;}
+  .pstep{background:var(--card); border:1px solid var(--line); border-radius:11px; padding:11px 12px; margin-bottom:8px; cursor:pointer;}
+  .pstep.done{border-color:var(--green); opacity:.7;}
+  .pstep .ph{font-size:14px; font-weight:800;}
+  .pstep .pb{font-size:11.5px; color:var(--dim); margin-top:3px; line-height:1.5;}
+  .pstep .tick{float:right; color:var(--green); font-weight:800;}
+
+  /* Change 9 — Why overlay */
+  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; padding:22px; z-index:50;}
+  .obox{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; max-width:400px;}
+  .obox .ot{font-size:12px; color:var(--amber); font-weight:800; text-transform:uppercase; letter-spacing:.5px;}
+  .obox .ott{font-size:17px; font-weight:800; margin:6px 0 8px;}
+  .obox .ob{font-size:13.5px; color:var(--txt); line-height:1.55;}
+  .obox .oref{margin-top:12px; font-size:11px; color:var(--dim); border-top:1px solid var(--line); padding-top:9px;}
+  .obox .oclose{margin-top:12px; width:100%; border:none; background:var(--blue); color:#fff; border-radius:10px; padding:11px; font-weight:800; cursor:pointer;}
+
+  .disc{font-size:9.5px; color:var(--dim); text-align:center; padding:10px 20px; line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="proto">PROTOTYPE — Changes 1–9 for review · not the live tool</div>
+
+<div class="top" id="topBox">
+  <div class="wrow">
+    <label>Weight</label>
+    <input id="wt" type="number" inputmode="decimal" placeholder="0.0" min="0" max="120" step="0.1">
+    <span class="u">kg</span>
+  </div>
+  <button class="bigbtn" id="bCode">START CPR</button>
+</div>
+
+<div class="codehdr hidden" id="codeHdr"><span class="dot"></span><span id="codeHdrTxt">CODE BLUE</span></div>
+<div class="banner hidden" id="banner"><span id="bannerTxt"></span><span class="chg" id="bChange">change</span></div>
+
+<div class="team hidden" id="teamPanel">
+  <h3>Team roles — tap to assign</h3>
+  <div class="roles" id="roles">
+    <div class="role" data-role="leader"><div class="rn">👤 Leader</div><div class="rv"></div></div>
+    <div class="role" data-role="compressor"><div class="rn">🫀 Compressor</div><div class="rv"></div></div>
+    <div class="role" data-role="airway"><div class="rn">🫁 Airway</div><div class="rv"></div></div>
+    <div class="role" data-role="drugs"><div class="rn">💉 Drugs/IV</div><div class="rv"></div></div>
+    <div class="role" data-role="defib"><div class="rn">⚡ Defib</div><div class="rv"></div></div>
+    <div class="role" data-role="recorder"><div class="rn">📝 Recorder</div><div class="rv"></div></div>
+  </div>
+</div>
+
+<div class="rsel hidden" id="rsel">
+  <h2 id="rselH">Rhythm?<small>Attach monitor · check pulse</small></h2>
+  <div class="rbig shock" data-r="shock"><span class="em">⚡</span><span class="t">SHOCKABLE</span><span class="s">VF / Pulseless VT</span></div>
+  <div class="rbig nonshock" data-r="nonshock"><span class="em">⭕</span><span class="t">NON-SHOCKABLE</span><span class="s">PEA / Asystole</span></div>
+  <div class="rbig rosc" data-r="rosc"><span class="t">🟢 ROSC — pulse present</span></div>
+</div>
+
+<div class="na hidden" id="na">
+  <div class="lbl">Next action</div>
+  <div class="verb" id="naVerb"></div>
+  <div class="num" id="naNum"></div>
+  <div class="det" id="naDet"></div>
+  <div class="then" id="naThen"></div>
+  <button class="conf" id="naConf"></button>
+  <button class="why hidden" id="naWhy">ⓘ Why?</button>
+</div>
+
+<div class="treminder hidden" id="teamReminder"></div>
+
+<div class="chips hidden" id="chips">
+  <div class="chip"><div class="ce">❤️</div><b>CPR</b><span>active</span></div>
+  <div class="chip" id="chEpi"><div class="ce">💉</div><b id="chEpiT">--:--</b><span>next epi</span></div>
+  <div class="chip" id="chSwap"><div class="ce">👤</div><b id="chSwapT">2:00</b><span>swap</span></div>
+  <div class="chip" id="chChk"><div class="ce">⚡</div><b id="chChkT">2:00</b><span>rhythm check</span></div>
+</div>
+
+<div class="cprq hidden" id="cprq">
+  <h3>❤️ CPR quality</h3>
+  <div class="qgrid">
+    <div class="q"><span>Rate /min</span><input id="qRate" type="number" inputmode="numeric" value="112"><div class="g" id="qRateG">target 100–120</div></div>
+    <div class="q"><span>Depth</span><b>≥⅓ AP</b><div class="g">4cm inf/5cm</div></div>
+    <div class="q toggle" id="qRecoil"><span>Recoil</span><b id="qRecoilB">🟢 Full</b></div>
+    <div class="q"><span>Compressor</span><b id="qComp" style="font-size:12px">—</b></div>
+    <div class="q"><span>Swap in</span><b id="qSwap">2:00</b></div>
+    <div class="q"><span>ETCO₂ mmHg</span><input id="qEtco" type="number" inputmode="numeric" placeholder="—"><div class="g" id="qEtcoG">&gt;10–15</div></div>
+  </div>
+  <div class="pausebox" id="pauseBox"><b id="pauseT">0s</b><span>⏱ CPR pause — target &lt; 10 s</span></div>
+</div>
+
+<div class="quick hidden" id="quick">
+  <button data-log="IV/IO access obtained">IV / IO access</button>
+  <button data-log="Airway secured">Airway secured</button>
+  <button id="bAmio">Amiodarone given</button>
+  <button data-log="Compressor changed">Compressor change</button>
+  <button class="rosc" id="bRosc">🟢 ROSC — pulse back</button>
+</div>
+
+<div class="logwrap hidden" id="logwrap">
+  <h3>Code log <button class="exp" id="bExport">📋 Export</button></h3>
+  <ul id="log"></ul>
+</div>
+
+<div class="rosc-sum hidden" id="roscSum">
+  <h2>🟢 ROSC ACHIEVED</h2>
+  <div class="sgrid">
+    <div class="scell"><b id="sTime">--:--</b><span>time to ROSC</span></div>
+    <div class="scell"><b id="sEpi">0</b><span>epinephrine doses</span></div>
+    <div class="scell"><b id="sShock">0</b><span>defibrillations</span></div>
+    <div class="scell"><b id="sCyc">0</b><span>CPR cycles</span></div>
+    <div class="scell"><b id="sFirstEpi">—</b><span>first epinephrine</span></div>
+    <div class="scell"><b id="sFirstShock">—</b><span>first shock</span></div>
+  </div>
+</div>
+<div class="pcac hidden" id="pcac">
+  <h3>Post-cardiac-arrest care</h3>
+  <div class="pstep"><div class="ph">🫁 Airway <span class="tick">✓</span></div><div class="pb">Confirm airway &amp; ETT position · confirm ETCO₂ · secure tube.</div></div>
+  <div class="pstep"><div class="ph">🫀 Breathing <span class="tick">✓</span></div><div class="pb">Titrate O₂ (SpO₂ 94–99%) · avoid hyper/hypoventilation · target normal ETCO₂.</div></div>
+  <div class="pstep"><div class="ph">❤️ Circulation <span class="tick">✓</span></div><div class="pb">BP &amp; perfusion · treat hypotension · consider fluid bolus / vasoactive infusion.</div></div>
+  <div class="pstep"><div class="ph">🧠 Neuro <span class="tick">✓</span></div><div class="pb">Neuro exam · check glucose · targeted temperature management · treat seizures.</div></div>
+  <div class="pstep"><div class="ph">🔍 Cause <span class="tick">✓</span></div><div class="pb">Identify &amp; treat the cause — Hs &amp; Ts · 12-lead ECG · labs · imaging.</div></div>
+</div>
+
+<div class="doses" id="doses"><div class="empty">Enter a weight to see doses, volumes and shock energies.</div></div>
+
+<p class="disc">Prototype cognitive aid · PALS-based · verify every dose and concentration before administration. Not a substitute for clinical judgment.</p>
+
+<div class="overlay hidden" id="whyOverlay">
+  <div class="obox">
+    <div class="ot">Why this action?</div>
+    <div class="ott" id="whyTitle"></div>
+    <div class="ob" id="whyBody"></div>
+    <div class="oref" id="whyRef"></div>
+    <button class="oclose" id="whyClose">Got it</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  function show(id,on){ $(id).classList.toggle('hidden',!on); }
+  var w=0, running=false, mode='idle', rhythm=null, t0=0, tick=null;
+  var shockCount=0, epiCount=0, amioCount=0, cycleCount=0;
+  var lastEpi=null, lastCheck=0, firstEpi=null, firstShock=null, roscTime=null;
+  var checkStart=null, recoilOk=true, naAct='';
+  var roles={leader:'',compressor:'',airway:'',drugs:'',defib:'',recorder:''};
+  var CYCLE=120, EPI=180, log=[];
+
+  function now(){ return (Date.now()-t0)/1000; }
+  function mmss(s){ s=Math.max(0,Math.floor(s)); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  function fmt(n,d){ if(d===undefined)d=2; var v=Math.round(n*Math.pow(10,d))/Math.pow(10,d); return (''+v).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1'); }
+
+  function epiMg(){ return Math.min(0.01*w,1); }
+  function epiVol(){ return epiMg()/0.1; }
+  function amioMg(){ return Math.min(5*w,300); }
+  function defibJ(n){ return Math.min((n<=1?2:4)*w, 10*w); }
+
+  function addLog(txt){ log.unshift({t:mmss(now()), x:txt}); paintLog(); }
+  function paintLog(){ $('log').innerHTML = log.map(function(e){ return '<li><b>'+e.t+'</b>'+e.x+'</li>'; }).join(''); }
+
+  function shockN(){ return shockCount+1; }
+  function epiDue(){
+    if(rhythm==='nonshock') return epiCount===0 || (lastEpi!=null && (now()-lastEpi)>=EPI);
+    if(rhythm==='shock')    return shockCount>=2 && (lastEpi==null || (now()-lastEpi)>=EPI);
+    return false;
+  }
+
+  function paintNA(){
+    var na=$('na'), cycleRem=CYCLE-(now()-lastCheck);
+    show('naWhy', false);
+    if(mode==='shock'){
+      naAct='shock'; na.className='na shock';
+      $('naVerb').textContent='⚡ SHOCK NOW';
+      $('naNum').innerHTML=fmt(defibJ(shockN()),0)+' <small>J</small>'; $('naNum').style.display='block';
+      $('naDet').textContent='Shock #'+shockN()+' · '+(shockN()<=1?'2':'4')+' J/kg × '+fmt(w,1)+' kg';
+      $('naThen').textContent='Resume CPR immediately after the shock.'; $('naThen').style.display='block';
+      var c=$('naConf'); c.style.display='block'; c.textContent='✓ Shock #'+shockN()+' delivered'; c.dataset.act='shock';
+      show('naWhy', true);
+    } else if(mode==='cpr' && epiDue()){
+      naAct='epi'; na.className='na epi';
+      $('naVerb').textContent='💉 GIVE EPINEPHRINE';
+      $('naNum').innerHTML=fmt(epiVol(),2)+' <small>mL</small>'; $('naNum').style.display='block';
+      $('naDet').textContent=fmt(epiMg(),2)+' mg · 0.01 mg/kg · of 0.1 mg/mL · IV/IO';
+      $('naThen').textContent=rhythm==='nonshock'&&epiCount===0?'Give as EARLY as possible in non-shockable arrest.':'Repeat every 3–5 min during CPR.'; $('naThen').style.display='block';
+      var c2=$('naConf'); c2.style.display='block'; c2.textContent='✓ Epinephrine given'; c2.dataset.act='epi';
+      show('naWhy', true);
+    } else if(mode==='cpr'){
+      naAct='cpr'; na.className='na cpr';
+      $('naVerb').textContent='CONTINUE CPR';
+      $('naNum').innerHTML=mmss(cycleRem); $('naNum').style.display='block';
+      $('naDet').textContent='Push hard & fast 100–120/min · full recoil · minimise pauses';
+      var thenTxt='Rhythm check + compressor swap at 0:00';
+      if(shockCount>=3 && amioCount<2) thenTxt+=' · consider amiodarone '+fmt(amioMg(),0)+' mg';
+      $('naThen').textContent=thenTxt; $('naThen').style.display='block';
+      $('naConf').style.display='none';
+    }
+  }
+
+  function teamReminder(){
+    var cycleRem=CYCLE-(now()-lastCheck), epiRem=lastEpi==null?null:EPI-(now()-lastEpi), msg='Maintain high-quality CPR';
+    if(rhythm==='shock' && cycleRem<=30) msg='⚡ Charge defibrillator to '+fmt(defibJ(shockN()),0)+' J — shock at rhythm check';
+    else if(rhythm==='nonshock' && epiRem!=null && epiRem<=30) msg='💉 Draw up next epinephrine '+fmt(epiVol(),2)+' mL';
+    else if(cycleRem<=20) msg='👤 Prepare to swap compressor & pause for rhythm check';
+    $('teamReminder').textContent='TEAM: '+msg;
+  }
+
+  function paintChips(){
+    var cycleRem=CYCLE-(now()-lastCheck), epiRem=lastEpi==null?null:EPI-(now()-lastEpi);
+    $('chEpiT').textContent = epiRem==null ? (rhythm==='nonshock'&&epiCount===0?'NOW':(rhythm==='shock'&&shockCount<2?'2nd shk':'--:--')) : mmss(epiRem);
+    $('chEpi').classList.toggle('due', epiDue());
+    $('chSwapT').textContent=mmss(cycleRem); $('chSwap').classList.toggle('due',cycleRem<=0);
+    $('chChkT').textContent=mmss(cycleRem); $('chChk').classList.toggle('due',cycleRem<=0);
+  }
+
+  function paintQuality(){
+    $('qComp').textContent = roles.compressor || '—';
+    $('qSwap').textContent = mmss(CYCLE-(now()-lastCheck));
+    var rate=parseInt($('qRate').value,10);
+    $('qRate').parentNode.classList.toggle('bad', !!rate && (rate<100||rate>120));
+    var et=parseInt($('qEtco').value,10);
+    $('qEtco').parentNode.classList.toggle('bad', !!et && et<10);
+    // pause timer: counts during the rhythm-check pause
+    var pause = (mode==='check' && checkStart!=null) ? (now()-checkStart) : 0;
+    $('pauseT').textContent = Math.floor(pause)+'s';
+    $('pauseBox').classList.toggle('bad', pause>=10);
+  }
+
+  function loop(){
+    if(mode==='cpr'){
+      if((CYCLE-(now()-lastCheck))<=0){ toCheck(); return; }
+      paintNA(); paintChips(); teamReminder(); paintQuality();
+    } else if(mode==='check'){ paintQuality(); }
+  }
+  function toCheck(){ mode='check'; checkStart=now(); addLog('Rhythm check — pause CPR'); render(); }
+
+  function render(){
+    var arrest=(mode==='cpr'||mode==='shock'||mode==='check');
+    show('codeHdr', arrest); show('teamPanel', arrest);
+    show('banner', arrest && !!rhythm);
+    show('rsel', mode==='check');
+    show('na', mode==='cpr'||mode==='shock');
+    show('teamReminder', mode==='cpr');
+    show('chips', mode==='cpr');
+    show('cprq', mode==='cpr'||mode==='check');
+    show('quick', arrest);
+    show('logwrap', mode!=='idle');
+    show('roscSum', mode==='rosc'); show('pcac', mode==='rosc');
+    $('codeHdrTxt').textContent='CODE BLUE   ·   '+(w?fmt(w,1)+' kg':'no weight')+'   ·   Cycle '+Math.max(1,cycleCount);
+    if(mode==='check') $('rselH').innerHTML = cycleCount===0 ? 'Rhythm?<small>Attach monitor · check pulse</small>' : '🛑 PAUSE CPR — RHYTHM CHECK<small>Check pulse &amp; rhythm (≤10 s)</small>';
+    if(mode==='cpr'||mode==='shock'){ paintNA(); teamReminder(); }
+    if(mode==='cpr'||mode==='check'){ paintChips(); paintQuality(); }
+  }
+
+  /* events */
+  $('wt').addEventListener('input',function(){ w=parseFloat(this.value)||0; renderDoses(); if(running){paintNA(); $('codeHdrTxt').textContent='CODE BLUE   ·   '+(w?fmt(w,1)+' kg':'no weight')+'   ·   Cycle '+Math.max(1,cycleCount);} });
+
+  $('bCode').addEventListener('click',function(){
+    if(!running){
+      running=true; t0=Date.now(); mode='check'; rhythm=null; checkStart=now();
+      shockCount=0; epiCount=0; amioCount=0; cycleCount=0; lastEpi=null; lastCheck=0; firstEpi=null; firstShock=null; roscTime=null; log=[];
+      this.textContent='END CODE'; this.classList.add('stop');
+      addLog('CPR started'); render(); tick=setInterval(loop,500);
+    } else { running=false; clearInterval(tick); mode='idle'; rhythm=null; this.textContent='START CPR'; this.classList.remove('stop'); render(); }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.role'),function(el){
+    el.addEventListener('click',function(){
+      var k=el.getAttribute('data-role'); var v=prompt('Name for '+el.querySelector('.rn').textContent.replace(/^[^ ]+ /,'')+':', roles[k]||'');
+      if(v!==null){ roles[k]=v.trim(); el.querySelector('.rv').textContent=roles[k]; el.classList.toggle('set',!!roles[k]); if(k==='compressor')$('qComp').textContent=roles.compressor||'—'; }
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.rbig'),function(b){
+    b.addEventListener('click',function(){
+      var r=b.getAttribute('data-r');
+      if(r==='rosc'){ doRosc(); return; }
+      if(checkStart!=null){ var p=Math.floor(now()-checkStart); if(p>0) addLog('CPR pause '+p+'s'); checkStart=null; }
+      rhythm=r;
+      $('banner').className='banner '+r;
+      $('bannerTxt').textContent = r==='shock' ? '⚡ VF/pVT — SHOCKABLE' : '⭕ PEA/Asystole — NON-SHOCKABLE';
+      if(r==='shock'){ addLog('VF/pVT detected'); mode='shock'; }
+      else { addLog('PEA/asystole confirmed'); mode='cpr'; lastCheck=now(); cycleCount++; addLog('CPR resumed'); }
+      render();
+    });
+  });
+  $('bChange').addEventListener('click',function(){ if(!running)return; mode='check'; checkStart=now(); render(); });
+
+  $('naConf').addEventListener('click',function(){
+    var act=this.dataset.act;
+    if(act==='shock'){ shockCount++; if(firstShock==null)firstShock=now(); addLog('Shock '+fmt(defibJ(shockCount),0)+' J (#'+shockCount+')'); mode='cpr'; lastCheck=now(); cycleCount++; addLog('CPR resumed'); }
+    else if(act==='epi'){ epiCount++; lastEpi=now(); if(firstEpi==null)firstEpi=now(); addLog('Epinephrine '+fmt(epiMg(),2)+' mg given'); }
+    render();
+  });
+  $('bAmio').addEventListener('click',function(){ if(!running)return; amioCount++; addLog('Amiodarone '+fmt(amioMg(),0)+' mg given'); });
+  Array.prototype.forEach.call(document.querySelectorAll('.quick button[data-log]'),function(b){ b.addEventListener('click',function(){ if(!running)return; addLog(b.getAttribute('data-log')); }); });
+  $('bRosc').addEventListener('click',doRosc);
+  $('qRecoil').addEventListener('click',function(){ recoilOk=!recoilOk; $('qRecoilB').textContent=recoilOk?'🟢 Full':'🔴 Check'; this.classList.toggle('bad',!recoilOk); });
+
+  /* Change 9 — Why */
+  var WHY={
+    shock:{t:'Initial rhythm: VF/pVT',b:'Rapid defibrillation is the priority for an initial shockable rhythm. Deliver 2 J/kg for the first shock and 4 J/kg thereafter (up to 10 J/kg), resuming CPR immediately after each shock.',r:'2025 AHA/AAP PALS'},
+    epi_nonshock:{t:'Initial rhythm: PEA/Asystole',b:'Epinephrine should be given as early as possible in paediatric cardiac arrest with an initial non-shockable rhythm, then repeated every 3–5 minutes.',r:'2025 AHA/AAP PALS'},
+    epi_shock:{t:'Shockable rhythm — epinephrine timing',b:'In VF/pVT, defibrillation comes first. Epinephrine is given during CPR after the second shock and repeated every 3–5 minutes; amiodarone (or lidocaine) is added for shock-refractory VF/pVT.',r:'2025 AHA/AAP PALS'}
+  };
+  $('naWhy').addEventListener('click',function(){
+    var key = naAct==='epi' ? (rhythm==='shock'?'epi_shock':'epi_nonshock') : 'shock';
+    var winf=WHY[key]; $('whyTitle').textContent=winf.t; $('whyBody').textContent=winf.b; $('whyRef').textContent='Reference · '+winf.r;
+    show('whyOverlay', true);
+  });
+  $('whyClose').addEventListener('click',function(){ show('whyOverlay', false); });
+
+  function doRosc(){
+    if(!running)return;
+    roscTime=now(); running=false; clearInterval(tick); mode='rosc'; addLog('✓ ROSC');
+    $('bCode').textContent='START CPR'; $('bCode').classList.remove('stop');
+    $('sTime').textContent=mmss(roscTime); $('sEpi').textContent=epiCount; $('sShock').textContent=shockCount; $('sCyc').textContent=cycleCount;
+    $('sFirstEpi').textContent=firstEpi==null?'—':mmss(firstEpi); $('sFirstShock').textContent=firstShock==null?'—':mmss(firstShock);
+    render();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.pstep'),function(s){ s.addEventListener('click',function(){ s.classList.toggle('done'); }); });
+
+  $('bExport').addEventListener('click',function(){
+    var lines=log.slice().reverse().map(function(e){ return e.t+'  '+e.x; });
+    var team=Object.keys(roles).filter(function(k){return roles[k];}).map(function(k){return k+': '+roles[k];}).join(' · ');
+    var txt='CODE BLUE LOG'+(w?' — '+fmt(w,1)+' kg':'')+'\n'+new Date().toLocaleString()+'\n'+(team?'Team: '+team+'\n':'')+'----------------\n'+lines.join('\n')+
+      '\n----------------\nEpinephrine: '+epiCount+' · Shocks: '+shockCount+' · CPR cycles: '+cycleCount+(roscTime!=null?' · ROSC at '+mmss(roscTime):'');
+    if(navigator.clipboard){ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){b.textContent='📋 Export';},1500); }
+    var win=window.open('','_blank'); if(win){ win.document.write('<pre style="font:13px monospace;padding:16px;white-space:pre-wrap">'+txt.replace(/</g,'&lt;')+'</pre>'); win.document.close(); }
+  });
+
+  function renderDoses(){
+    var d=$('doses');
+    if(!w||w<=0){ d.innerHTML='<div class="empty">Enter a weight to see doses, volumes and shock energies.</div>'; return; }
+    function g4(a,b,c,e){ return '<div class="grid4"><div class="g4"><b>'+a[0]+'</b><span>'+a[1]+'</span></div><div class="g4"><b>'+b[0]+'</b><span>'+b[1]+'</span></div><div class="g4"><b>'+c[0]+'</b><span>'+c[1]+'</span></div><div class="g4"><b>'+e[0]+'</b><span>'+e[1]+'</span></div></div>'; }
+    var html='<h3>Auto-calculated for '+fmt(w,1)+' kg</h3>';
+    html+='<div class="drug red"><div class="h"><span class="nm">💉 Epinephrine</span><span class="more" data-d="epi">drug details</span></div>'+
+      g4(['0.01','mg/kg'],[fmt(epiMg(),2),'total mg'],['0.1','mg/mL'],[fmt(epiVol(),2),'mL IV/IO'])+
+      '<div class="verify">⚠️ Verify the vial/syringe concentration (0.1 mg/mL) before giving.</div>'+
+      '<div class="details" id="d_epi"><b>Indication:</b> any pulseless arrest. <b>Dose:</b> 0.01 mg/kg IV/IO. <b>Max:</b> 1 mg. <b>Conc:</b> 0.1 mg/mL. <b>Repeat:</b> every 3–5 min.</div></div>';
+    html+='<div class="drug red"><div class="h"><span class="nm">💉 Amiodarone</span><span class="more" data-d="amio">drug details</span></div>'+
+      g4(['5','mg/kg'],[fmt(amioMg(),0),'total mg'],['—','bolus'],['','refractory'])+
+      '<div class="details" id="d_amio"><b>Indication:</b> shock-refractory VF/pVT (after 3rd shock). <b>Dose:</b> 5 mg/kg bolus, may repeat ×2. <b>Max single:</b> 300 mg. <b>Alt:</b> lidocaine 1 mg/kg.</div></div>';
+    html+='<div class="drug amber"><div class="h"><span class="nm">⚡ Defibrillation</span><span class="more" data-d="defib">drug details</span></div>'+
+      g4([fmt(defibJ(1),0),'J shock 1'],[fmt(defibJ(2),0),'J shock 2'],[fmt(Math.min(4*w,10*w),0),'J next'],[fmt(10*w,0),'J max'])+
+      '<div class="details" id="d_defib"><b>Shock 1:</b> 2 J/kg. <b>Shock 2:</b> 4 J/kg. <b>Subsequent:</b> ≥4 J/kg, up to 10 J/kg or the adult dose.</div></div>';
+    d.innerHTML=html;
+  }
+  $('doses').addEventListener('click',function(e){ var m=e.target.closest('.more'); if(!m)return; var el=$('d_'+m.getAttribute('data-d')); if(el) el.classList.toggle('show'); });
+})();
+</script>
+</body>
+</html>
