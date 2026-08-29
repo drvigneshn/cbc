@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<!--
+  Code Blue Companion — Paediatric resuscitation decision-support tool
+  © 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved.
+  "Code Blue Companion" and "PediaOS" are marks of the author.
+  This software and its content may not be copied, reused, redistributed,
+  or adapted, in whole or in part, without the author's prior written permission.
+  Contact: codeblue.pediaos.com
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Code Blue Companion</title>
+<meta name="description" content="Paediatric resuscitation decision-support — PALS-based weight-calculated doses, arrest console and timers.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1220">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Code Blue">
+<style>
+  /* Theme 1 — Navy (default) */
+  :root{
+    --bg:#0b1220; --card:#141e33; --card2:#1b2745; --line:#26355a;
+    --red:#ff4757; --amber:#ffb020; --green:#2ed573; --blue:#4aa3ff;
+    --txt:#eef2fb; --dim:#8fa0c2; --clock:#eef2fb; --logo:#ff4757; --onwarm:#3a2600; --violet:#8b7cff;
+    --console:#18233d; --consoleline:#33456f;
+  }
+  /* Theme 2 — Monitor black */
+  body.theme-monitor{
+    --bg:#000; --card:#0d0d0d; --card2:#151515; --line:#1e2a21;
+    --red:#ff3b3b; --amber:#efa020; --green:#22e06a; --blue:#3f9dff;
+    --txt:#e9f6ec; --dim:#7d9184; --clock:#22e06a; --logo:#22e06a; --onwarm:#2a1c00; --violet:#9d8bff;
+    --console:#121712; --consoleline:#26331f;
+  }
+  /* Theme 3 — Bright */
+  body.theme-bright{
+    --bg:#eef1f6; --card:#ffffff; --card2:#f3f5f9; --line:#d3dae5;
+    --red:#d92d3c; --amber:#b8770f; --green:#12855f; --blue:#1668c4;
+    --txt:#131a26; --dim:#5c6879; --clock:#131a26; --logo:#d92d3c; --onwarm:#ffffff; --violet:#6d28d9;
+    --console:#ece9e3; --consoleline:#d6d1c6;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg); color:var(--txt); font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; padding-bottom:24px;}
+
+  .topstack{position:sticky; top:0; z-index:60; background:var(--console); border:2px solid var(--red);
+    border-radius:16px; box-shadow:0 10px 28px rgba(60,50,30,.32); padding:6px 0 6px; overflow:hidden; margin-bottom:12px;}
+  /* Title row scrolls away; only the timer row and below stay pinned */
+  .apphead{max-width:560px; margin-left:auto; margin-right:auto;}
+  /* Quick reference crash-card */
+  .qref{max-width:560px; margin:0 auto 6px; padding:0 12px;}
+  .qref .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px 12px;}
+  .qref .card h3{font-size:11.5px; color:var(--txt); font-weight:800; letter-spacing:.2px; margin-bottom:9px;}
+  .qref .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
+  .qref .qr{background:var(--card2); border-left:3px solid var(--line); border-radius:6px; padding:7px 7px; text-align:left;}
+  .qref .qr b{font-size:14.5px; display:block; font-variant-numeric:tabular-nums; line-height:1.1; color:var(--txt);}
+  .qref .qr u{font-size:9px; text-decoration:none; color:var(--dim); display:block; line-height:1.2; margin-top:1px;}
+  .qref .qr span{font-size:8.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px; display:block; margin-top:1px;}
+  .qref .qr.red{border-left-color:var(--red); background:var(--card2); background:color-mix(in srgb, var(--red) 9%, var(--card2));} .qref .qr.red u{color:var(--red);}
+  .qref .qr.amber{border-left-color:var(--amber); background:var(--card2); background:color-mix(in srgb, var(--amber) 9%, var(--card2));} .qref .qr.amber u{color:var(--amber);}
+  .qref .qr.green{border-left-color:var(--green); background:var(--card2); background:color-mix(in srgb, var(--green) 9%, var(--card2));} .qref .qr.green u{color:var(--green);}
+  .qref .qr.blue{border-left-color:var(--blue); background:var(--card2); background:color-mix(in srgb, var(--blue) 9%, var(--card2));} .qref .qr.blue u{color:var(--blue);}
+  @media (min-width:720px){ body:not(.narrow) .qref{max-width:900px;} body:not(.narrow) .qref .grid{grid-template-columns:repeat(8,1fr);} }
+  @media (min-width:1000px){ body:not(.narrow) .qref{max-width:1240px;} }
+  body.wide .qref{max-width:1240px;} body.wide .qref .grid{grid-template-columns:repeat(8,1fr);}
+  body.narrow .qref{max-width:560px;}
+  /* Keep the top controls the same width as the content below, so it's symmetrical */
+  .topstack, .topstack > *, .apphead{max-width:560px; margin-left:auto; margin-right:auto;}
+  @media (min-width:720px){ body:not(.narrow) .topstack, body:not(.narrow) .topstack > *, body:not(.narrow) .apphead{max-width:900px;} }
+  @media (min-width:1000px){ body:not(.narrow) .topstack, body:not(.narrow) .topstack > *, body:not(.narrow) .apphead{max-width:1240px;} }
+  body.wide .topstack, body.wide .topstack > *, body.wide .apphead{max-width:1240px;}
+  body.narrow .topstack, body.narrow .topstack > *, body.narrow .apphead{max-width:560px;}
+  /* Portrait mode: keep the sticky console short so more of the screen is usable */
+  body.narrow .tblock{padding:4px 10px 2px;}
+  body.narrow .startrow{padding:4px 10px 2px;}
+  body.narrow .bigbtn{padding:8px 26px;}
+  body.narrow .statusbar{padding:6px 10px; font-size:13.5px;}
+  body.narrow .rhythmbar, body.narrow .tactions{padding:4px 10px 0; gap:4px;}
+  body.narrow .rb, body.narrow .act{min-height:36px; font-size:12.5px;}
+  body.narrow .utilrow{padding:3px 10px 6px;}
+  body.narrow .util, body.narrow .seg{min-height:36px; height:36px;}
+  header{padding:8px 14px 10px; display:flex; flex-direction:column; gap:9px;}
+  .headtop{display:flex; align-items:center; gap:10px;}
+  .logo{width:30px; height:30px; border-radius:8px; background:var(--logo); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; color:#fff;}
+  body.theme-monitor .logo{color:#000;}
+  header h1{font-size:16px;}
+  .vbadge{font-size:10.5px; font-weight:600; color:var(--dim); border:1px solid var(--line); border-radius:20px; padding:1px 8px; margin-left:6px; vertical-align:middle;}
+  header .credit{font-size:13px; color:var(--txt); font-weight:600; margin-top:1px;}
+  header .subtl{font-size:10px; color:var(--dim);}
+  header .hosp{font-size:11px; color:var(--dim); font-weight:600; margin-top:1px;}
+  .hbtns{display:flex; gap:6px;}
+  .hbtns .hbtn{flex:1; text-align:center;}
+  .hbtn{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:9px; padding:7px 10px; font-size:11px; font-weight:700; cursor:pointer;}
+  #bResetAll{color:var(--red); border-color:var(--red);}
+
+  /* ---- Timer block ---- */
+  .tblock{padding:5px 12px 3px;}
+  .trow{display:flex; align-items:center; gap:8px;}
+  .tclock{font-size:27px; font-weight:800; font-variant-numeric:tabular-nums; color:var(--clock); line-height:1;
+    text-align:center; letter-spacing:.5px; font-family:ui-monospace,'SF Mono',Menlo,monospace; min-width:74px; flex-shrink:0;}
+  .tcyc{position:relative; overflow:hidden; flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:0; background:var(--card2); border:1px solid var(--line); border-radius:7px; padding:2px 6px 6px; min-height:34px; text-align:center; opacity:.5;}
+  .code-active .tcyc{opacity:1;}
+  .tcyc b{display:block; font-size:13px; font-variant-numeric:tabular-nums; line-height:1;}
+  .tcyc span{font-size:7px; color:var(--dim); text-transform:uppercase; letter-spacing:.3px; line-height:1.1; margin-top:1px;}
+  /* countdown fill — grows left→right as the event nears; chip blinks when due */
+  .cbar{position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(127,127,127,.18);}
+  .cbar > i{display:block; height:100%; width:0%; background:var(--amber); transition:width .5s linear;}
+  .tcyc.due .cbar{background:rgba(127,127,127,.18);}
+  .tcyc.due .cbar > i{background:var(--red); width:100% !important;}
+  .tcyc.due{background:var(--card2); border-color:var(--red); color:var(--red); animation:pulse 1.4s infinite;}
+  .tcyc.due span{color:var(--red);}
+  /* Round countdown rings for the two side timers */
+  .tring{flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:2px; opacity:.55;}
+  .code-active .tring{opacity:1;}
+  .tring svg{width:66px; height:66px; display:block;}
+  .tring .rtrack{fill:none; stroke:rgba(127,127,127,.22); stroke-width:5;}
+  .tring .rprog{fill:none; stroke:var(--amber); stroke-width:5; stroke-linecap:round; stroke-dasharray:182.2; stroke-dashoffset:182.2; transition:stroke-dashoffset .5s linear;}
+  .tring .rtime{fill:var(--txt); font-weight:800; font-size:19px; text-anchor:middle; font-family:ui-monospace,'SF Mono',Menlo,monospace;}
+  .tring span{font-size:9.5px; font-weight:700; color:var(--txt); text-transform:uppercase; letter-spacing:.3px; line-height:1.1; margin-top:2px;}
+  .tring.due .rtrack{stroke:rgba(255,80,80,.28);}
+  .tring.due .rprog{stroke:var(--red); stroke-dashoffset:0 !important;}
+  .tring.due .rtime{fill:var(--red);}
+  .tring.due span{color:var(--red);}
+  .tring.due{animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  @keyframes dotblink{0%,60%{opacity:1;}61%,100%{opacity:0;}}
+
+  .startrow{display:flex; justify-content:center; padding:5px 12px 2px;}
+  .bigbtn{border:none; border-radius:10px; padding:9px 30px; font-size:13px; font-weight:800; color:#fff;
+    background:var(--green); cursor:pointer; letter-spacing:.4px; white-space:nowrap; min-width:180px;}
+  .bigbtn:disabled{opacity:.35; cursor:not-allowed;}
+  .bigbtn.ready{animation:pulse 1.4s infinite;}
+
+  /* Prominent leader status line — always readable, pulses only when action due */
+  .statusbar{text-align:center; font-weight:800; font-size:14.5px; padding:8px 12px; letter-spacing:.3px; color:#ffc247; background:#1c2735;}
+  .statusbar.s-cpr{background:#1c2735; color:#ffc247;}
+  .statusbar.s-select{background:#1c2735; color:#ffc247; animation:pulse 1.2s infinite;}
+  .statusbar.s-rhythm{background:var(--amber); color:var(--onwarm); animation:pulse 1.3s infinite;}
+  .statusbar.s-adr{background:var(--red); color:#fff; animation:pulse 1.1s infinite;}
+  .statusbar.s-shock{background:var(--amber); color:var(--onwarm); animation:pulse 1.3s infinite;}
+  .statusbar.s-rosc{background:var(--green); color:#04240f;}
+  .ctlwrap{display:none;} .code-active .ctlwrap{display:block;}
+
+  /* Uniform control buttons — rhythm bar + action buttons share one size */
+  .rhythmbar{display:none; grid-template-columns:1fr 1fr; gap:5px; padding:5px 12px 0;}
+  .tactions{display:none; grid-template-columns:repeat(2,1fr); gap:5px; padding:5px 12px 0;}
+  .code-active .rhythmbar, .code-active .tactions{display:grid;}
+  .rb, .act{min-height:40px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+    border:none; border-radius:9px; font-weight:700; font-size:13px; cursor:pointer; padding:5px; line-height:1.12; text-align:center;}
+  .rb{background:var(--card2); border:1px solid var(--line); color:var(--txt);}
+  .rb span{font-size:9.5px; font-weight:400; color:var(--dim); text-transform:uppercase; letter-spacing:.4px;}
+  #rbShock.on{background:var(--card2); background:color-mix(in srgb, var(--amber) 15%, var(--card2)); border-color:var(--amber); color:var(--amber);}
+  #rbShock.on span{color:var(--amber); opacity:.85;}
+  #rbNon.on{background:var(--card2); background:color-mix(in srgb, var(--red) 15%, var(--card2)); border-color:var(--red); color:var(--red);}
+  #rbNon.on span{color:var(--red); opacity:.85;}
+  /* Resting: neutral surface, identified only by a coloured left edge (calm console) */
+  .act{position:relative; background:var(--card2); border:1px solid var(--line); border-left:3px solid var(--line); color:var(--dim);}
+  .act.adr{border-left-color:var(--red);} .act.shock{border-left-color:var(--amber);}
+  .act.rhythm{border-left-color:var(--blue);} .act.rosc{border-left-color:var(--green);}
+  /* Cued: only the action(s) due now — steady fill + corner dot, no strobe */
+  .act.adr.cue{background:var(--card2); background:color-mix(in srgb, var(--red) 15%, var(--card2)); border-color:var(--red); color:var(--red);}
+  .act.shock.cue{background:var(--card2); background:color-mix(in srgb, var(--amber) 15%, var(--card2)); border-color:var(--amber); color:var(--amber);}
+  .act.rhythm.cue{background:var(--card2); background:color-mix(in srgb, var(--blue) 15%, var(--card2)); border-color:var(--blue); color:var(--blue);}
+  .act.rosc.cue{background:var(--card2); background:color-mix(in srgb, var(--green) 15%, var(--card2)); border-color:var(--green); color:var(--green);}
+  .act.cue::after{content:''; position:absolute; top:5px; right:5px; width:9px; height:9px; border-radius:50%; background:currentColor; animation:dotblink 1s steps(1,end) infinite;}
+  /* Rhythm buttons: neutral until one is needed, then cued (steady, not strobing) */
+  .rb{position:relative;}
+  .rb.cue{background:var(--card2); background:color-mix(in srgb, var(--blue) 15%, var(--card2)); border-color:var(--blue); color:var(--blue);}
+  .rb.cue span{color:var(--blue);}
+  .rb.cue::after{content:''; position:absolute; top:5px; right:6px; width:9px; height:9px; border-radius:50%; background:currentColor; animation:dotblink 1s steps(1,end) infinite;}
+  @media (min-width:720px){ body:not(.narrow) .tactions{grid-template-columns:repeat(4,1fr);} }
+  body.wide .tactions{grid-template-columns:repeat(4,1fr);}
+
+  /* Secondary utility row */
+  .utilrow{display:flex; flex-wrap:wrap; gap:5px; align-items:center; padding:4px 12px 7px; opacity:.92;}
+  .util{flex:1; min-width:80px; min-height:40px; height:40px; border:1px solid var(--line); background:var(--card2); color:var(--dim);
+    border-radius:7px; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;}
+  .util.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .seg{display:flex; align-items:stretch; min-height:40px; height:40px; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card2);}
+  .seg .seglbl{font-size:10px; color:var(--dim); font-weight:700; padding:0 8px; text-transform:uppercase; letter-spacing:.5px;}
+  .segb{border:none; background:transparent; color:var(--dim); font-size:10.5px; font-weight:700; padding:6px 9px; cursor:pointer; border-left:1px solid var(--line);}
+  .segb.on{background:var(--blue); color:#fff;}
+  .wtseg{flex:0 0 auto; position:relative;}
+  .wtseg.empty{border-color:var(--amber); color:var(--amber); animation:sugarglow 1s infinite;}
+  .wtseg:not(.empty){border-color:var(--green);}
+  .wtseg .seglbl{color:inherit;}
+  .wtdot{position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; background:var(--amber);}
+  .wtseg.empty .wtdot{animation:blinkdot 1s steps(1,end) infinite;}
+  .wtseg:not(.empty) .wtdot{background:var(--green); animation:none;}
+  .wmini{border:none; background:transparent; color:var(--txt); font-size:13px; font-weight:800; width:52px; text-align:center; padding:5px 4px; outline:none; -moz-appearance:textfield;}
+  .wmini::-webkit-outer-spin-button,.wmini::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+  .wmini::placeholder{color:var(--amber); font-weight:700;}
+  .sugarutil{position:relative;}
+  .sugarutil .dot{position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; background:var(--amber);}
+  @keyframes blinkdot{0%,50%{opacity:1;}51%,100%{opacity:0;}}
+  .sugarutil:not(.done){border-color:var(--amber); color:var(--amber); animation:sugarglow 1s infinite;}
+  .sugarutil:not(.done) .dot{animation:blinkdot 1s steps(1,end) infinite;}
+  @keyframes sugarglow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,0);}50%{box-shadow:0 0 0 3px rgba(255,176,32,.35);}}
+  .sugarutil.done{border-color:var(--green); color:var(--green);}
+  .sugarutil.done .dot{background:var(--green); animation:none;}
+  .util.intub-on{background:var(--green); border-color:var(--green); color:#04240f;}
+  body.theme-bright .util.intub-on{color:#fff;}
+
+  /* ---- Assessment ---- */
+  .assess{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
+  .assess h3{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;}
+  #assessCard h3{cursor:pointer;}
+  #assessCard h3::after{content:'\25be'; float:right; color:var(--dim); font-size:12px; line-height:1;}
+  #assessCard.collapsed h3{margin-bottom:0;}
+  #assessCard.collapsed h3::after{content:'\25b8';}
+  #assessCard.collapsed .qrow, #assessCard.collapsed .verdict, #assessCard.collapsed .resetb{display:none;}
+  .qrow{margin-bottom:10px;}
+  .qlab{font-size:12.5px; margin-bottom:6px;}
+  .qopts{display:flex; gap:6px; flex-wrap:wrap;}
+  .qb{flex:1; min-width:78px; background:var(--card2); border:1px solid var(--line); color:var(--txt);
+    border-radius:9px; padding:9px 6px; font-size:11.5px; font-weight:600; cursor:pointer;}
+  .qb.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .qb.on.warn{background:var(--amber); border-color:var(--amber); color:var(--onwarm);}
+  .qb.on.bad{background:var(--red); border-color:var(--red); color:#fff;}
+  .qb.on.good{background:var(--green); border-color:var(--green); color:#04240f;}
+  body.theme-bright .qb.on.good{color:#fff;}
+  .qrow.off{opacity:.35; pointer-events:none;}
+  .verdict{border-radius:10px; padding:11px 12px; font-size:12.5px; font-weight:600; margin-top:4px; display:none;}
+  .verdict.show{display:block;}
+  .verdict b{display:block; font-size:14px; margin-bottom:3px;}
+  .v-red{background:var(--red); color:#fff;}
+  .v-amber{background:var(--amber); color:var(--onwarm);}
+  .v-green{background:var(--green); color:#04240f;}
+  .v-blue{background:var(--blue); color:#fff;}
+  body.theme-bright .v-green{color:#fff;}
+  .resetb{background:none; border:none; color:var(--blue); font-size:11px; font-weight:700; cursor:pointer; padding:0; margin-top:8px;}
+
+  /* ---- Dashboard ---- */
+  .dash{display:flex; flex-direction:column; gap:12px; padding:12px; max-width:560px; margin:0 auto;}
+  .col{display:flex; flex-direction:column; gap:12px;}
+  .col-center{order:-1;}
+  /* Tablet: assessment/weight full-width on top, drugs side by side below */
+  @media (min-width:720px) and (max-width:999px){
+    body:not(.narrow) .dash{flex-flow:row wrap; align-items:flex-start; max-width:900px;}
+    body:not(.narrow) .col-center{flex:1 1 100%; order:-1;}
+    body:not(.narrow) .col-left{flex:1 1 45%; order:0;}
+    body:not(.narrow) .col-right{flex:1 1 45%; order:0;}
+  }
+  /* Desktop: three columns */
+  @media (min-width:1000px){
+    body:not(.narrow) .dash{flex-direction:row; align-items:flex-start; max-width:1240px;}
+    body:not(.narrow) .col-left{flex:1;} body:not(.narrow) .col-right{flex:1;}
+    body:not(.narrow) .col-center{flex:1; order:0;}
+  }
+  body.wide .dash{flex-direction:row; align-items:flex-start; max-width:1240px;}
+  body.wide .col-left{flex:1;} body.wide .col-right{flex:1;} body.wide .col-center{flex:1; order:0;}
+
+  .wcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
+  .wcard label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px;}
+  #wLabel{cursor:pointer; display:flex; align-items:center; gap:6px;}
+  #wSummary{color:var(--green); font-weight:800; font-size:13px; text-transform:none; letter-spacing:0;}
+  #wSummary:empty{display:none;}
+  .wcaret{margin-left:auto; color:var(--dim); font-size:12px; line-height:1;}
+  .wcaret::before{content:'\25be';}
+  .wcard.collapsed .wcaret::before{content:'\25b8';}
+  .wcard.collapsed .wrow, .wcard.collapsed .agetoggle, .wcard.collapsed .agechips, .wcard.collapsed .est{display:none;}
+  .wrow{display:flex; gap:9px; margin-top:7px; align-items:center;}
+  .wrow input{flex:1; background:var(--card2); border:2px solid var(--line); border-radius:10px; color:var(--txt);
+    font-size:30px; font-weight:700; padding:9px 12px; width:100%; outline:none; text-align:center;}
+  .wrow input:focus{border-color:var(--blue);}
+  .unit{font-size:18px; color:var(--dim); font-weight:600;}
+  .agetoggle{display:flex; align-items:center; justify-content:space-between; margin-top:10px;}
+  .agetoggle button{background:var(--card2); border:1px solid var(--line); color:var(--blue); border-radius:8px; padding:5px 11px; font-size:11px; font-weight:700; cursor:pointer;}
+  .agechips{display:flex; flex-wrap:wrap; gap:5px; margin-top:9px;}
+  .grouplbl{width:100%; font-size:9.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; margin-top:3px;}
+  .chip{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:16px; padding:5px 10px; font-size:11.5px; cursor:pointer;}
+  .chip:active{background:var(--blue); color:#fff;}
+  .est{font-size:10.5px; color:var(--dim); margin-top:7px;}
+
+  details.sec{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  details.sec>summary{list-style:none; cursor:pointer; padding:9px 12px; font-size:11px; font-weight:700;
+    text-transform:uppercase; letter-spacing:1px; color:var(--txt); display:flex; align-items:center; gap:8px;}
+  details.sec>summary::-webkit-details-marker{display:none;}
+  details.sec>summary::before{content:''; width:3px; height:13px; border-radius:2px; background:var(--accent,var(--blue));}
+  details.sec>summary::after{content:'▾'; margin-left:auto; color:var(--dim); font-size:12px;}
+  details.sec[open]>summary::after{content:'▴';}
+  details.sec .body{padding:0 11px 11px;}
+  .seq{font-size:10px; color:var(--dim); margin:0 2px 7px;}
+  .doses{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+  .dose{background:var(--card2); border-radius:8px; padding:7px 9px; border-left:3px solid var(--line);}
+  .dose .n{font-size:10px; color:var(--dim);}
+  .dose .v{font-size:16px; font-weight:800; margin-top:1px;}
+  .dose .s{font-size:9px; color:var(--dim); margin-top:1px; line-height:1.3;}
+  .dose.red{border-left-color:var(--red);} .dose.amber{border-left-color:var(--amber);}
+  .dose.blue{border-left-color:var(--blue);} .dose.green{border-left-color:var(--green);}
+  .capped{color:var(--amber); font-size:9.5px; font-weight:700;}
+  /* Rhythm-driven highlight */
+  .dose.rx-shock, .dose.rx-nonshock{transition:box-shadow .2s;}
+  body.rhythm-shock .dose.rx-shock{box-shadow:0 0 0 2px var(--amber);}
+  body.rhythm-nonshock .dose.rx-nonshock{box-shadow:0 0 0 2px var(--red);}
+  .empty{color:var(--dim); text-align:center; padding:22px 10px; font-size:12.5px;}
+
+  .bprow{display:flex; gap:10px;}
+  .bpitem{flex:1; text-align:center; background:var(--card2); border-radius:9px; padding:9px 6px;}
+  .bpn{font-size:9.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px;}
+  .bpv{font-size:23px; font-weight:800; margin-top:1px;}
+  .bps{font-size:9.5px; color:var(--dim);}
+  .bpdbp{font-size:10.5px; color:var(--amber); text-align:center; margin-top:8px;}
+
+  /* Reversible causes */
+  .rcgrp{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; margin:8px 2px 4px;}
+  .causegrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0 18px;}
+  details.cause{border-bottom:1px solid var(--line);}
+  details.cause>summary{list-style:none; cursor:pointer; padding:8px 2px; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:9px;}
+  details.cause>summary::-webkit-details-marker{display:none;}
+  details.cause>summary::before{content:'+'; color:var(--blue); font-weight:800; font-size:14px; width:12px; text-align:center;}
+  details.cause[open]>summary::before{content:'\2013';}
+  details.cause[open]>summary{color:var(--blue);}
+  .chint{font-size:11px; color:var(--dim); padding:0 2px 9px 23px; line-height:1.55;}
+  .acrocard{background:var(--card2); border-radius:9px; padding:9px 11px; margin-top:9px;}
+  .acrocard b{font-size:12.5px; color:var(--txt);}
+  .acrocard .cap{font-size:10px; color:var(--dim); font-weight:400;}
+  .acrocard .row{font-size:11px; color:var(--dim); margin-top:4px; line-height:1.5;}
+  .acrocard .row b{font-size:11px; color:var(--txt);}
+
+  .qcard,.logcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px 13px;}
+  .qcard h3,.logcard h3{font-size:10.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.9px; margin-bottom:7px; display:flex; justify-content:space-between; align-items:center;}
+  .qlist{display:grid; grid-template-columns:1fr 1fr; gap:6px 11px;}
+  .qitem{font-size:11.5px; display:flex; align-items:baseline; gap:5px;}
+  .qitem b{color:var(--green); font-size:12px;}
+  .qitem span{color:var(--dim); font-size:10px;}
+  .copy{background:var(--card2); border:1px solid var(--line); color:var(--blue); border-radius:7px; font-size:10.5px; padding:3px 9px; cursor:pointer;}
+  .logbtns{display:flex; gap:6px;}
+  #log{list-style:none; max-height:200px; overflow-y:auto; font-size:12.5px;}
+  #log li{padding:4px 0; border-bottom:1px dashed var(--line); font-variant-numeric:tabular-nums;}
+  #log li b{color:var(--amber); margin-right:7px;}
+  .codeonly{display:none;} .code-active .codeonly{display:block;}
+
+  .legend{display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; padding:12px 20px 2px; max-width:760px; margin:0 auto;}
+  .legend span{display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--dim);}
+  .legend i{width:11px; height:11px; border-radius:3px; display:inline-block; flex-shrink:0;}
+  .disclaimer{font-size:9.5px; color:var(--dim); text-align:center; padding:6px 20px 12px; line-height:1.6; max-width:700px; margin:0 auto;}
+  .disclaimer a{color:var(--blue); text-decoration:underline;}
+  .copyr{display:inline-block; margin-top:5px; font-size:9px; color:var(--dim);}
+</style>
+</head>
+<body class="theme-bright">
+
+<header class="apphead">
+    <div class="headtop">
+      <div class="logo">&#9889;</div>
+      <div style="flex:1">
+        <h1>Code Blue Companion <span class="vbadge">v4.8</span></h1>
+        <p class="credit">Created by Dr Vignesh N</p>
+        <p class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</p>
+        <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
+      </div>
+    </div>
+    <div class="hbtns">
+      <button class="hbtn" id="bResetAll" title="Clear this patient and start fresh">New patient</button>
+      <button class="hbtn" id="bTheme">Bright</button>
+      <button class="hbtn" id="bLayout">Auto</button>
+    </div>
+</header>
+
+<div class="topstack">
+  <div class="tblock">
+    <div class="trow">
+      <div class="tring" id="cycAdr"><svg viewBox="0 0 72 72"><circle class="rtrack" cx="36" cy="36" r="29"></circle><circle class="rprog" id="ringAdr" cx="36" cy="36" r="29" transform="rotate(-90 36 36)"></circle><text class="rtime" id="tAdr" x="36" y="41" font-size="15">--:--</text></svg><span>next adrenaline</span></div>
+      <div class="tclock" id="clock">00:00</div>
+      <div class="tring" id="cycRhythm"><svg viewBox="0 0 72 72"><circle class="rtrack" cx="36" cy="36" r="29"></circle><circle class="rprog" id="ringRhythm" cx="36" cy="36" r="29" transform="rotate(-90 36 36)"></circle><text class="rtime" id="tRhythm" x="36" y="41" font-size="15">2:00</text></svg><span>reassess + swap</span></div>
+    </div>
+    <div class="startrow"><button class="bigbtn" id="bCode">START CPR</button></div>
+  </div>
+
+  <div class="statusbar codeonly s-cpr" id="statusBar">CPR in progress</div>
+
+  <div class="ctlwrap codeonly">
+    <div class="rhythmbar">
+      <button class="rb" id="rbShock" data-r="shock">Shockable<span>VF / pVT</span></button>
+      <button class="rb" id="rbNon" data-r="nonshock">Non-shockable<span>asystole / PEA</span></button>
+    </div>
+
+    <div class="tactions">
+      <button class="act adr" id="bAdr">Adrenaline</button>
+      <button class="act shock" id="bShock">Shock</button>
+      <button class="act rhythm" id="bRhythm">Reassess + swap</button>
+      <button class="act rosc" id="bRosc">ROSC</button>
+    </div>
+
+    <div class="utilrow">
+      <div class="seg" id="ratioSeg">
+        <span class="seglbl">CPR</span>
+        <button class="segb" data-r="30:2">30:2</button>
+        <button class="segb on" data-r="15:2">15:2</button>
+        <button class="segb" data-r="cont">Cont.</button>
+      </div>
+      <button class="util" id="bIntub">Intubated?</button>
+      <div class="seg wtseg" id="wtSeg"><span class="wtdot"></span><span class="seglbl">WT</span><input id="wtMini" class="wmini" type="number" inputmode="decimal" placeholder="kg" min="0" max="120" step="0.1"></div>
+      <button class="util sugarutil" id="bSugar"><span class="dot"></span><span id="sugarTxt">Blood sugar</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="qref" id="quickRef"></div>
+
+<div class="dash">
+
+  <div class="col col-left"><div id="colLeft"></div></div>
+
+  <div class="col col-center">
+
+    <div class="assess" id="assessCard">
+      <h3 id="assessToggle">Rapid assessment</h3>
+
+      <div class="qrow" id="q1">
+        <div class="qlab">1 &middot; Is the child responsive?</div>
+        <div class="qopts">
+          <button class="qb" data-q="1" data-v="resp">Responsive</button>
+          <button class="qb" data-q="1" data-v="unresp">Unresponsive</button>
+        </div>
+      </div>
+
+      <div class="qrow off" id="q2">
+        <div class="qlab">2 &middot; Breathing?</div>
+        <div class="qopts">
+          <button class="qb" data-q="2" data-v="normal">Normal</button>
+          <button class="qb" data-q="2" data-v="gasping">Gasping</button>
+          <button class="qb" data-q="2" data-v="none">Not breathing</button>
+        </div>
+      </div>
+
+      <div class="qrow off" id="q3">
+        <div class="qlab">3 &middot; Central pulse (10 s max)?</div>
+        <div class="qopts">
+          <button class="qb" data-q="3" data-v="ok">Present &ge;60</button>
+          <button class="qb" data-q="3" data-v="slow">Present &lt;60</button>
+          <button class="qb" data-q="3" data-v="absent">Absent</button>
+        </div>
+      </div>
+
+      <div class="verdict" id="verdict"></div>
+      <button class="resetb" id="bReset">Reset assessment</button>
+    </div>
+
+    <div class="wcard" id="wCard">
+      <label id="wLabel">Patient weight <b id="wSummary"></b><span class="wcaret"></span></label>
+      <div class="wrow">
+        <input id="wt" type="number" inputmode="decimal" placeholder="0.0" min="0" max="120" step="0.1">
+        <span class="unit">kg</span>
+      </div>
+      <div class="agetoggle">
+        <span style="font-size:10.5px;color:var(--dim);">No weight? Estimate from age</span>
+        <button id="bAges" type="button">Show ages</button>
+      </div>
+      <div class="agechips" id="ageWrap" hidden>
+        <span class="grouplbl">Infant &lt; 1 year</span>
+        <button class="chip" data-kg="3.5" data-age="0.02">Newborn</button>
+        <button class="chip" data-kg="4.5" data-age="0.08">1 mo</button>
+        <button class="chip" data-kg="5" data-age="0.17">2 mo</button>
+        <button class="chip" data-kg="6" data-age="0.25">3 mo</button>
+        <button class="chip" data-kg="7" data-age="0.5">6 mo</button>
+        <button class="chip" data-kg="8.5" data-age="0.75">9 mo</button>
+        <span class="grouplbl">Child 1&ndash;12 years</span>
+        <button class="chip" data-kg="10" data-age="1">1 y</button>
+        <button class="chip" data-kg="12" data-age="2">2 y</button>
+        <button class="chip" data-kg="14" data-age="3">3 y</button>
+        <button class="chip" data-kg="16" data-age="4">4 y</button>
+        <button class="chip" data-kg="18" data-age="5">5 y</button>
+        <button class="chip" data-kg="21" data-age="6">6 y</button>
+        <button class="chip" data-kg="23" data-age="7">7 y</button>
+        <button class="chip" data-kg="26" data-age="8">8 y</button>
+        <button class="chip" data-kg="29" data-age="9">9 y</button>
+        <button class="chip" data-kg="32" data-age="10">10 y</button>
+        <button class="chip" data-kg="35" data-age="11">11 y</button>
+        <button class="chip" data-kg="38" data-age="12">12 y</button>
+        <span class="grouplbl">Adolescent 13&ndash;18 years</span>
+        <button class="chip" data-kg="43" data-age="13">13 y</button>
+        <button class="chip" data-kg="50" data-age="14">14 y</button>
+        <button class="chip" data-kg="55" data-age="15">15 y</button>
+        <button class="chip" data-kg="58" data-age="16">16 y</button>
+        <button class="chip" data-kg="61" data-age="17">17 y</button>
+        <button class="chip" data-kg="65" data-age="18">18 y</button>
+      </div>
+      <div class="est" id="estnote"></div>
+    </div>
+
+  </div>
+
+  <div class="col col-right">
+    <div id="colRight"></div>
+
+    <details class="sec" id="rcSec" style="--accent:var(--violet)" open>
+      <summary>Reversible causes &mdash; 6 H's &amp; 5 T's</summary>
+      <div class="body">
+        <div class="seq">Tap a cause to see what to check &amp; do</div>
+
+        <div class="rcgrp">The 6 H's</div>
+        <div class="causegrid">
+          <details class="cause"><summary>Hypoxia</summary><div class="chint">Maximise oxygen. Confirm ETT position and bilateral air entry; ventilate effectively.</div></details>
+          <details class="cause"><summary>Hypovolaemia</summary><div class="chint">IV/IO fluid bolus 10&ndash;20 mL/kg. Control haemorrhage; consider blood if bleeding.</div></details>
+          <details class="cause"><summary>Hydrogen ion (acidosis)</summary><div class="chint">Ensure effective ventilation and treat the cause. Sodium bicarbonate only if prolonged arrest or known metabolic acidosis / hyperkalaemia.</div></details>
+          <details class="cause"><summary>Hypo / Hyperkalaemia &amp; metabolic</summary><div class="chint">Check ABG, electrolytes, glucose. Hyperkalaemia: calcium, bicarbonate, insulin&ndash;dextrose, salbutamol.</div></details>
+          <details class="cause"><summary>Hypoglycaemia</summary><div class="chint">Check blood glucose. Give Dextrose 10% 5 mL/kg (0.5 g/kg) if low.</div></details>
+          <details class="cause"><summary>Hypothermia</summary><div class="chint">Check core temperature. Active rewarming; continue resuscitation until warm ("not dead until warm and dead").</div></details>
+        </div>
+
+        <div class="rcgrp">The 5 T's</div>
+        <div class="causegrid">
+          <details class="cause"><summary>Tension pneumothorax</summary><div class="chint">Absent breath sounds, tracheal shift. Needle decompression (2nd ICS, mid-clavicular line), then chest drain.</div></details>
+          <details class="cause"><summary>Tamponade (cardiac)</summary><div class="chint">Muffled heart sounds, distended neck veins. Echo if available; pericardiocentesis.</div></details>
+          <details class="cause"><summary>Toxins</summary><div class="chint">Consider ingestion / overdose. Specific antidote (e.g. naloxone for opioids); call poison centre.</div></details>
+          <details class="cause"><summary>Thrombosis &mdash; pulmonary (PE)</summary><div class="chint">Consider in sudden collapse with risk factors. Thrombolysis if strongly suspected.</div></details>
+          <details class="cause"><summary>Thrombosis &mdash; coronary</summary><div class="chint">Rare in children; consider with cardiac history or Kawasaki disease.</div></details>
+        </div>
+
+        <div class="acrocard">
+          <b>MR SOPA</b> <span class="cap">&mdash; bag-mask ventilation not working</span>
+          <div class="row"><b>M</b>ask seal &middot; <b>R</b>eposition airway &middot; <b>S</b>uction mouth/nose &middot; <b>O</b>pen mouth &middot; <b>P</b>ressure increase &middot; <b>A</b>irway (LMA/ETT)</div>
+        </div>
+        <div class="acrocard">
+          <b>DOPE</b> <span class="cap">&mdash; intubated patient suddenly deteriorates</span>
+          <div class="row"><b>D</b>isplacement of tube &middot; <b>O</b>bstruction (secretions/kink) &middot; <b>P</b>neumothorax &middot; <b>E</b>quipment failure (circuit, O&#8322;, bag)</div>
+        </div>
+      </div>
+    </details>
+
+    <div class="qcard codeonly">
+      <h3>CPR quality &mdash; coach every cycle</h3>
+      <div class="qlist">
+        <div class="qitem"><b>Rate</b> <span>100&ndash;120/min</span></div>
+        <div class="qitem"><b>Depth</b> <span>&#8531; chest &middot; 4cm inf / 5cm child</span></div>
+        <div class="qitem"><b>Recoil</b> <span>full, don't lean</span></div>
+        <div class="qitem"><b>Pauses</b> <span>&lt; 10 s</span></div>
+        <div class="qitem"><b>Swap</b> <span>every 2 min</span></div>
+        <div class="qitem"><b>Ventilate</b> <span>don't over-ventilate</span></div>
+      </div>
+    </div>
+
+    <div class="logcard codeonly">
+      <h3>Code log <span class="logbtns"><button class="copy" id="bPrint">Print</button><button class="copy" id="bCopy">Copy</button></span></h3>
+      <ul id="log"></ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <span><i style="background:var(--red)"></i>Drugs</span>
+  <span><i style="background:var(--amber)"></i>Electricity</span>
+  <span><i style="background:var(--blue)"></i>Rhythm / assessment</span>
+  <span><i style="background:var(--green)"></i>Airway / ROSC</span>
+  <span><i style="background:var(--violet)"></i>Status / guidance</span>
+</div>
+<p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v4.8 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission.</span></p>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var wt=0, ageY=null;
+
+  function fmt(n,dp){ if(dp===undefined)dp=2; var v=Math.round(n*Math.pow(10,dp))/Math.pow(10,dp); return (''+v).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1'); }
+  function cap(val,max){ return {v:Math.min(val,max), capped:val>max}; }
+  function card(cls,name,val,sub,capped,rx){
+    return '<div class="dose '+cls+(rx?' '+rx:'')+'"><div class="n">'+name+'</div><div class="v">'+val+
+      (capped?' <span class="capped">MAX</span>':'')+'</div><div class="s">'+sub+'</div></div>';
+  }
+  function sect(title,accent,open,inner){
+    return '<details class="sec" style="--accent:var('+accent+')"'+(open?' open':'')+'><summary>'+title+'</summary><div class="body">'+inner+'</div></details>';
+  }
+
+  /* ---------- Assessment ---------- */
+  var A={1:null,2:null,3:null};
+  var TONE={1:{resp:'good',unresp:'bad'},
+            2:{normal:'good',gasping:'warn',none:'bad'},
+            3:{ok:'good',slow:'warn',absent:'bad'}};
+
+  function setVerdict(cls,title,body,arrest){
+    var v=$('verdict');
+    v.className='verdict show '+cls;
+    v.innerHTML='<b>'+title+'</b>'+body;
+    $('bCode').classList.toggle('ready',!!arrest && !running);
+  }
+  function clearVerdict(){
+    $('verdict').className='verdict';
+    $('bCode').classList.remove('ready');
+  }
+
+  function evaluate(){
+    $('q2').classList.toggle('off', A[1]!=='unresp');
+    $('q3').classList.toggle('off', A[1]!=='unresp' || !A[2] || A[2]==='normal');
+
+    if(A[1]==='resp'){
+      setVerdict('v-green','Not an arrest','Child is responsive — assess airway, breathing, circulation. Monitor, get senior help if unwell.',false);
+      return;
+    }
+    if(A[1]!=='unresp'){ clearVerdict(); return; }
+    if(!A[2]){ setVerdict('v-blue','Shout for help','Call for help and a defibrillator now. Check breathing.',false); return; }
+    if(A[2]==='normal'){
+      setVerdict('v-blue','Not an arrest — monitor','Unresponsive but breathing normally. Recovery position, give oxygen, monitor closely, find the cause.',false);
+      return;
+    }
+    if(!A[3]){
+      setVerdict('v-amber','Check central pulse','Gasping counts as NOT breathing. Feel brachial (infant) or carotid/femoral (child) for no more than 10 seconds.',false);
+      return;
+    }
+    if(A[3]==='ok'){
+      setVerdict('v-amber','Rescue breaths only','Pulse present and adequate. Give 1 breath every 2–3 seconds (20–30/min). Recheck pulse every 2 minutes.',false);
+      return;
+    }
+    if(A[3]==='slow'){
+      setVerdict('v-red','Start CPR now','Pulse under 60 with poor perfusion = start compressions. Oxygenate and ventilate first, then CPR. Adrenaline if bradycardia persists.',true);
+      return;
+    }
+    setVerdict('v-red','Cardiac arrest — start CPR','No pulse. Start high-quality CPR immediately, attach defibrillator, get IV/IO access.',true);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(b){
+    b.addEventListener('click',function(){
+      var q=b.getAttribute('data-q'), v=b.getAttribute('data-v');
+      A[q]=v;
+      if(q==='1'){ A[2]=null; A[3]=null; }
+      if(q==='2'){ A[3]=null; }
+      Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(o){
+        var oq=o.getAttribute('data-q');
+        if(A[oq]===o.getAttribute('data-v')) o.className='qb on '+(TONE[oq][o.getAttribute('data-v')]||'');
+        else o.className='qb';
+      });
+      evaluate();
+    });
+  });
+  $('assessToggle').addEventListener('click',function(){ $('assessCard').classList.toggle('collapsed'); });
+  $('bReset').addEventListener('click',function(){
+    A={1:null,2:null,3:null};
+    Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(o){o.className='qb';});
+    $('q2').classList.add('off'); $('q3').classList.add('off');
+    clearVerdict();
+  });
+
+  /* ---------- Doses ---------- */
+  function renderQuickRef(){
+    var q=$('quickRef'); if(!q) return;
+    if(!wt||wt<=0){ q.innerHTML=''; return; }
+    var w=wt, adr=Math.min(0.01*w,1);
+    var ett = w<3.5?3.0 : w<6?3.5 : w<10?3.5 : w<12?4.0 : w<15?4.5 : w<19?5.0 : w<24?5.5 : w<30?6.0 : w<37?6.5 : 7.0;
+    var blade = w<3.5?'Miller 0' : w<10?'Miller 1' : w<18?'Miller 1\u20132' : w<30?'Mac 2' : 'Mac 3';
+    var CMAP={'Adrenaline':'red','Defib':'amber','ETT size':'green','Blade':'green','Fentanyl':'blue','Ketamine':'blue','Midazolam':'blue','Vecuronium':'blue'};
+    function cell(val,sub,lab){ return '<div class="qr '+(CMAP[lab]||'')+'"><b>'+val+'</b>'+(sub?'<u>'+sub+'</u>':'')+'<span>'+lab+'</span></div>'; }
+    var g='<div class="grid">';
+    g+=cell(fmt(adr*10,1)+' mL', fmt(adr,2)+' mg · 1:10,000', 'Adrenaline');
+    g+=cell(fmt(2*w,0)+'\u2192'+fmt(4*w,0)+' J','2\u21924 J/kg','Defib');
+    g+=cell(fmt(ett,1),'cuffed','ETT size');
+    g+=cell(blade,'','Blade');
+    g+=cell(fmt(Math.min(1*w,50),0)+'\u2013'+fmt(Math.min(2*w,100),0)+' \u00b5g','1\u20132 \u00b5g/kg','Fentanyl');
+    g+=cell(fmt(1*w,0)+'\u2013'+fmt(2*w,0)+' mg','1\u20132 mg/kg','Ketamine');
+    g+=cell(fmt(0.1*w,1)+'\u2013'+fmt(Math.min(0.2*w,10),1)+' mg','0.1\u20130.2/kg','Midazolam');
+    g+=cell(fmt(0.1*w,1)+' mg','0.1 mg/kg','Vecuronium');
+    g+='</div>';
+    q.innerHTML='<div class="card"><h3>\u26a1 Quick reference \u2014 '+fmt(w,1)+' kg</h3>'+g+'</div>';
+  }
+  function render(){
+    renderQuickRef();
+    var L=$('colLeft'), R=$('colRight');
+    if(!wt||wt<=0){
+      L.innerHTML='<div class="empty">Enter weight &rarr;<br>arrest &amp; shock doses appear here.</div>';
+      R.innerHTML='<div class="empty">Enter weight &rarr;<br>airway, RSI &amp; infusions appear here.</div>';
+      return;
+    }
+    var w=wt, s='';
+
+    s='<div class="doses">';
+    var adr=cap(0.01*w,1);
+    s+=card('red','Adrenaline 1:10,000', fmt(adr.v*10,1)+' mL', fmt(adr.v,2)+' mg IV/IO · q3–5 min · max 1 mg', adr.capped, 'rx-nonshock');
+    var amio=cap(5*w,300);
+    s+=card('red','Amiodarone', fmt(amio.v,0)+' mg', '5 mg/kg bolus (VF/pVT) · max 300 mg', amio.capped, 'rx-shock');
+    var atrV=Math.min(Math.max(0.02*w,0.1),0.5);
+    s+=card('amber','Atropine (bradycardia)', fmt(atrV,2)+' mg', '0.02 mg/kg · min 0.1, max 0.5');
+    var mg=cap(25*w,2000);
+    s+=card('amber','Magnesium', fmt(mg.v,0)+' mg', '25–50 mg/kg (torsades) · max 2 g', mg.capped);
+    var cagluc=Math.min(0.5*w,20);
+    s+=card('amber','Calcium gluconate 10%', fmt(cagluc,1)+' mL', '0.5 mL/kg (50 mg/kg) slow · max 20 mL (2 g) · hyperK / hypoCa / CCB OD');
+    var bicarb=Math.min(1*w,50);
+    s+=card('amber','Sodium bicarbonate 8.4%', fmt(bicarb,0)+' mL', '1 mmol/kg (1 mL/kg) slow · max 50 mmol · dilute 1:1 with equal-volume D5W · hyperK / TCA');
+    s+='</div>';
+    var left=sect('Arrest drugs','--red',true,s);
+
+    s='<div class="doses">';
+    s+=card('amber','Defib — 1st', fmt(2*w,0)+' J', '2 J/kg unsynchronized', false, 'rx-shock');
+    s+=card('amber','Defib — next', fmt(4*w,0)+' J', '4 J/kg (max 10 J/kg)', false, 'rx-shock');
+    s+=card('blue','Sync cardiovert', fmt(0.5*w,1)+'–'+fmt(1*w,0)+' J', '0.5–1 then 2 J/kg');
+    var a1=cap(0.1*w,6), a2=cap(0.2*w,12);
+    s+=card('blue','Adenosine (SVT)', fmt(a1.v,1)+'→'+fmt(a2.v,1)+' mg', '0.1 then 0.2 mg/kg fast · max 6→12 mg', a1.capped||a2.capped);
+    s+='</div>';
+    left+=sect('Electricity','--amber',true,s);
+    L.innerHTML=left;
+
+    s='<div class="doses">';
+    var ett = w<3.5?3.0 : w<6?3.5 : w<10?3.5 : w<12?4.0 : w<15?4.5 : w<19?5.0 : w<24?5.5 : w<30?6.0 : w<37?6.5 : 7.0;
+    s+=card('green','ETT size', fmt(ett,1)+' cuffed', 'uncuffed '+fmt(ett+0.5,1)+' mm · depth ≈ '+fmt(ett*3,1)+' cm at lip');
+    var blade = w<3.5?'Miller 0' : w<10?'Miller 1' : w<18?'Miller 1–2' : w<30?'Mac 2' : 'Mac 3';
+    var bladeType = w<10?'straight — floppy epiglottis' : w<18?'straight preferred (<2 yr)' : 'curved (Macintosh)';
+    s+=card('green','Laryngoscope', blade, bladeType);
+    var lma = w<5?'1' : w<10?'1.5' : w<20?'2' : w<30?'2.5' : w<50?'3' : '4';
+    s+=card('green','LMA size', lma, 'supraglottic airway');
+    s+=card('green','Fluid bolus', fmt(10*w,0)+'–'+fmt(20*w,0)+' mL', '10–20 mL/kg NS, reassess');
+    s+=card('green','Dextrose 10%', fmt(5*w,0)+' mL', '0.5 g/kg if hypoglycemic');
+    var nal=cap(0.1*w,2);
+    s+=card('green','Naloxone', fmt(nal.v,2)+' mg', '0.1 mg/kg IV/IO · max 2 mg', nal.capped);
+    s+='</div>';
+    var right=sect('Airway &amp; circulation','--green',true,s);
+
+    s='<div class="seq">premedicate → induce → paralyse</div><div class="doses">';
+    var atrP=Math.min(Math.max(0.02*w,0.1),0.5);
+    s+=card('amber','Atropine (premed)', fmt(atrP,2)+' mg', '0.02 mg/kg · min 0.1');
+    var fH=cap(2*w,100), fL=cap(1*w,50);
+    s+=card('amber','Fentanyl', fmt(fL.v,0)+'–'+fmt(fH.v,0)+' µg', '1–2 µg/kg slow IV · max 100 µg', fH.capped);
+    s+=card('blue','Ketamine', fmt(1*w,0)+'–'+fmt(2*w,0)+' mg', '1–2 mg/kg IV induction');
+    var mz=cap(0.2*w,10);
+    s+=card('blue','Midazolam', fmt(0.1*w,1)+'–'+fmt(mz.v,1)+' mg', '0.1–0.2 mg/kg IV · max 10 mg', mz.capped);
+    s+=card('blue','Etomidate', fmt(0.3*w,1)+' mg', '0.3 mg/kg IV');
+    s+=card('blue','Propofol', fmt(1*w,0)+'–'+fmt(2*w,0)+' mg', '1–2 mg/kg (caution: shock)');
+    s+=card('red','Rocuronium', fmt(1*w,0)+' mg', '1 mg/kg IV (RSI)');
+    s+=card('red','Vecuronium', fmt(0.1*w,1)+' mg', '0.1 mg/kg (0.2–0.3 RSI)');
+    s+=card('red','Succinylcholine', fmt(1.5*w,0)+'–'+fmt(2*w,0)+' mg', '1–2 mg/kg IV');
+    s+='</div>';
+    right+=sect('Rapid sequence intubation','--blue',true,s);
+
+    s='<div class="seq">Rule of 6 — add drug to 50 mL (D5 / NS). Use your unit\'s standard concentration where available.</div>';
+    s+='<details class="cause" style="margin-bottom:8px"><summary>What is the &ldquo;rule of 6&rdquo;?</summary><div class="chint">It makes the pump rate read directly as the dose. Add <b>3 × weight (mg) to 50 mL</b> → 1 mL/h = 1 µg/kg/min (dopamine / dobutamine). For adrenaline / noradrenaline use <b>0.3 × weight (mg) in 50 mL</b> → 1 mL/h = 0.1 µg/kg/min. Every patient gets a different concentration, so prefer your unit\'s standardised concentration and smart-pump library when available.</div></details>';
+    s+='<div class="doses">';
+    var potentMix=fmt(0.3*w,1);   /* 0.3 × wt mg / 50 mL → 1 mL/h = 0.1 µg/kg/min */
+    var pressorMix=fmt(3*w,0);    /* 3 × wt mg / 50 mL → 1 mL/h = 1 µg/kg/min */
+    s+=card('red','Adrenaline', '0.05–1 µg/kg/min', 'mix '+potentMix+' mg → 50 mL · 1 mL/h = 0.1 µg/kg/min');
+    s+=card('red','Noradrenaline', '0.05–2 µg/kg/min', 'mix '+potentMix+' mg → 50 mL · 1 mL/h = 0.1 µg/kg/min');
+    s+=card('amber','Dopamine', '5–20 µg/kg/min', 'mix '+pressorMix+' mg → 50 mL · 1 mL/h = 1 µg/kg/min');
+    s+=card('amber','Dobutamine', '5–20 µg/kg/min', 'mix '+pressorMix+' mg → 50 mL · 1 mL/h = 1 µg/kg/min');
+    s+=card('blue','Milrinone', '0.25–0.75 µg/kg/min', 'load 50 µg/kg over 30–60 min · then per unit protocol');
+    s+='</div>';
+    right+=sect('Post-ROSC infusions','--amber',false,s);
+    R.innerHTML=right;
+  }
+
+  function wSum(){ $('wSummary').textContent = wt>0 ? fmt(wt,2)+' kg' : ''; }
+  function collapseWeight(){ if(wt>0) $('wCard').classList.add('collapsed'); }
+  function applyWeight(v){ wt=parseFloat(v)||0; ageY=null; $('estnote').textContent=''; $('wtSeg').classList.toggle('empty', !(wt>0)); wSum(); if(!(wt>0)) $('wCard').classList.remove('collapsed'); if(typeof saveState==='function') saveState(); }
+  $('wt').addEventListener('blur', collapseWeight);
+  $('wtMini').addEventListener('blur', collapseWeight);
+  $('wLabel').addEventListener('click',function(){
+    if($('wCard').classList.contains('collapsed')){ $('wCard').classList.remove('collapsed'); $('wt').focus(); }
+    else if(wt>0){ $('wCard').classList.add('collapsed'); }
+  });
+  $('wt').addEventListener('input',function(){ $('wtMini').value=this.value; applyWeight(this.value); render(); });
+  $('wtMini').addEventListener('input',function(){ $('wt').value=this.value; applyWeight(this.value); render(); });
+  $('bAges').addEventListener('click',function(){
+    var w=$('ageWrap'); w.hidden=!w.hidden; this.textContent=w.hidden?'Show ages':'Hide ages';
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(c){
+    c.addEventListener('click',function(){
+      wt=parseFloat(c.getAttribute('data-kg')); ageY=parseFloat(c.getAttribute('data-age')); $('wt').value=wt; $('wtMini').value=wt; $('wtSeg').classList.remove('empty');
+      $('estnote').textContent='Estimated for '+c.textContent+' ≈ '+wt+' kg (APLS) — replace with actual weight.';
+      wSum(); $('wCard').classList.add('collapsed'); render(); if(typeof saveState==='function') saveState();
+    });
+  });
+
+  /* ---------- Timer ---------- */
+  var running=false,t0=0,tick=null,lastAdr=null,lastRhythm=null,adrCount=0,shockCount=0,rhythmType=null;
+  var cprRatio='15:2', startClock=null, rosc=false, intubated=false, shockedThisCheck=false, prevRDue=false;
+  var ADR_INT=180, RHY_INT=120;
+  function mmss(s){ s=Math.max(0,Math.floor(s)); return (s<600?'0':'')+Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  function now(){ return (Date.now()-t0)/1000; }
+  function beep(){ try{ var c=beep.ctx||(beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
+    var o=c.createOscillator(),g=c.createGain(); o.frequency.value=880; o.connect(g); g.connect(c.destination);
+    g.gain.setValueAtTime(0.15,c.currentTime); o.start(); o.stop(c.currentTime+0.18);}catch(e){} }
+  function addLog(t){ var li=document.createElement('li'); li.innerHTML='<b>'+mmss(now())+'</b>'+t; $('log').insertBefore(li,$('log').firstChild); if(typeof saveState==='function') saveState(); }
+
+  function loop(){
+    var t=now(); $('clock').textContent=mmss(t);
+    if(typeof saveState==='function') saveState();
+    if(rosc){
+      ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
+      $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
+      $('statusBar').className='statusbar codeonly s-rosc';
+      $('statusBar').textContent='ROSC — reassess: airway · breathing · BP · glucose · temperature';
+      return;
+    }
+    var rRem=lastRhythm===null?RHY_INT-t:RHY_INT-(t-lastRhythm);
+    var aRem=lastAdr===null?null:ADR_INT-(t-lastAdr);
+    $('tRhythm').textContent=mmss(Math.max(0,rRem));
+
+    /* Adrenaline prompt is rhythm-dependent:
+       non-shockable -> as early as possible;  shockable -> only after 2 failed shocks. */
+    var aDue=false, aTxt='--:--';
+    if(aRem!==null){ aDue=aRem<=0; aTxt=mmss(Math.max(0,aRem)); }
+    else if(rhythmType==='nonshock'){ aDue=true; aTxt='GIVE NOW'; }
+    else if(rhythmType==='shock'){
+      if(shockCount>=2){ aDue=true; aTxt='GIVE NOW'; }
+      else { aTxt='after 2nd shock'; }
+    }
+    else { aTxt='check rhythm'; }
+    var aCenter=aTxt;
+    if(aTxt==='GIVE NOW') aCenter='NOW';
+    else if(aTxt==='after 2nd shock') aCenter='2nd';
+    else if(aTxt==='check rhythm') aCenter='--';
+    var aEl=$('tAdr'); aEl.textContent=aCenter; aEl.style.fontSize=(aCenter.length>5?'12':'19')+'px';
+    var rDue=rRem<=0;
+    if(rDue && !prevRDue){ shockedThisCheck=false; }   /* new rhythm-check window → a fresh shock may be needed */
+    prevRDue=rDue;
+    var shockDue = rhythmType==='shock' && (rDue || shockCount===0) && !shockedThisCheck;
+    $('cycRhythm').classList.toggle('due',rDue);
+    $('cycAdr').classList.toggle('due',aDue);
+
+    /* countdown fills — elapsed fraction toward the next event (0% just after, ~100% when due) */
+    var C=182.2;
+    $('ringRhythm').style.strokeDashoffset=(C*(1-Math.max(0,Math.min(1,1-rRem/RHY_INT)))).toFixed(1);
+    var aFrac = aRem!==null ? (1-aRem/ADR_INT) : (aDue?1:0);
+    $('ringAdr').style.strokeDashoffset=(C*(1-Math.max(0,Math.min(1,aFrac)))).toFixed(1);
+
+    /* Cue ONLY the buttons whose action is due; the status bar carries the order.
+       Timer chips + status bar are the only things that pulse — buttons stay steady-lit. */
+    var needRhythm = !rhythmType;
+    $('rbShock').classList.toggle('cue', needRhythm);
+    $('rbNon').classList.toggle('cue', needRhythm);
+    $('bRhythm').classList.toggle('cue', rDue);
+    $('bShock').classList.toggle('cue', shockDue);
+    $('bAdr').classList.toggle('cue', aDue);
+    $('bRosc').classList.remove('cue');   /* ROSC is leader-judged — never auto-cued */
+
+    /* Status line — one place to look; if several actions fall due it lists them in order */
+    var cls, msg;
+    if(needRhythm){ cls='s-select'; msg='Check the monitor — Shockable or Non-shockable?'; }
+    else {
+      var acts=[];
+      if(rDue) acts.push('REASSESS');
+      if(shockDue) acts.push('SHOCK');
+      if(aDue) acts.push('ADRENALINE');
+      if(acts.length>1){
+        cls = rDue ? 's-rhythm' : (shockDue ? 's-shock' : 's-adr');
+        msg = acts.join('   ·   ')+(rDue?'   (reassess: pulse · rhythm · swap)':'');
+      } else if(rDue){ cls='s-rhythm'; msg='2 MIN — REASSESS: pulse · rhythm · breathing · swap compressor'; }
+      else if(shockDue){ cls='s-shock'; msg='Shockable rhythm — DELIVER SHOCK'; }
+      else if(aDue){ cls='s-adr'; msg='ADRENALINE due now'; }
+      else { cls='s-cpr'; msg='CPR in progress — next rhythm check in '+mmss(Math.max(0,rRem)); }
+    }
+    $('statusBar').className='statusbar codeonly '+cls;
+    $('statusBar').textContent=msg;
+
+    if((rDue||aDue||shockDue)&&Math.floor(t)%2===0) beep();
+  }
+
+  $('bCode').addEventListener('click',function(){
+    if(!running){
+      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false;
+      startClock=new Date();
+      $('wtMini').value=$('wt').value; $('wtSeg').classList.toggle('empty', !(wt>0));
+      $('assessCard').classList.add('collapsed');   /* fold triage away once the code is running */
+      $('rbShock').classList.remove('on'); $('rbNon').classList.remove('on');
+      document.body.classList.remove('rhythm-shock','rhythm-nonshock');
+      $('bSugar').classList.remove('done'); $('sugarTxt').textContent='Blood sugar';
+      $('bIntub').classList.remove('intub-on'); $('bIntub').textContent='Intubated?';
+      ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
+      $('statusBar').className='statusbar codeonly s-select'; $('statusBar').textContent='Check the monitor — Shockable or Non-shockable?';
+      $('log').innerHTML=''; document.body.classList.add('code-active');
+      this.textContent='END CODE'; this.classList.add('stop'); this.classList.remove('ready');
+      addLog('CODE STARTED · '+startClock.toLocaleString([], {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+(wt?' · weight '+wt+' kg':'')+' · CPR '+cprRatio);
+      tick=setInterval(loop,500); loop();
+    }else{
+      running=false; clearInterval(tick);
+      addLog('CODE ENDED · total '+mmss(now())+' · adrenaline ×'+adrCount+' · shocks ×'+shockCount);
+      this.textContent='START CPR'; this.classList.remove('stop');
+      $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
+      ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
+      document.body.classList.remove('rhythm-shock','rhythm-nonshock');
+      if(typeof saveState==='function') saveState();
+    }
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.rb'),function(b){
+    b.addEventListener('click',function(){
+      rhythmType=b.getAttribute('data-r'); rosc=false; shockedThisCheck=false;
+      $('rbShock').classList.toggle('on',rhythmType==='shock');
+      $('rbNon').classList.toggle('on',rhythmType==='nonshock');
+      document.body.classList.toggle('rhythm-shock',rhythmType==='shock');
+      document.body.classList.toggle('rhythm-nonshock',rhythmType==='nonshock');
+      if(running) addLog('Rhythm: '+(rhythmType==='shock'?'shockable (VF/pVT)':'non-shockable (asystole/PEA)'));
+      if(running) loop();
+    });
+  });
+
+  $('bAdr').addEventListener('click',function(){ if(!running)return; lastAdr=now(); adrCount++;
+    addLog('Adrenaline #'+adrCount+(wt?' ('+fmt(Math.min(0.01*wt,1),2)+' mg)':'')); loop(); });
+  $('bShock').addEventListener('click',function(){ if(!running)return; shockCount++; shockedThisCheck=true;
+    var j=shockCount===1?2*wt:4*wt; addLog('Shock #'+shockCount+(wt?' ('+fmt(j,0)+' J)':'')); loop(); });
+  $('bRhythm').addEventListener('click',function(){ if(!running)return; lastRhythm=now();
+    addLog('Rhythm check + compressor swap · CPR quality checked'); loop(); });
+  $('bSugar').addEventListener('click',function(){ if(!running||this.classList.contains('done'))return;
+    this.classList.add('done'); $('sugarTxt').textContent='Sugar checked'; addLog('Blood sugar checked'); });
+  $('bRosc').addEventListener('click',function(){ if(!running)return; rosc=true;
+    addLog('✓ ROSC — post-ROSC reassessment: airway, breathing, BP, glucose, temperature, 12-lead'); beep(); loop(); });
+
+  /* CPR ratio segmented control */
+  Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(b){
+    b.addEventListener('click',function(){
+      cprRatio=b.getAttribute('data-r');
+      Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on',o===b); });
+      if(running) addLog('CPR ratio set to '+(cprRatio==='cont'?'continuous compressions (advanced airway)':cprRatio));
+      if(typeof saveState==='function') saveState();
+    });
+  });
+
+  /* Intubated marker — auto-switches CPR to continuous compressions */
+  $('bIntub').addEventListener('click',function(){ if(!running)return;
+    intubated=!intubated;
+    this.classList.toggle('intub-on',intubated);
+    this.textContent=intubated?'Intubated ✓':'Intubated?';
+    if(intubated){
+      addLog('Intubated');
+      cprRatio='cont';
+      Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on', o.getAttribute('data-r')==='cont'); });
+      addLog('CPR ratio → continuous compressions (advanced airway)');
+    }
+    if(typeof saveState==='function') saveState();
+  });
+
+  /* Print the code log */
+  $('bPrint').addEventListener('click',function(){
+    var rows=[]; Array.prototype.forEach.call($('log').children,function(li){ rows.unshift('<tr><td>'+li.querySelector('b').textContent+'</td><td>'+li.textContent.replace(li.querySelector('b').textContent,'').trim()+'</td></tr>'); });
+    var when = startClock ? startClock.toLocaleString() : new Date().toLocaleString();
+    var html='<html><head><title>Code Blue Log</title><style>body{font-family:Arial,sans-serif;margin:24px;color:#111}h1{font-size:18px;margin:0 0 4px}.meta{font-size:12px;color:#555;margin-bottom:14px}table{width:100%;border-collapse:collapse;font-size:13px}td{border-bottom:1px solid #ddd;padding:6px 8px;vertical-align:top}td:first-child{width:70px;font-weight:bold;color:#b8770f;white-space:nowrap}.foot{margin-top:16px;font-size:10px;color:#888}</style></head><body>'+
+      '<h1>Code Blue — resuscitation log</h1>'+
+      '<div class="meta">Weight: '+(wt||'—')+' kg &nbsp;·&nbsp; CPR started: '+when+' &nbsp;·&nbsp; CPR ratio: '+cprRatio+'</div>'+
+      '<table><tr><td>Time</td><td>Event</td></tr>'+rows.join('')+'</table>'+
+      '<div class="foot">Code Blue Companion · decision-support aid; clinician verifies all doses.</div>'+
+      '</body></html>';
+    var w2=window.open('','_blank'); if(!w2){ alert('Allow pop-ups to print the log.'); return; }
+    w2.document.write(html); w2.document.close(); w2.focus(); setTimeout(function(){ w2.print(); },300);
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('details.cause'),function(d){
+    d.addEventListener('toggle',function(){
+      if(d.open && running) addLog('Reviewed reversible cause: '+d.querySelector('summary').textContent.trim());
+    });
+  });
+
+  $('bCopy').addEventListener('click',function(){
+    var lines=[]; Array.prototype.forEach.call($('log').children,function(li){ lines.unshift(li.textContent); });
+    var txt='CODE BLUE LOG — '+new Date().toLocaleString()+'\n'+lines.join('\n');
+    if(navigator.clipboard){ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){b.textContent='Copy';},1500); }
+  });
+
+  /* ---------- Toggles ---------- */
+  var themes=['Navy','Monitor','Bright'], ti=2;
+  $('bTheme').addEventListener('click',function(){
+    ti=(ti+1)%3; this.textContent=themes[ti];
+    document.body.classList.remove('theme-monitor','theme-bright');
+    if(ti===1) document.body.classList.add('theme-monitor');
+    if(ti===2) document.body.classList.add('theme-bright');
+  });
+  var modes=['Auto','Portrait','Wide'], mi=0;
+  $('bLayout').addEventListener('click',function(){
+    mi=(mi+1)%3; this.textContent=modes[mi];
+    document.body.classList.remove('narrow','wide');
+    if(mi===1) document.body.classList.add('narrow');
+    if(mi===2) document.body.classList.add('wide');
+  });
+
+  /* ---------- Auto-save (survives page refresh, same device) ---------- */
+  var LS_KEY='cbc_session_v1';
+  function saveState(){
+    try{
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        wt:wt, ageY:ageY, wtInput:$('wt').value,
+        running:running, t0:t0, startClock:startClock?startClock.toISOString():null,
+        lastAdr:lastAdr, lastRhythm:lastRhythm, adrCount:adrCount, shockCount:shockCount,
+        rhythmType:rhythmType, cprRatio:cprRatio, intubated:intubated, rosc:rosc,
+        sugarDone:$('bSugar').classList.contains('done'), logHTML:$('log').innerHTML, ts:Date.now()
+      }));
+    }catch(e){}
+  }
+  function loadState(){
+    var raw; try{ raw=localStorage.getItem(LS_KEY); }catch(e){ return; }
+    if(!raw) return;
+    var st; try{ st=JSON.parse(raw); }catch(e){ return; }
+    if(!st) return;
+    /* Only recover a session that was actively running (crash / accidental refresh
+       mid-code). On a fresh open with no active code, start blank so a stale
+       weight from a previous child is never carried into a new resuscitation. */
+    if(!st.running){ try{ localStorage.removeItem(LS_KEY); }catch(e){} return; }
+    /* A running session older than 6 h is almost certainly a previous patient -> discard */
+    if(st.ts && (Date.now()-st.ts) > 6*3600*1000){ try{ localStorage.removeItem(LS_KEY); }catch(e){} return; }
+    if(st.wt){ wt=st.wt; ageY=(st.ageY===undefined?null:st.ageY); if(st.wtInput){ $('wt').value=st.wtInput; $('wtMini').value=st.wtInput; } render(); }
+    $('wtSeg').classList.toggle('empty', !(wt>0)); wSum(); collapseWeight();
+    cprRatio=st.cprRatio||'15:2';
+    Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on', o.getAttribute('data-r')===cprRatio); });
+    if(st.logHTML) $('log').innerHTML=st.logHTML;
+    if(st.running){
+      running=true; t0=st.t0; startClock=st.startClock?new Date(st.startClock):null;
+      lastAdr=st.lastAdr; lastRhythm=st.lastRhythm; adrCount=st.adrCount||0; shockCount=st.shockCount||0;
+      rhythmType=st.rhythmType||null; intubated=!!st.intubated; rosc=!!st.rosc;
+      document.body.classList.add('code-active');
+      $('bCode').textContent='END CODE'; $('bCode').classList.add('stop'); $('bCode').classList.remove('ready');
+      if(rhythmType){
+        $('rbShock').classList.toggle('on',rhythmType==='shock'); $('rbNon').classList.toggle('on',rhythmType==='nonshock');
+        document.body.classList.toggle('rhythm-shock',rhythmType==='shock'); document.body.classList.toggle('rhythm-nonshock',rhythmType==='nonshock');
+      }
+      if(st.sugarDone){ $('bSugar').classList.add('done'); $('sugarTxt').textContent='Sugar checked'; }
+      if(intubated){ $('bIntub').classList.add('intub-on'); $('bIntub').textContent='Intubated ✓'; }
+      tick=setInterval(loop,500); loop();
+    }
+  }
+
+  $('bResetAll').addEventListener('click',function(){
+    if(!confirm('Start a NEW PATIENT? This clears the current weight, code log and timers.')) return;
+    running=false; try{ clearInterval(tick); }catch(e){}
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    location.reload();   /* full refresh -> blank console for the new patient */
+  });
+
+  render();
+  loadState();
+})();
+
+/* ---- Global usage counter (best-effort; silently does nothing offline) ---- */
+(function(){
+  var el=document.getElementById('useCount'); if(!el) return;
+  var NS='codeblue-pediaos', KEY='uses', API='https://abacus.jasoncameron.dev/';
+  var counted=false; try{ counted=localStorage.getItem('cbc_counted')==='1'; }catch(e){}
+  fetch(API+(counted?'get':'hit')+'/'+NS+'/'+KEY).then(function(r){return r.json();}).then(function(d){
+    if(d && typeof d.value!=='undefined'){
+      el.textContent='Used '+Number(d.value).toLocaleString()+' times across users';
+      document.getElementById('useCountWrap').style.display='block';
+      if(!counted){ try{ localStorage.setItem('cbc_counted','1'); }catch(e){} }
+    }
+  }).catch(function(){});
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
