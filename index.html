@@ -89,6 +89,16 @@
   body.theme-monitor .logo{color:#000;}
   header h1{font-size:16px;}
   .vbadge{font-size:10.5px; font-weight:600; color:var(--dim); border:1px solid var(--line); border-radius:20px; padding:1px 8px; margin-left:6px; vertical-align:middle;}
+  .trophychip{position:relative; display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:800;
+    color:var(--onwarm); background:var(--amber); border-radius:20px; padding:2px 9px 2px 7px; margin-left:6px;
+    vertical-align:middle; cursor:pointer; white-space:nowrap; border:none;}
+  .trophypop{display:none; position:absolute; top:calc(100% + 8px); left:0; z-index:40; width:240px;
+    background:var(--card); border:1px solid var(--amber); border-radius:11px; padding:11px 12px;
+    font-size:11.5px; color:var(--txt); line-height:1.55; font-weight:400; text-align:left; white-space:normal;
+    box-shadow:0 10px 24px rgba(0,0,0,.28);}
+  .trophychip.open .trophypop{display:block;}
+  .trophypop b{display:block; font-size:12.5px; margin-bottom:3px;}
+  .trophypop .venue{color:var(--dim); font-size:10.5px; margin-top:4px;}
   header .credit{font-size:13px; color:var(--txt); font-weight:600; margin-top:1px;}
   header .subtl{font-size:10px; color:var(--dim);}
   header .hosp{font-size:11px; color:var(--dim); font-weight:600; margin-top:1px;}
@@ -349,7 +359,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v4.8</span></h1>
+        <h1>Code Blue Companion <span class="vbadge">v4.8</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="credit">Created by Dr Vignesh N</p>
         <p class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</p>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
@@ -945,6 +955,15 @@
     var lines=[]; Array.prototype.forEach.call($('log').children,function(li){ lines.unshift(li.textContent); });
     var txt='CODE BLUE LOG — '+new Date().toLocaleString()+'\n'+lines.join('\n');
     if(navigator.clipboard){ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){b.textContent='Copy';},1500); }
+  });
+
+  /* ---------- Trophy chip ---------- */
+  $('trophyChip').addEventListener('click',function(e){
+    e.stopPropagation();
+    this.classList.toggle('open');
+  });
+  document.addEventListener('click',function(){
+    $('trophyChip').classList.remove('open');
   });
 
   /* ---------- Toggles ---------- */
