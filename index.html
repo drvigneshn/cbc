@@ -107,6 +107,25 @@
   .hbtn{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:9px; padding:7px 10px; font-size:11px; font-weight:700; cursor:pointer;}
   #bResetAll{color:var(--red); border-color:var(--red);}
   #bVoice.on{color:var(--green); border-color:var(--green);}
+  .helpbtn{flex-shrink:0; align-self:flex-start; width:30px; height:30px; border-radius:50%; background:var(--card2); border:1px solid var(--line); color:var(--blue); font-size:15px; font-weight:800; cursor:pointer; line-height:1;}
+
+  /* How-to onboarding overlay */
+  .htoverlay{position:fixed; inset:0; z-index:200; background:rgba(6,10,18,.62); display:flex; align-items:center; justify-content:center; padding:20px;}
+  .htoverlay.hidden{display:none;}
+  .htsheet{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px 18px; width:100%; max-width:340px; max-height:88vh; overflow-y:auto; box-shadow:0 22px 55px rgba(0,0,0,.45);}
+  .htsheet .hh{display:flex; align-items:center; gap:9px; margin-bottom:3px;}
+  .htsheet .hh .em{font-size:22px;}
+  .htsheet h2{font-size:17px; margin:0; color:var(--txt);}
+  .htsheet .subh{font-size:11.5px; color:var(--dim); margin:0 0 15px;}
+  .htsteps{display:flex; flex-direction:column; gap:12px; margin-bottom:16px;}
+  .htstep{display:flex; gap:11px; align-items:flex-start;}
+  .htstep .num{flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .htstep .stt{font-size:13px; font-weight:700; color:var(--txt);}
+  .htstep .sdd{font-size:11.5px; color:var(--dim); margin-top:1px; line-height:1.45;}
+  .htgotit{width:100%; border:none; border-radius:11px; padding:12px; font-size:14px; font-weight:800; color:#fff; background:var(--green); cursor:pointer;}
+  .htdont{display:flex; align-items:center; justify-content:center; gap:7px; font-size:11.5px; color:var(--dim); margin-top:12px; cursor:pointer;}
+  .htdont .box{width:16px; height:16px; border:1.5px solid var(--dim); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--green); background:transparent;}
+  .htdont.on .box{border-color:var(--green);}
 
   /* ---- Timer block ---- */
   .tblock{padding:5px 12px 3px;}
@@ -371,6 +390,7 @@
         <p class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</p>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
+      <button class="helpbtn" id="bHelp" title="How to use this app" aria-label="How to use this app">?</button>
     </div>
     <div class="hbtns">
       <button class="hbtn" id="bResetAll" title="Clear this patient and start fresh">New patient</button>
@@ -578,6 +598,21 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v4.8 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission.</span></p>
+
+<div class="htoverlay hidden" id="howOverlay">
+  <div class="htsheet">
+    <div class="hh"><span class="em">&#128075;</span><h2>How to use</h2></div>
+    <p class="subh">Four steps &mdash; takes ten seconds to learn.</p>
+    <div class="htsteps">
+      <div class="htstep"><div class="num">1</div><div><div class="stt">Rapid assessment</div><div class="sdd">Answer responsive? &middot; breathing? &middot; pulse? &mdash; the tool tells you if it&rsquo;s an arrest.</div></div></div>
+      <div class="htstep"><div class="num">2</div><div><div class="stt">Enter the weight</div><div class="sdd">Type the weight (or pick an age) &mdash; every drug dose auto-calculates.</div></div></div>
+      <div class="htstep"><div class="num">3</div><div><div class="stt">Start CPR</div><div class="sdd">Tap START CPR to begin the timers and the arrest console.</div></div></div>
+      <div class="htstep"><div class="num">4</div><div><div class="stt">Follow the console</div><div class="sdd">The status bar &amp; timers cue each action &mdash; adrenaline, reassess, shock &mdash; as it falls due. Turn on &#128266; Voice to hear them read out.</div></div></div>
+    </div>
+    <button class="htgotit" id="howGotit">Got it &mdash; start</button>
+    <div class="htdont" id="howDont"><span class="box"></span>Don&rsquo;t show this again</div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -1030,6 +1065,23 @@
   document.addEventListener('click',function(){
     $('trophyChip').classList.remove('open');
   });
+
+  /* ---------- How-to overlay ---------- */
+  var htDont=false;
+  function htOpen(){ $('howOverlay').classList.remove('hidden'); }
+  function htClose(){ $('howOverlay').classList.add('hidden'); }
+  $('bHelp').addEventListener('click',htOpen);
+  $('howDont').addEventListener('click',function(){
+    htDont=!htDont; this.classList.toggle('on',htDont);
+    this.querySelector('.box').innerHTML=htDont?'✓':'';
+  });
+  $('howGotit').addEventListener('click',function(){
+    if(htDont){ try{ localStorage.setItem('cbcSeenGuide','1'); }catch(e){} }
+    htClose();
+  });
+  /* First-run: auto-open until the user ticks "don't show again" */
+  var htSeen=false; try{ htSeen=localStorage.getItem('cbcSeenGuide')==='1'; }catch(e){}
+  if(!htSeen) htOpen();
 
   /* ---------- Toggles ---------- */
   var themes=['Navy','Monitor','Bright'], ti=2;
