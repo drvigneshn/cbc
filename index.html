@@ -1280,7 +1280,7 @@
     }).catch(function(e){ list.innerHTML='<div class="logempty">Could not load logs.<br>'+esc(e.message||'')+'</div>'; });
   }
 
-  var ADMIN_EMAIL='admin@codeblue.app';
+  var ADMIN_EMAIL='n.vignesh.1996@gmail.com';
   function isAdmin(u){ return !!(u && u.email && u.email.toLowerCase()===ADMIN_EMAIL); }
   function setAcct(html){ $('acctWho').innerHTML=html; $('whoLine').innerHTML=html; }
   function showSignup(v){ $('signupForm').classList.toggle('hidden', !v); $('loginForm').classList.toggle('hidden', v); }
