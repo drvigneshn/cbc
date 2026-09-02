@@ -169,6 +169,12 @@
   .logrow .lrdetail b{color:var(--amber);}
   .logrow.open .lrdetail{display:block;}
   .logempty{font-size:12px; color:var(--dim); text-align:center; padding:16px; line-height:1.5;}
+  .hidden{display:none !important;}
+  .authswitch{text-align:center; font-size:11.5px; color:var(--dim); margin-top:13px;}
+  .authswitch button{background:none; border:none; color:var(--blue); font-weight:700; font-size:11.5px; cursor:pointer; padding:0;}
+  .wholine{font-size:10px; color:var(--dim); text-align:right; margin-top:3px;}
+  .wholine:empty{display:none;}
+  .wholine b{color:var(--txt);}
 
   /* ---- Timer block ---- */
   .tblock{padding:5px 12px 3px;}
@@ -436,10 +442,12 @@
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
+        <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel">&#128737;</button>
         <button class="helpbtn" id="bLogsTop" title="Saved logs &amp; account" aria-label="Saved logs and account">&#9729;</button>
         <button class="helpbtn" id="bHelp" title="How to use this app" aria-label="How to use this app">?</button>
       </div>
     </div>
+    <div class="wholine" id="whoLine"></div>
     <div class="hbtns">
       <button class="hbtn" id="bResetAll" title="Clear this patient and start fresh">New patient</button>
       <button class="hbtn" id="bVoice" title="Read out actions aloud (adrenaline due, reassess, shock)" aria-pressed="false">&#128263; Voice</button>
@@ -666,10 +674,20 @@
 <div class="authgate" id="authGate">
   <div class="authbox">
     <div class="authbrand"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><div class="sb">Sign in to continue</div></div>
-    <div class="authfield"><label>Institution login</label><input id="authEmail" type="email" autocomplete="username" placeholder="institution@hospital.org"></div>
-    <div class="authfield"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
-    <button class="authbtn" id="authLogin">Log in</button>
-    <div class="autherr" id="authErr"></div>
+    <div id="loginForm">
+      <div class="authfield"><label>Login</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@hospital.org"></div>
+      <div class="authfield"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+      <button class="authbtn" id="authLogin">Log in</button>
+      <div class="autherr" id="authErr"></div>
+      <div class="authswitch">New user? <button id="toSignup">Create an account</button></div>
+    </div>
+    <div id="signupForm" class="hidden">
+      <div class="authfield"><label>Your email</label><input id="suEmail" type="email" autocomplete="email" placeholder="you@hospital.org"></div>
+      <div class="authfield"><label>Choose a password</label><input id="suPass" type="password" autocomplete="new-password" placeholder="6+ characters"></div>
+      <button class="authbtn" id="doSignup">Request access</button>
+      <div class="autherr" id="signupErr"></div>
+      <div class="authswitch">Access is granted by the administrator, valid 2 days. &nbsp;<button id="toLogin">&larr; Back to login</button></div>
+    </div>
     <div class="authdiv"><span>or</span></div>
     <button class="emgaccess" id="authEmg">&#128680; Emergency &mdash; use now</button>
     <div class="emgnote">Instant access, no login. The code log is saved as an <b>emergency session</b>.</div>
@@ -684,6 +702,24 @@
     <p class="subh">The institute&rsquo;s most recent 25 codes. Tap one to expand its timeline.</p>
     <div id="logsList"><div class="logempty">Loading&hellip;</div></div>
     <button class="htgotit" id="logsClose" style="margin-top:6px">Close</button>
+  </div>
+</div>
+
+<div class="authgate hidden" id="statusGate">
+  <div class="authbox">
+    <div class="authbrand"><div class="lg">&#9889;</div><h2 id="statusTitle">Awaiting approval</h2><div class="sb" id="statusMsg">&mdash;</div></div>
+    <button class="emgaccess" id="statusEmg">&#128680; Use Emergency mode</button>
+    <div class="authdiv"><span>or</span></div>
+    <button class="authbtn" id="statusLogout" style="background:var(--card2); color:var(--txt); border:1px solid var(--line)">Log out</button>
+  </div>
+</div>
+
+<div class="htoverlay hidden" id="adminOverlay">
+  <div class="htsheet">
+    <div class="hh"><span class="em">&#128737;</span><h2>Admin &mdash; users</h2></div>
+    <p class="subh">Approve individual sign-ups for 2 days, or revoke them. Delete accounts fully in the Firebase console.</p>
+    <div id="adminList"><div class="logempty">Loading&hellip;</div></div>
+    <button class="htgotit" id="adminClose" style="margin-top:6px">Close</button>
   </div>
 </div>
 
@@ -1226,9 +1262,11 @@
     var list=$('logsList');
     if(!fbReady()||!AUTH.currentUser){ list.innerHTML='<div class="logempty">Not signed in.</div>'; return; }
     list.innerHTML='<div class="logempty">Loading…</div>';
-    DB.collection('codelogs').where('owner','==',AUTH.currentUser.uid).get().then(function(snap){
+    var admin=isAdmin(AUTH.currentUser);
+    var q = admin ? DB.collection('codelogs') : DB.collection('codelogs').where('owner','==',AUTH.currentUser.uid);
+    q.get().then(function(snap){
       var docs=[]; snap.forEach(function(d){ docs.push(d.data()); });
-      docs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }); docs=docs.slice(0,25);
+      docs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }); docs=docs.slice(0, admin?100:25);
       if(!docs.length){ list.innerHTML='<div class="logempty">No saved codes yet.</div>'; return; }
       list.innerHTML=docs.map(function(d){
         var when=d.startedAt?new Date(d.startedAt).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
@@ -1242,23 +1280,97 @@
     }).catch(function(e){ list.innerHTML='<div class="logempty">Could not load logs.<br>'+esc(e.message||'')+'</div>'; });
   }
 
+  var ADMIN_EMAIL='admin@codeblue.app';
+  function isAdmin(u){ return !!(u && u.email && u.email.toLowerCase()===ADMIN_EMAIL); }
+  function setAcct(html){ $('acctWho').innerHTML=html; $('whoLine').innerHTML=html; }
+  function showSignup(v){ $('signupForm').classList.toggle('hidden', !v); $('loginForm').classList.toggle('hidden', v); }
+  function showStatus(d){
+    var t,m;
+    if(d.status==='revoked'){ t='Access revoked'; m='Your access has been removed. Please contact the administrator.'; }
+    else if(d.status==='approved'){ t='Access expired'; m='Your 2-day access has ended. Ask the administrator to renew it.'; }
+    else { t='Awaiting approval'; m='Your request has been received. You can use the tool once the administrator approves you.'; }
+    $('statusTitle').textContent=t; $('statusMsg').textContent=m;
+    $('statusGate').classList.remove('hidden');
+  }
+  function hideStatus(){ $('statusGate').classList.add('hidden'); }
+  function showAdminBtn(v){ $('bAdmin').classList.toggle('hidden', !v); }
+
+  function doSignup(){
+    if(!fbReady()){ $('signupErr').textContent='Offline — cannot sign up right now.'; return; }
+    var em=$('suEmail').value.trim(), pw=$('suPass').value;
+    if(!em||pw.length<6){ $('signupErr').textContent='Enter your email and a password of 6+ characters.'; return; }
+    $('signupErr').textContent='Creating…';
+    AUTH.createUserWithEmailAndPassword(em,pw).then(function(cred){
+      return DB.collection('users').doc(cred.user.uid).set({email:em, status:'pending', createdAt:Date.now(), expiresAt:null});
+    }).then(function(){ return AUTH.signOut(); })
+    .then(function(){ showSignup(false); $('suEmail').value=''; $('suPass').value=''; $('signupErr').textContent=''; $('authErr').textContent='✓ Request sent — you can log in once the admin approves you.'; })
+    .catch(function(err){ var c=err.code||'';
+      $('signupErr').textContent = /email-already-in-use/.test(c)?'That email already has an account — log in instead.':/weak-password/.test(c)?'Password too weak (use 6+ characters).':(err.message||'Sign-up failed.'); });
+  }
+
+  function loadAdmin(){
+    $('adminOverlay').classList.remove('hidden');
+    var L=$('adminList');
+    if(!fbReady()||!isAdmin(AUTH.currentUser)){ L.innerHTML='<div class="logempty">Admin only.</div>'; return; }
+    L.innerHTML='<div class="logempty">Loading…</div>';
+    DB.collection('users').get().then(function(snap){
+      var rows=[]; snap.forEach(function(d){ var o=d.data(); o.uid=d.id; rows.push(o); });
+      rows.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
+      if(!rows.length){ L.innerHTML='<div class="logempty">No sign-ups yet.</div>'; return; }
+      L.innerHTML=rows.map(function(r){
+        var expired = r.status==='approved' && r.expiresAt && Date.now()>r.expiresAt;
+        var st = expired?'expired':(r.status||'pending');
+        var left = (r.status==='approved'&&r.expiresAt&&Date.now()<r.expiresAt)?' · '+Math.ceil((r.expiresAt-Date.now())/86400000)+'d left':'';
+        return '<div class="logrow" data-uid="'+esc(r.uid)+'"><div class="lr1"><span>'+esc(r.email||r.uid)+'</span><span>'+st+left+'</span></div>'+
+          '<div class="lr2" style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">'+
+          '<button class="copy" data-act="approve">Approve 2 days</button>'+
+          '<button class="copy" data-act="revoke">Revoke</button>'+
+          '</div></div>';
+      }).join('');
+      Array.prototype.forEach.call(L.querySelectorAll('button[data-act]'),function(b){
+        b.addEventListener('click',function(ev){ ev.stopPropagation();
+          var uid=b.parentNode.parentNode.getAttribute('data-uid'), act=b.getAttribute('data-act');
+          var upd = act==='revoke'?{status:'revoked'}:{status:'approved', expiresAt:Date.now()+2*86400000};
+          b.textContent='…';
+          DB.collection('users').doc(uid).update(upd).then(loadAdmin).catch(function(e){ alert('Failed: '+(e.message||e.code)); });
+        });
+      });
+    }).catch(function(e){ L.innerHTML='<div class="logempty">Could not load users.<br>'+esc(e.message||'')+'</div>'; });
+  }
+
+  /* wiring */
   $('authLogin').addEventListener('click',doLogin);
   $('authPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
   $('authEmg').addEventListener('click',goEmergency);
+  $('toSignup').addEventListener('click',function(){ $('authErr').textContent=''; showSignup(true); });
+  $('toLogin').addEventListener('click',function(){ $('signupErr').textContent=''; showSignup(false); });
+  $('doSignup').addEventListener('click',doSignup);
+  $('suPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doSignup(); });
   $('emgLogin').addEventListener('click',function(){ if(fbReady()) AUTH.signOut(); });
+  $('statusEmg').addEventListener('click',function(){ if(fbReady()) AUTH.signInAnonymously(); });
+  $('statusLogout').addEventListener('click',function(){ if(fbReady()) AUTH.signOut(); });
   $('btnLogout').addEventListener('click',function(){ if(fbReady() && confirm('Log out of this device?')){ AUTH.signOut(); $('logsOverlay').classList.add('hidden'); } });
   $('bLogsTop').addEventListener('click',openLogs);
   $('logsClose').addEventListener('click',function(){ $('logsOverlay').classList.add('hidden'); });
+  $('bAdmin').addEventListener('click',loadAdmin);
+  $('adminClose').addEventListener('click',function(){ $('adminOverlay').classList.add('hidden'); });
 
   if(fbReady()){
     AUTH.onAuthStateChanged(function(user){
-      if(user){
-        showGate(false);
-        var anon=user.isAnonymous; setEmgBanner(anon);
-        $('acctWho').innerHTML = anon ? '⚠ Emergency session' : 'Signed in: <b>'+esc(user.email||'Institution')+'</b>';
-      } else {
-        showGate(true); setEmgBanner(false);
-      }
+      showAdminBtn(false);
+      if(!user){ showGate(true); setEmgBanner(false); hideStatus(); setAcct(''); return; }
+      hideStatus();
+      if(user.isAnonymous){ showGate(false); setEmgBanner(true); setAcct('⚠ Emergency session'); return; }
+      if(isAdmin(user)){ showGate(false); setEmgBanner(false); setAcct('Admin: <b>'+esc(user.email)+'</b>'); showAdminBtn(true); return; }
+      DB.collection('users').doc(user.uid).get().then(function(snap){
+        if(!snap.exists){ showGate(false); setEmgBanner(false); setAcct('Signed in: <b>'+esc(user.email||'Institution')+'</b>'); return; }
+        var d=snap.data();
+        if(d.status==='approved' && (!d.expiresAt || Date.now()<d.expiresAt)){
+          showGate(false); setEmgBanner(false);
+          var left=d.expiresAt?' · '+Math.max(0,Math.ceil((d.expiresAt-Date.now())/86400000))+'d left':'';
+          setAcct('Signed in: <b>'+esc(user.email)+'</b>'+left);
+        } else { showGate(false); showStatus(d); }
+      }).catch(function(){ showGate(false); setAcct('Signed in'); });
     });
   } else {
     showGate(false);   /* fail-open: never lock an emergency tool if Firebase can't load */
