@@ -106,6 +106,7 @@
   .hbtns .hbtn{flex:1; text-align:center;}
   .hbtn{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:9px; padding:7px 10px; font-size:11px; font-weight:700; cursor:pointer;}
   #bResetAll{color:var(--red); border-color:var(--red);}
+  #bVoice.on{color:var(--green); border-color:var(--green);}
 
   /* ---- Timer block ---- */
   .tblock{padding:5px 12px 3px;}
@@ -367,6 +368,7 @@
     </div>
     <div class="hbtns">
       <button class="hbtn" id="bResetAll" title="Clear this patient and start fresh">New patient</button>
+      <button class="hbtn" id="bVoice" title="Read out actions aloud (adrenaline due, reassess, shock)" aria-pressed="false">&#128263; Voice</button>
       <button class="hbtn" id="bTheme">Bright</button>
       <button class="hbtn" id="bLayout">Auto</button>
     </div>
@@ -776,6 +778,18 @@
   var running=false,t0=0,tick=null,lastAdr=null,lastRhythm=null,adrCount=0,shockCount=0,rhythmType=null;
   var cprRatio='15:2', startClock=null, rosc=false, intubated=false, shockedThisCheck=false, prevRDue=false;
   var ADR_INT=180, RHY_INT=120;
+
+  /* ---------- Voice guidance (Web Speech API — on-device, no network/library) ---------- */
+  var voiceOn=false, lastVoiceKey=null, voiceRepeatAt=0, voiceRepeats=0;
+  function speak(text){
+    if(!voiceOn || !('speechSynthesis' in window)) return;
+    try{
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text);
+      u.rate=0.95; u.pitch=1; u.volume=1; u.lang='en-GB';
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
   function mmss(s){ s=Math.max(0,Math.floor(s)); return (s<600?'0':'')+Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
   function now(){ return (Date.now()-t0)/1000; }
   function beep(){ try{ var c=beep.ctx||(beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
@@ -791,6 +805,7 @@
       $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
       $('statusBar').className='statusbar codeonly s-rosc';
       $('statusBar').textContent='ROSC — reassess: airway · breathing · BP · glucose · temperature';
+      if(voiceOn && lastVoiceKey!=='rosc'){ lastVoiceKey='rosc'; speak('Return of circulation. Begin post arrest care. Check airway, breathing, blood pressure, glucose and temperature.'); }
       return;
     }
     var rRem=lastRhythm===null?RHY_INT-t:RHY_INT-(t-lastRhythm);
@@ -855,11 +870,25 @@
     $('statusBar').textContent=msg;
 
     if((rDue||aDue||shockDue)&&Math.floor(t)%2===0) beep();
+
+    /* Voice guidance — speak once per event onset, one repeat after 15 s if not actioned */
+    if(voiceOn){
+      var vkey=null, vphrase='';
+      if(needRhythm){ vkey='rhythm-select'; vphrase='Check the monitor. Shockable, or non-shockable?'; }
+      else if(rDue){ vkey='reassess'; vphrase='Two minutes. Reassess rhythm, check the pulse, and swap the compressor.'; if(shockDue) vphrase+=' Prepare to shock.'; }
+      else if(shockDue){ vkey='shock'; vphrase='Shockable rhythm. Deliver shock'+(wt>0?', '+fmt((shockCount===0?2:4)*wt,0)+' joules':'')+'.'; }
+      else if(aDue){ vkey='adrenaline'; vphrase='Adrenaline due'+(wt>0?', '+fmt(Math.min(0.1*wt,10),1)+' millilitres':'')+'.'; }
+      var tSec=Math.floor(t);
+      if(vkey){
+        if(vkey!==lastVoiceKey){ lastVoiceKey=vkey; voiceRepeats=0; voiceRepeatAt=tSec+15; speak(vphrase); }
+        else if(voiceRepeats<1 && tSec>=voiceRepeatAt){ voiceRepeats=1; speak(vphrase); }
+      } else { lastVoiceKey=null; }
+    }
   }
 
   $('bCode').addEventListener('click',function(){
     if(!running){
-      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false;
+      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false; lastVoiceKey=null;
       startClock=new Date();
       $('wtMini').value=$('wt').value; $('wtSeg').classList.toggle('empty', !(wt>0));
       $('assessCard').classList.add('collapsed');   /* fold triage away once the code is running */
@@ -874,7 +903,8 @@
       addLog('CODE STARTED · '+startClock.toLocaleString([], {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+(wt?' · weight '+wt+' kg':'')+' · CPR '+cprRatio);
       tick=setInterval(loop,500); loop();
     }else{
-      running=false; clearInterval(tick);
+      running=false; clearInterval(tick); lastVoiceKey=null;
+      try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){}
       addLog('CODE ENDED · total '+mmss(now())+' · adrenaline ×'+adrCount+' · shocks ×'+shockCount);
       this.textContent='START CPR'; this.classList.remove('stop');
       $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
@@ -956,6 +986,21 @@
     var txt='CODE BLUE LOG — '+new Date().toLocaleString()+'\n'+lines.join('\n');
     if(navigator.clipboard){ navigator.clipboard.writeText(txt); this.textContent='Copied!'; var b=this; setTimeout(function(){b.textContent='Copy';},1500); }
   });
+
+  /* ---------- Voice toggle ---------- */
+  function setVoiceBtn(){
+    var b=$('bVoice');
+    b.classList.toggle('on',voiceOn);
+    b.innerHTML=(voiceOn?'🔊':'🔇')+' Voice';
+    b.setAttribute('aria-pressed',voiceOn?'true':'false');
+  }
+  $('bVoice').addEventListener('click',function(){
+    voiceOn=!voiceOn; setVoiceBtn();
+    try{ localStorage.setItem('cbcVoice',voiceOn?'1':'0'); }catch(e){}
+    if(voiceOn){ lastVoiceKey=null; speak('Voice guidance on.'); }   /* also primes speech on this user gesture */
+    else { try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} lastVoiceKey=null; }
+  });
+  try{ if(localStorage.getItem('cbcVoice')==='1'){ voiceOn=true; setVoiceBtn(); } }catch(e){}
 
   /* ---------- Trophy chip ---------- */
   $('trophyChip').addEventListener('click',function(e){
