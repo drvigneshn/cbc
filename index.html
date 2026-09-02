@@ -127,6 +127,49 @@
   .htdont .box{width:16px; height:16px; border:1.5px solid var(--dim); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--green); background:transparent;}
   .htdont.on .box{border-color:var(--green);}
 
+  /* Auth gate + emergency access */
+  .hdtopbtns{display:flex; gap:6px; flex-shrink:0; align-self:flex-start;}
+  .authgate{position:fixed; inset:0; z-index:300; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px 20px; overflow-y:auto;}
+  .authgate.hidden{display:none;}
+  .authbox{width:100%; max-width:340px; display:flex; flex-direction:column;}
+  .authbrand{display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; margin-bottom:22px;}
+  .authbrand .lg{width:56px; height:56px; border-radius:15px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;}
+  .authbrand h2{font-size:19px; margin:0; color:var(--txt);}
+  .authbrand .sb{font-size:11px; color:var(--dim);}
+  .authfield{margin-bottom:10px;}
+  .authfield label{display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--dim); margin-bottom:5px;}
+  .authfield input{width:100%; background:var(--card2); border:1.5px solid var(--line); border-radius:10px; color:var(--txt); font-size:15px; padding:11px 12px; outline:none;}
+  .authfield input:focus{border-color:var(--blue);}
+  .authbtn{width:100%; border:none; border-radius:11px; padding:13px; font-size:15px; font-weight:800; color:#fff; background:var(--green); cursor:pointer; letter-spacing:.3px; margin-top:4px;}
+  .autherr{font-size:11.5px; color:var(--red); text-align:center; margin-top:10px; min-height:15px;}
+  .authdiv{display:flex; align-items:center; gap:10px; margin:18px 0;}
+  .authdiv::before,.authdiv::after{content:''; height:1px; flex:1; background:var(--line);}
+  .authdiv span{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:1px;}
+  .emgaccess{width:100%; border:2px solid var(--red); border-radius:12px; padding:14px; font-size:15px; font-weight:800; color:#fff; background:var(--red); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;}
+  .emgnote{font-size:10.5px; color:var(--dim); text-align:center; margin-top:9px; line-height:1.5;}
+  .authfoot{margin-top:24px; font-size:9.5px; color:var(--dim); text-align:center; line-height:1.5;}
+
+  .emgbanner{display:flex; align-items:center; gap:9px; background:var(--red); color:#fff; padding:7px 13px; font-size:11.5px; font-weight:700;}
+  .emgbanner.hidden{display:none;}
+  .emgbanner .dot{width:9px; height:9px; border-radius:50%; background:#fff; flex-shrink:0; animation:blinkdot 1.1s steps(1,end) infinite;}
+  .emgbanner .lnk{margin-left:auto; text-decoration:underline; cursor:pointer; white-space:nowrap; background:none; border:none; color:#fff; font:inherit; font-weight:700; padding:0;}
+
+  .recby{display:flex; align-items:center; gap:8px; margin-bottom:9px;}
+  .recby label{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--dim); white-space:nowrap;}
+  .recby input{flex:1; background:var(--card2); border:1px solid var(--line); border-radius:8px; color:var(--txt); font-size:13px; padding:7px 9px; outline:none;}
+  .recby input:focus{border-color:var(--blue);}
+
+  .acctbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; font-size:11.5px; color:var(--dim);}
+  .acctbar b{color:var(--txt);}
+  .logoutbtn{background:var(--card2); border:1px solid var(--red); color:var(--red); border-radius:8px; font-size:11px; font-weight:700; padding:6px 12px; cursor:pointer;}
+  .logrow{background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:9px 11px; margin-bottom:7px; cursor:pointer;}
+  .logrow .lr1{display:flex; justify-content:space-between; gap:8px; font-size:12px; font-weight:700; color:var(--txt); font-variant-numeric:tabular-nums;}
+  .logrow .lr2{font-size:10.5px; color:var(--dim); margin-top:2px;}
+  .logrow .lrdetail{display:none; margin-top:8px; border-top:1px dashed var(--line); padding-top:7px; font-size:11px; color:var(--dim); line-height:1.5; font-variant-numeric:tabular-nums;}
+  .logrow .lrdetail b{color:var(--amber);}
+  .logrow.open .lrdetail{display:block;}
+  .logempty{font-size:12px; color:var(--dim); text-align:center; padding:16px; line-height:1.5;}
+
   /* ---- Timer block ---- */
   .tblock{padding:5px 12px 3px;}
   .trow{display:flex; align-items:center; gap:8px;}
@@ -381,6 +424,8 @@
 </head>
 <body class="theme-bright">
 
+<div class="emgbanner hidden" id="emgBanner"><span class="dot"></span><span>Emergency mode &mdash; not logged in</span><button class="lnk" id="emgLogin">Log in</button></div>
+
 <header class="apphead">
     <div class="headtop">
       <div class="logo">&#9889;</div>
@@ -390,7 +435,10 @@
         <p class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</p>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
-      <button class="helpbtn" id="bHelp" title="How to use this app" aria-label="How to use this app">?</button>
+      <div class="hdtopbtns">
+        <button class="helpbtn" id="bLogsTop" title="Saved logs &amp; account" aria-label="Saved logs and account">&#9729;</button>
+        <button class="helpbtn" id="bHelp" title="How to use this app" aria-label="How to use this app">?</button>
+      </div>
     </div>
     <div class="hbtns">
       <button class="hbtn" id="bResetAll" title="Clear this patient and start fresh">New patient</button>
@@ -576,6 +624,7 @@
 
     <div class="logcard codeonly">
       <h3>Code log <span class="logbtns"><button class="copy" id="bPrint">Print</button><button class="copy" id="bCopy">Copy</button></span></h3>
+      <div class="recby"><label>Recorded by</label><input id="recBy" type="text" placeholder="team leader / name (optional)"></div>
       <ul id="log"></ul>
     </div>
   </div>
@@ -613,6 +662,51 @@
     <div class="htdont" id="howDont"><span class="box"></span>Don&rsquo;t show this again</div>
   </div>
 </div>
+
+<div class="authgate" id="authGate">
+  <div class="authbox">
+    <div class="authbrand"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><div class="sb">Sign in to continue</div></div>
+    <div class="authfield"><label>Institution login</label><input id="authEmail" type="email" autocomplete="username" placeholder="institution@hospital.org"></div>
+    <div class="authfield"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+    <button class="authbtn" id="authLogin">Log in</button>
+    <div class="autherr" id="authErr"></div>
+    <div class="authdiv"><span>or</span></div>
+    <button class="emgaccess" id="authEmg">&#128680; Emergency &mdash; use now</button>
+    <div class="emgnote">Instant access, no login. The code log is saved as an <b>emergency session</b>.</div>
+    <div class="authfoot">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital &middot; Decision-support aid &middot; a trained clinician verifies every dose.</div>
+  </div>
+</div>
+
+<div class="htoverlay hidden" id="logsOverlay">
+  <div class="htsheet">
+    <div class="acctbar"><span id="acctWho">&mdash;</span><button class="logoutbtn" id="btnLogout">Log out</button></div>
+    <div class="hh"><span class="em">&#9729;</span><h2>Saved code logs</h2></div>
+    <p class="subh">The institute&rsquo;s most recent 25 codes. Tap one to expand its timeline.</p>
+    <div id="logsList"><div class="logempty">Loading&hellip;</div></div>
+    <button class="htgotit" id="logsClose" style="margin-top:6px">Close</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyDDI7wJPum_BT9ksYdowESI0jCyQcPHE4I",
+    authDomain: "code-blue-companion.firebaseapp.com",
+    projectId: "code-blue-companion",
+    storageBucket: "code-blue-companion.firebasestorage.app",
+    messagingSenderId: "34689641460",
+    appId: "1:34689641460:web:85c6c2c555d51a1cab67a1"
+  };
+  try{
+    firebase.initializeApp(firebaseConfig);
+    window.cbcAuth = firebase.auth();
+    window.cbcDB = firebase.firestore();
+    window.cbcAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
+    window.cbcDB.enablePersistence({synchronizeTabs:true}).catch(function(){});
+  }catch(e){ console.warn('Firebase init failed:', e); }
+</script>
 
 <script>
 (function(){
@@ -961,6 +1055,7 @@
       running=false; clearInterval(tick); lastVoiceKey=null;
       try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){}
       addLog('CODE ENDED · total '+mmss(now())+' · adrenaline ×'+adrCount+' · shocks ×'+shockCount);
+      if(typeof saveLogToCloud==='function') saveLogToCloud();
       this.textContent='START CPR'; this.classList.remove('stop');
       $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
       ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
@@ -1082,6 +1177,92 @@
   /* First-run: auto-open until the user ticks "don't show again" */
   var htSeen=false; try{ htSeen=localStorage.getItem('cbcSeenGuide')==='1'; }catch(e){}
   if(!htSeen) htOpen();
+
+  /* ---------- Cloud auth + central code logs (Firebase) ---------- */
+  var AUTH = window.cbcAuth || null, DB = window.cbcDB || null;
+  function fbReady(){ return !!(AUTH && DB); }
+  function esc(s){ return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function showGate(v){ $('authGate').classList.toggle('hidden', !v); }
+  function setEmgBanner(v){ $('emgBanner').classList.toggle('hidden', !v); }
+  function doLogin(){
+    if(!fbReady()){ $('authErr').textContent='Offline — cannot sign in right now.'; return; }
+    var em=$('authEmail').value.trim(), pw=$('authPass').value;
+    if(!em||!pw){ $('authErr').textContent='Enter the login and password.'; return; }
+    $('authErr').textContent='Signing in…';
+    AUTH.signInWithEmailAndPassword(em,pw).then(function(){ $('authErr').textContent=''; $('authPass').value=''; })
+      .catch(function(err){
+        var c=err.code||'';
+        $('authErr').textContent = (/wrong-password|invalid-credential|user-not-found|invalid-email/.test(c)) ? 'Wrong login or password.' : (err.message||'Sign-in failed.');
+      });
+  }
+  function goEmergency(){ if(!fbReady()){ showGate(false); return; } AUTH.signInAnonymously().catch(function(err){ $('authErr').textContent='Emergency access failed: '+(err.message||err.code||''); }); }
+  function collectEvents(){
+    var out=[]; Array.prototype.forEach.call($('log').children,function(li){
+      var b=li.querySelector('b'); var t=b?b.textContent:''; var e=li.textContent.replace(t,'').trim(); out.unshift({t:t,e:e});
+    }); return out;
+  }
+  function saveLogToCloud(){
+    if(!fbReady()||!AUTH.currentUser) return;
+    var u=AUTH.currentUser;
+    try{
+      DB.collection('codelogs').add({
+        owner:u.uid, sessionType:u.isAnonymous?'emergency':'account',
+        recordedBy:($('recBy')?$('recBy').value:'').trim(),
+        weightKg:wt||null, startedAt:startClock?startClock.toISOString():null, endedAt:new Date().toISOString(),
+        durationSec:Math.floor(now()), adrenaline:adrCount, shocks:shockCount, cprRatio:cprRatio,
+        events:collectEvents(), ts:Date.now(), createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(){ pruneLogs(u.uid); }).catch(function(e){ console.warn('cloud log save failed:',e); });
+    }catch(e){ console.warn(e); }
+  }
+  function pruneLogs(uid){
+    DB.collection('codelogs').where('owner','==',uid).get().then(function(snap){
+      var a=[]; snap.forEach(function(d){ a.push({id:d.id, ts:(d.data().ts||0)}); });
+      a.sort(function(x,y){ return y.ts-x.ts; });
+      a.slice(25).forEach(function(d){ DB.collection('codelogs').doc(d.id).delete().catch(function(){}); });
+    }).catch(function(){});
+  }
+  function openLogs(){
+    $('logsOverlay').classList.remove('hidden');
+    var list=$('logsList');
+    if(!fbReady()||!AUTH.currentUser){ list.innerHTML='<div class="logempty">Not signed in.</div>'; return; }
+    list.innerHTML='<div class="logempty">Loading…</div>';
+    DB.collection('codelogs').where('owner','==',AUTH.currentUser.uid).get().then(function(snap){
+      var docs=[]; snap.forEach(function(d){ docs.push(d.data()); });
+      docs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }); docs=docs.slice(0,25);
+      if(!docs.length){ list.innerHTML='<div class="logempty">No saved codes yet.</div>'; return; }
+      list.innerHTML=docs.map(function(d){
+        var when=d.startedAt?new Date(d.startedAt).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+        var dur=d.durationSec!=null?mmss(d.durationSec):'';
+        var ev=(d.events||[]).map(function(e){ return '<div><b>'+esc(e.t)+'</b> &nbsp;'+esc(e.e)+'</div>'; }).join('');
+        var who=d.recordedBy?' · '+esc(d.recordedBy):'';
+        var tag=d.sessionType==='emergency'?' · ⚠ emergency':'';
+        return '<div class="logrow"><div class="lr1"><span>'+esc(when)+'</span><span>'+esc(dur)+'</span></div><div class="lr2">'+(d.weightKg?esc(d.weightKg)+' kg · ':'')+'adrenaline ×'+(d.adrenaline||0)+' · shocks ×'+(d.shocks||0)+who+tag+'</div><div class="lrdetail">'+(ev||'<i>no events</i>')+'</div></div>';
+      }).join('');
+      Array.prototype.forEach.call(list.querySelectorAll('.logrow'),function(r){ r.addEventListener('click',function(){ r.classList.toggle('open'); }); });
+    }).catch(function(e){ list.innerHTML='<div class="logempty">Could not load logs.<br>'+esc(e.message||'')+'</div>'; });
+  }
+
+  $('authLogin').addEventListener('click',doLogin);
+  $('authPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  $('authEmg').addEventListener('click',goEmergency);
+  $('emgLogin').addEventListener('click',function(){ if(fbReady()) AUTH.signOut(); });
+  $('btnLogout').addEventListener('click',function(){ if(fbReady() && confirm('Log out of this device?')){ AUTH.signOut(); $('logsOverlay').classList.add('hidden'); } });
+  $('bLogsTop').addEventListener('click',openLogs);
+  $('logsClose').addEventListener('click',function(){ $('logsOverlay').classList.add('hidden'); });
+
+  if(fbReady()){
+    AUTH.onAuthStateChanged(function(user){
+      if(user){
+        showGate(false);
+        var anon=user.isAnonymous; setEmgBanner(anon);
+        $('acctWho').innerHTML = anon ? '⚠ Emergency session' : 'Signed in: <b>'+esc(user.email||'Institution')+'</b>';
+      } else {
+        showGate(true); setEmgBanner(false);
+      }
+    });
+  } else {
+    showGate(false);   /* fail-open: never lock an emergency tool if Firebase can't load */
+  }
 
   /* ---------- Toggles ---------- */
   var themes=['Navy','Monitor','Bright'], ti=2;
