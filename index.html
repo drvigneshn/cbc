@@ -874,14 +874,21 @@
     /* Voice guidance — speak once per event onset, one repeat after 15 s if not actioned */
     if(voiceOn){
       var vkey=null, vphrase='';
+      var adrSay=' Give adrenaline'+(wt>0?', '+fmt(Math.min(0.1*wt,10),1)+' millilitres of 1 in 10,000 dilution':'')+'.';
+      var shockSay=' Deliver shock'+(wt>0?', '+fmt((shockCount===0?2:4)*wt,0)+' joules':'')+'.';
       if(needRhythm){ vkey='rhythm-select'; vphrase='Check the monitor. Shockable, or non-shockable?'; }
-      else if(rDue){ vkey='reassess'; vphrase='Two minutes. Reassess rhythm, check the pulse, and swap the compressor.'; if(shockDue) vphrase+=' Prepare to shock.'; }
-      else if(shockDue){ vkey='shock'; vphrase='Shockable rhythm. Deliver shock'+(wt>0?', '+fmt((shockCount===0?2:4)*wt,0)+' joules':'')+'.'; }
+      else if(rDue){
+        vkey='reassess'+(shockDue?'-s':'')+(aDue?'-a':'');   /* key reflects what is chained, so a newly-due drug re-announces */
+        vphrase='Two minutes. Reassess rhythm, check the pulse, and swap the compressor.';
+        if(shockDue) vphrase+=shockSay;
+        if(aDue) vphrase+=adrSay;
+      }
+      else if(shockDue){ vkey='shock'+(aDue?'-a':''); vphrase='Shockable rhythm.'+shockSay; if(aDue) vphrase+=adrSay; }
       else if(aDue){ vkey='adrenaline'; vphrase='Adrenaline due'+(wt>0?', '+fmt(Math.min(0.1*wt,10),1)+' millilitres of 1 in 10,000 dilution':'')+'.'; }
       var tSec=Math.floor(t);
       if(vkey){
         if(vkey!==lastVoiceKey){ lastVoiceKey=vkey; voiceRepeats=0; voiceRepeatAt=tSec+15; speak(vphrase); }
-        else if(voiceRepeats<1 && tSec>=voiceRepeatAt){ voiceRepeats=1; speak(vphrase); }
+        else if(voiceRepeats<2 && tSec>=voiceRepeatAt){ voiceRepeats++; voiceRepeatAt=tSec+15; speak(vphrase); }
       } else { lastVoiceKey=null; }
     }
   }
