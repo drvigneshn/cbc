@@ -298,7 +298,7 @@
   .seq{font-size:10px; color:var(--dim); margin:0 2px 7px;}
   .doses{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
   .dose{background:var(--card2); border-radius:8px; padding:7px 9px; border-left:3px solid var(--line);}
-  .dose .n{font-size:10px; color:var(--dim);}
+  .dose .n{font-size:10.5px; color:var(--txt); font-weight:700;}
   .dose .v{font-size:16px; font-weight:800; margin-top:1px;}
   .dose .s{font-size:9px; color:var(--dim); margin-top:1px; line-height:1.3;}
   .dose.red{border-left-color:var(--red);} .dose.amber{border-left-color:var(--amber);}
@@ -352,6 +352,12 @@
   .disclaimer{font-size:9.5px; color:var(--dim); text-align:center; padding:6px 20px 12px; line-height:1.6; max-width:700px; margin:0 auto;}
   .disclaimer a{color:var(--blue); text-decoration:underline;}
   .copyr{display:inline-block; margin-top:5px; font-size:9px; color:var(--dim);}
+  .awardcard{display:flex; gap:11px; align-items:flex-start; background:var(--card); border:1px solid var(--amber);
+    border-radius:12px; padding:12px 13px; margin:14px auto 4px; max-width:520px;}
+  .awardcard .ico{font-size:24px; line-height:1; flex-shrink:0;}
+  .awardcard .tt{font-size:12.5px; font-weight:800; color:var(--txt);}
+  .awardcard .dd{font-size:10.5px; color:var(--dim); margin-top:3px; line-height:1.55;}
+  .awardcard .dd b{color:var(--amber);}
 </style>
 </head>
 <body class="theme-bright">
@@ -562,6 +568,13 @@
   <span><i style="background:var(--blue)"></i>Rhythm / assessment</span>
   <span><i style="background:var(--green)"></i>Airway / ROSC</span>
   <span><i style="background:var(--violet)"></i>Status / guidance</span>
+</div>
+<div class="awardcard">
+  <div class="ico">&#127942;</div>
+  <div>
+    <div class="tt">Medshark Champion &mdash; Best Pitch</div>
+    <div class="dd">Awarded at the <b>ANBAI National Conclave 2026</b>, Bangalore Baptist Hospital, Bengaluru (29&ndash;30 August 2026), in recognition of an entrepreneurial spirit to challenge, create, collaborate and turn ideas into action.</div>
+  </div>
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v4.8 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission.</span></p>
