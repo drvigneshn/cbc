@@ -333,6 +333,19 @@
   body.wide .dash{flex-direction:row; align-items:flex-start; max-width:1240px;}
   body.wide .col-left{flex:1;} body.wide .col-right{flex:1;} body.wide .col-center{flex:1; order:0;}
 
+  /* ---- Landscape two-pane (tablet/desktop): console left, content right ---- */
+  .stage{display:block;} .stageright{min-width:0;}
+  @media (orientation:landscape) and (min-width:900px) and (min-height:480px){
+    body:not(.narrow) .stage{display:flex; align-items:flex-start; gap:12px; max-width:1400px; margin:0 auto; padding:0 10px;}
+    body:not(.narrow) .stage .topstack{flex:0 0 40%; max-width:none; margin:0; position:sticky; top:8px; max-height:calc(100vh - 16px); overflow-y:auto;}
+    body:not(.narrow) .stage .topstack > *, body:not(.narrow) .stage .apphead{max-width:none;}
+    body:not(.narrow) .stageright{flex:1 1 60%; min-width:0;}
+    body:not(.narrow) .stageright .qref{max-width:none; margin:0 0 6px;}
+    body:not(.narrow) .stageright .qref .grid{grid-template-columns:repeat(4,1fr);}
+    body:not(.narrow) .stageright .dash{max-width:none; margin:0; flex-direction:column;}
+    body:not(.narrow) .stageright .dash .col{width:100%;}
+  }
+
   .wcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
   .wcard label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px;}
   #wLabel{cursor:pointer; display:flex; align-items:center; gap:6px;}
@@ -436,7 +449,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.0.1</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.1</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="credit">Created by Dr Vignesh N</p>
         <p class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</p>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
@@ -456,6 +469,7 @@
     </div>
 </header>
 
+<div class="stage">
 <div class="topstack">
   <div class="tblock">
     <div class="trow">
@@ -495,6 +509,7 @@
   </div>
 </div>
 
+<div class="stageright">
 <div class="qref" id="quickRef"></div>
 
 <div class="dash">
@@ -638,6 +653,8 @@
   </div>
 
 </div>
+</div>
+</div>
 
 <div class="legend">
   <span><i style="background:var(--red)"></i>Drugs</span>
@@ -654,7 +671,7 @@
   </div>
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.0.1 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.1 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
