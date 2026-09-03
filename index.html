@@ -169,6 +169,10 @@
   .logrow .lrdetail b{color:var(--amber);}
   .logrow.open .lrdetail{display:block;}
   .logempty{font-size:12px; color:var(--dim); text-align:center; padding:16px; line-height:1.5;}
+  .addinst{display:flex; gap:6px; margin-bottom:8px;}
+  .addinst input{flex:1; min-width:0; background:var(--card2); border:1px solid var(--line); border-radius:8px; color:var(--txt); font-size:12.5px; padding:8px 9px; outline:none;}
+  .addinst input:focus{border-color:var(--blue);}
+  .addinst select{background:var(--card2); border:1px solid var(--line); border-radius:8px; color:var(--txt); font-size:11.5px; padding:7px 6px;}
   .hidden{display:none !important;}
   .authswitch{text-align:center; font-size:11.5px; color:var(--dim); margin-top:13px;}
   .authswitch button{background:none; border:none; color:var(--blue); font-weight:700; font-size:11.5px; cursor:pointer; padding:0;}
@@ -452,7 +456,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.1.1</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.2</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -673,7 +677,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.1.1 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.2 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -718,7 +722,7 @@
   <div class="htsheet">
     <div class="acctbar"><span id="acctWho">&mdash;</span><button class="logoutbtn" id="btnLogout">Log out</button></div>
     <div class="hh"><span class="em">&#9729;</span><h2>Saved code logs</h2></div>
-    <p class="subh">The institute&rsquo;s most recent 25 codes. Tap one to expand its timeline.</p>
+    <p class="subh">The institute&rsquo;s most recent 100 codes. Tap one to expand its timeline.</p>
     <div id="logsList"><div class="logempty">Loading&hellip;</div></div>
     <button class="htgotit" id="logsClose" style="margin-top:6px">Close</button>
   </div>
@@ -735,8 +739,14 @@
 
 <div class="htoverlay hidden" id="adminOverlay">
   <div class="htsheet">
-    <div class="hh"><span class="em">&#128737;</span><h2>Admin &mdash; users</h2></div>
-    <p class="subh">Approve individual sign-ups for 2 days, or revoke them. Delete accounts fully in the Firebase console.</p>
+    <div class="hh"><span class="em">&#128737;</span><h2>Admin &mdash; access</h2></div>
+    <p class="subh">Approve sign-ups, set a paid institution&rsquo;s subscription, or revoke. Free institutions created in the Firebase console (with no record here) work indefinitely. Delete a login fully in the Firebase console.</p>
+    <div class="addinst">
+      <input id="instEmail" type="email" autocomplete="off" placeholder="hospital login email">
+      <select id="instDur"><option value="free">Free &#8734;</option><option value="30">Paid +1 month</option><option value="365">Paid +1 year</option></select>
+      <button class="copy" id="instAdd">Set</button>
+    </div>
+    <div class="autherr" id="instErr" style="min-height:0; margin:0 0 8px;"></div>
     <div id="adminList"><div class="logempty">Loading&hellip;</div></div>
     <button class="htgotit" id="adminClose" style="margin-top:6px">Close</button>
   </div>
@@ -1273,7 +1283,7 @@
     DB.collection('codelogs').where('owner','==',uid).get().then(function(snap){
       var a=[]; snap.forEach(function(d){ a.push({id:d.id, ts:(d.data().ts||0)}); });
       a.sort(function(x,y){ return y.ts-x.ts; });
-      a.slice(25).forEach(function(d){ DB.collection('codelogs').doc(d.id).delete().catch(function(){}); });
+      a.slice(100).forEach(function(d){ DB.collection('codelogs').doc(d.id).delete().catch(function(){}); });
     }).catch(function(){});
   }
   function openLogs(){
@@ -1285,7 +1295,7 @@
     var q = admin ? DB.collection('codelogs') : DB.collection('codelogs').where('owner','==',AUTH.currentUser.uid);
     q.get().then(function(snap){
       var docs=[]; snap.forEach(function(d){ docs.push(d.data()); });
-      docs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }); docs=docs.slice(0, admin?100:25);
+      docs.sort(function(a,b){ return (b.ts||0)-(a.ts||0); }); docs=docs.slice(0, admin?300:100);
       if(!docs.length){ list.innerHTML='<div class="logempty">No saved codes yet.</div>'; return; }
       list.innerHTML=docs.map(function(d){
         var when=d.startedAt?new Date(d.startedAt).toLocaleString([], {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'';
@@ -1306,7 +1316,7 @@
   function showStatus(d){
     var t,m;
     if(d.status==='revoked'){ t='Access revoked'; m='Your access has been removed. Please contact the administrator.'; }
-    else if(d.status==='approved'){ t='Access expired'; m='Your 2-day access has ended. Ask the administrator to renew it.'; }
+    else if(d.status==='approved'){ t='Access expired'; m='Your access / subscription has ended. Please contact the administrator to renew.'; }
     else { t='Awaiting approval'; m='Your request has been received. You can use the tool once the administrator approves you.'; }
     $('statusTitle').textContent=t; $('statusMsg').textContent=m;
     $('statusGate').classList.remove('hidden');
@@ -1316,45 +1326,66 @@
 
   function doSignup(){
     if(!fbReady()){ $('signupErr').textContent='Offline — cannot sign up right now.'; return; }
-    var em=$('suEmail').value.trim(), pw=$('suPass').value;
+    var em=$('suEmail').value.trim().toLowerCase(), pw=$('suPass').value;
     if(!em||pw.length<6){ $('signupErr').textContent='Enter your email and a password of 6+ characters.'; return; }
     $('signupErr').textContent='Creating…';
-    AUTH.createUserWithEmailAndPassword(em,pw).then(function(cred){
-      return DB.collection('users').doc(cred.user.uid).set({email:em, status:'pending', createdAt:Date.now(), expiresAt:null});
+    AUTH.createUserWithEmailAndPassword(em,pw).then(function(){
+      return DB.collection('access').doc(em).set({email:em, type:'individual', status:'pending', plan:'free', expiresAt:null, createdAt:Date.now()});
     }).then(function(){ return AUTH.signOut(); })
     .then(function(){ showSignup(false); $('suEmail').value=''; $('suPass').value=''; $('signupErr').textContent=''; $('authErr').textContent='✓ Request sent — you can log in once the admin approves you.'; })
     .catch(function(err){ var c=err.code||'';
       $('signupErr').textContent = /email-already-in-use/.test(c)?'That email already has an account — log in instead.':/weak-password/.test(c)?'Password too weak (use 6+ characters).':(err.message||'Sign-up failed.'); });
   }
 
+  function subInfo(d){
+    if(d.status==='revoked') return 'revoked';
+    if(d.status==='pending') return 'pending';
+    if(d.plan==='free' || !d.expiresAt) return 'free ∞';
+    if(Date.now()>d.expiresAt) return 'expired';
+    return Math.ceil((d.expiresAt-Date.now())/86400000)+'d left';
+  }
+  function setAccess(email, upd){
+    return DB.collection('access').doc(email.toLowerCase()).set(Object.assign({email:email.toLowerCase()}, upd), {merge:true});
+  }
   function loadAdmin(){
     $('adminOverlay').classList.remove('hidden');
     var L=$('adminList');
     if(!fbReady()||!isAdmin(AUTH.currentUser)){ L.innerHTML='<div class="logempty">Admin only.</div>'; return; }
     L.innerHTML='<div class="logempty">Loading…</div>';
-    DB.collection('users').get().then(function(snap){
-      var rows=[]; snap.forEach(function(d){ var o=d.data(); o.uid=d.id; rows.push(o); });
+    DB.collection('access').get().then(function(snap){
+      var rows=[]; snap.forEach(function(d){ var o=d.data(); o.id=d.id; rows.push(o); });
       rows.sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
-      if(!rows.length){ L.innerHTML='<div class="logempty">No sign-ups yet.</div>'; return; }
+      if(!rows.length){ L.innerHTML='<div class="logempty">No accounts yet. Add a paid institution above, or approve sign-ups as they arrive. Free institutions (created in the Firebase console with no access record) work without appearing here.</div>'; return; }
       L.innerHTML=rows.map(function(r){
-        var expired = r.status==='approved' && r.expiresAt && Date.now()>r.expiresAt;
-        var st = expired?'expired':(r.status||'pending');
-        var left = (r.status==='approved'&&r.expiresAt&&Date.now()<r.expiresAt)?' · '+Math.ceil((r.expiresAt-Date.now())/86400000)+'d left':'';
-        return '<div class="logrow" data-uid="'+esc(r.uid)+'"><div class="lr1"><span>'+esc(r.email||r.uid)+'</span><span>'+st+left+'</span></div>'+
+        return '<div class="logrow" data-email="'+esc(r.email||r.id)+'" data-exp="'+(r.expiresAt||0)+'"><div class="lr1"><span>'+esc(r.email||r.id)+'</span><span>'+esc(subInfo(r))+'</span></div>'+
+          '<div class="lr2">'+esc(r.type||'individual')+' · '+esc(r.plan||'free')+'</div>'+
           '<div class="lr2" style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">'+
-          '<button class="copy" data-act="approve">Approve 2 days</button>'+
+          '<button class="copy" data-act="free">Free &#8734;</button>'+
+          '<button class="copy" data-act="30">+1 month</button>'+
+          '<button class="copy" data-act="365">+1 year</button>'+
           '<button class="copy" data-act="revoke">Revoke</button>'+
           '</div></div>';
       }).join('');
       Array.prototype.forEach.call(L.querySelectorAll('button[data-act]'),function(b){
         b.addEventListener('click',function(ev){ ev.stopPropagation();
-          var uid=b.parentNode.parentNode.getAttribute('data-uid'), act=b.getAttribute('data-act');
-          var upd = act==='revoke'?{status:'revoked'}:{status:'approved', expiresAt:Date.now()+2*86400000};
+          var row=b.parentNode.parentNode, email=row.getAttribute('data-email'), exp=parseInt(row.getAttribute('data-exp'),10)||0, act=b.getAttribute('data-act'), upd;
+          if(act==='free') upd={status:'approved', plan:'free', expiresAt:null};
+          else if(act==='revoke') upd={status:'revoked'};
+          else { var base=Math.max(Date.now(), exp); upd={status:'approved', plan:'paid', expiresAt: base + parseInt(act,10)*86400000}; }
           b.textContent='…';
-          DB.collection('users').doc(uid).update(upd).then(loadAdmin).catch(function(e){ alert('Failed: '+(e.message||e.code)); });
+          setAccess(email, upd).then(loadAdmin).catch(function(e){ alert('Failed: '+(e.message||e.code)); });
         });
       });
-    }).catch(function(e){ L.innerHTML='<div class="logempty">Could not load users.<br>'+esc(e.message||'')+'</div>'; });
+    }).catch(function(e){ L.innerHTML='<div class="logempty">Could not load accounts.<br>'+esc(e.message||'')+'</div>'; });
+  }
+  function addInstitution(){
+    if(!fbReady()||!isAdmin(AUTH.currentUser)) return;
+    var em=$('instEmail').value.trim().toLowerCase(); if(!em){ $('instErr').textContent='Enter the login email.'; return; }
+    var v=$('instDur').value, upd;
+    if(v==='free') upd={type:'institution', status:'approved', plan:'free', expiresAt:null, createdAt:Date.now()};
+    else upd={type:'institution', status:'approved', plan:'paid', expiresAt:Date.now()+parseInt(v,10)*86400000, createdAt:Date.now()};
+    $('instErr').textContent='Saving…';
+    setAccess(em, upd).then(function(){ $('instErr').textContent=''; $('instEmail').value=''; loadAdmin(); }).catch(function(e){ $('instErr').textContent='Failed: '+(e.message||e.code); });
   }
 
   /* wiring */
@@ -1373,6 +1404,7 @@
   $('logsClose').addEventListener('click',function(){ $('logsOverlay').classList.add('hidden'); });
   $('bAdmin').addEventListener('click',loadAdmin);
   $('adminClose').addEventListener('click',function(){ $('adminOverlay').classList.add('hidden'); });
+  $('instAdd').addEventListener('click',addInstitution);
 
   if(fbReady()){
     AUTH.onAuthStateChanged(function(user){
@@ -1381,12 +1413,12 @@
       hideStatus();
       if(user.isAnonymous){ showGate(false); setEmgBanner(true); setAcct('⚠ Emergency session'); return; }
       if(isAdmin(user)){ showGate(false); setEmgBanner(false); setAcct('Admin: <b>'+esc(user.email)+'</b>'); showAdminBtn(true); return; }
-      DB.collection('users').doc(user.uid).get().then(function(snap){
+      DB.collection('access').doc((user.email||'').toLowerCase()).get().then(function(snap){
         if(!snap.exists){ showGate(false); setEmgBanner(false); setAcct('Signed in: <b>'+esc(user.email||'Institution')+'</b>'); return; }
         var d=snap.data();
-        if(d.status==='approved' && (!d.expiresAt || Date.now()<d.expiresAt)){
+        if(d.status==='approved' && (d.plan==='free' || !d.expiresAt || Date.now()<d.expiresAt)){
           showGate(false); setEmgBanner(false);
-          var left=d.expiresAt?' · '+Math.max(0,Math.ceil((d.expiresAt-Date.now())/86400000))+'d left':'';
+          var left=(d.plan!=='free' && d.expiresAt)?' · '+Math.max(0,Math.ceil((d.expiresAt-Date.now())/86400000))+'d left':'';
           setAcct('Signed in: <b>'+esc(user.email)+'</b>'+left);
         } else { showGate(false); showStatus(d); }
       }).catch(function(){ showGate(false); setAcct('Signed in'); });
