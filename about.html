@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+  Code Blue Companion — About page
+  © 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Code Blue Companion</title>
+<meta name="description" content="About Code Blue Companion — paediatric resuscitation decision-support, created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0b1220">
+<style>
+  :root{
+    --bg:#eef1f6; --card:#ffffff; --card2:#f3f5f9; --line:#d3dae5;
+    --red:#d92d3c; --amber:#b8770f; --green:#12855f; --blue:#1668c4; --violet:#6d28d9;
+    --txt:#131a26; --dim:#5c6879; --onwarm:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1220; --card:#141e33; --card2:#1b2745; --line:#26355a;
+      --red:#ff4757; --amber:#ffb020; --green:#2ed573; --blue:#4aa3ff; --violet:#8b7cff;
+      --txt:#eef2fb; --dim:#8fa0c2; --onwarm:#3a2600;
+    }
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--txt);
+    font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; line-height:1.6;
+    padding:0 18px 56px; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:620px; margin:0 auto;}
+
+  .backbar{max-width:620px; margin:0 auto; padding:14px 0 4px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--blue); text-decoration:none;}
+  .back:hover{text-decoration:underline;}
+
+  .hero{text-align:center; padding:26px 0 22px;}
+  .logo{width:64px; height:64px; border-radius:17px; background:var(--red); display:inline-flex; align-items:center; justify-content:center; font-size:34px; color:#fff; box-shadow:0 8px 24px rgba(217,45,60,.28);}
+  @media (prefers-color-scheme: dark){ .logo{background:var(--red); box-shadow:0 8px 26px rgba(0,0,0,.5);} }
+  h1{font-size:24px; margin-top:14px; letter-spacing:-.3px; text-wrap:balance;}
+  .vbadge{font-size:12px; font-weight:600; color:var(--dim); border:1px solid var(--line); border-radius:20px; padding:2px 9px; margin-left:7px; vertical-align:middle;}
+  .tagline{font-size:13.5px; color:var(--dim); margin-top:7px; text-wrap:balance;}
+
+  .award{display:flex; gap:13px; align-items:flex-start; background:var(--card); border:1px solid var(--amber);
+    border-radius:14px; padding:15px 16px; margin:6px 0 22px;}
+  .award .medal{font-size:30px; line-height:1; flex-shrink:0;}
+  .award .at{font-size:14px; font-weight:800; color:var(--txt);}
+  .award .ad{font-size:12px; color:var(--dim); margin-top:4px; line-height:1.55;}
+  .award .ad b{color:var(--amber);}
+
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:17px 18px; margin-bottom:14px;}
+  section h2{font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--dim); margin-bottom:11px;}
+  section p{font-size:13.5px; color:var(--txt);}
+  section p + p{margin-top:10px;}
+
+  .feat{display:flex; flex-direction:column; gap:11px;}
+  .frow{display:flex; gap:11px; align-items:flex-start;}
+  .frow .fi{width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .fi.r{background:color-mix(in srgb, var(--red) 15%, var(--card)); }
+  .fi.a{background:color-mix(in srgb, var(--amber) 15%, var(--card)); }
+  .fi.b{background:color-mix(in srgb, var(--blue) 15%, var(--card)); }
+  .fi.g{background:color-mix(in srgb, var(--green) 15%, var(--card)); }
+  .frow .ft{font-size:13px; font-weight:700; color:var(--txt);}
+  .frow .fd{font-size:12px; color:var(--dim); margin-top:1px;}
+
+  .credit{display:flex; flex-direction:column; gap:2px;}
+  .credit .who{font-size:16px; font-weight:800; color:var(--txt);}
+  .credit .role{font-size:12.5px; color:var(--dim);}
+  .credit .hosp{font-size:13.5px; font-weight:700; color:var(--txt); margin-top:9px;}
+  .credit .hospsub{font-size:12px; color:var(--dim);}
+
+  .links{display:flex; flex-direction:column; gap:9px;}
+  .links a{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13px; font-weight:600; color:var(--blue); text-decoration:none; border:1px solid var(--line); border-radius:9px; padding:11px 13px; background:var(--card2);}
+  .links a:hover{border-color:var(--blue);}
+  .links a .arw{color:var(--dim); font-weight:400;}
+
+  .disc{font-size:11.5px; color:var(--dim); line-height:1.6; background:color-mix(in srgb, var(--amber) 8%, var(--card)); border:1px solid color-mix(in srgb, var(--amber) 40%, var(--line)); border-radius:12px; padding:13px 15px; margin-bottom:14px;}
+  .disc b{color:var(--amber);}
+
+  footer{text-align:center; font-size:10.5px; color:var(--dim); line-height:1.6; padding:10px 6px 0;}
+  footer a{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a class="back" href="index.html">&larr; Back to the app</a></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="logo">&#9889;</div>
+    <h1>Code Blue Companion <span class="vbadge">v5.0.1</span></h1>
+    <p class="tagline">Paediatric resuscitation decision-support &mdash; PALS-based, weight-calculated doses, arrest console and timers, at the bedside.</p>
+  </div>
+
+  <div class="award">
+    <div class="medal">&#127942;</div>
+    <div>
+      <div class="at">Medshark Champion &mdash; Best Pitch</div>
+      <div class="ad">Awarded at the <b>ANBAI National Conclave 2026</b>, Bangalore Baptist Hospital, Bengaluru (29&ndash;30 August 2026), in recognition of an entrepreneurial spirit to challenge, create, collaborate and turn ideas into action.</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="feat">
+      <div class="frow"><div class="fi b">&#129658;</div><div><div class="ft">Rapid assessment</div><div class="fd">Guides responsive &middot; breathing &middot; pulse, and tells you if it&rsquo;s an arrest.</div></div></div>
+      <div class="frow"><div class="fi r">&#128137;</div><div><div class="ft">Weight-calculated doses</div><div class="fd">Every arrest drug, RSI agent, infusion and equipment size, auto-calculated and capped.</div></div></div>
+      <div class="frow"><div class="fi a">&#9889;</div><div><div class="ft">Arrest console &amp; timers</div><div class="fd">Cues adrenaline, reassessment and shocks as they fall due &mdash; with optional voice read-out.</div></div></div>
+      <div class="frow"><div class="fi g">&#128203;</div><div><div class="ft">Code log</div><div class="fd">Records every action with a timestamp; saved securely for later review.</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Created by</h2>
+    <div class="credit">
+      <div class="who">Dr Vignesh N</div>
+      <div class="role">Paediatrician &middot; author &amp; developer</div>
+      <div class="hosp">Kanchi Kamakoti CHILDS Trust Hospital</div>
+      <div class="hospsub">Chennai, India</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Guidelines &amp; references</h2>
+    <p style="font-size:12.5px; color:var(--dim); margin-bottom:11px;">Aligned with AHA PALS 2020/2025 and APLS weight estimates. A trained clinician must verify every dose against local protocol.</p>
+    <div class="links">
+      <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS &mdash; cpr.heart.org <span class="arw">&#8599;</span></a>
+      <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India &mdash; BLS / PALS <span class="arw">&#8599;</span></a>
+      <a href="dose-reference.html">Dose calculation reference <span class="arw">&rarr;</span></a>
+    </div>
+  </section>
+
+  <div class="disc">
+    <b>Decision-support aid, not a substitute for clinical judgment.</b> This tool assists recall and calculation; the treating clinician must verify every dose before administration and remains responsible for all decisions.
+  </div>
+
+  <footer>
+    &copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved.<br>
+    &ldquo;Code Blue Companion&rdquo; and &ldquo;PediaOS&rdquo; are marks of the author &middot; not for reuse or redistribution without written permission.<br>
+    <a href="index.html">cbc.pediaos.com</a>
+  </footer>
+
+</div>
+
+</body>
+</html>
