@@ -1,7 +1,10 @@
 {
+  "id": "/",
   "name": "Code Blue Companion",
   "short_name": "Code Blue",
-  "description": "Paediatric resuscitation decision-support",
+  "description": "Paediatric resuscitation decision-support — PALS-based weight-calculated doses, arrest console and timers.",
+  "lang": "en-GB",
+  "categories": ["medical", "health"],
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
