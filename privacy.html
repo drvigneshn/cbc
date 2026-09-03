@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--
+  Code Blue Companion — Privacy Policy
+  © 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Code Blue Companion</title>
+<meta name="description" content="Privacy policy for Code Blue Companion — what data it collects, how it is stored, and your choices.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0b1220">
+<style>
+  :root{
+    --bg:#eef1f6; --card:#ffffff; --card2:#f3f5f9; --line:#d3dae5;
+    --red:#d92d3c; --amber:#b8770f; --blue:#1668c4;
+    --txt:#131a26; --dim:#5c6879;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1220; --card:#141e33; --card2:#1b2745; --line:#26355a;
+      --red:#ff4757; --amber:#ffb020; --blue:#4aa3ff;
+      --txt:#eef2fb; --dim:#8fa0c2;
+    }
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--txt);
+    font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; line-height:1.65;
+    padding:0 18px 60px; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:640px; margin:0 auto;}
+  .backbar{max-width:640px; margin:0 auto; padding:14px 0 2px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--blue); text-decoration:none;}
+  .back:hover{text-decoration:underline;}
+  header.h{padding:22px 0 8px;}
+  header.h h1{font-size:23px; letter-spacing:-.3px;}
+  header.h .sub{font-size:12.5px; color:var(--dim); margin-top:5px;}
+  h2{font-size:14px; text-transform:uppercase; letter-spacing:.8px; color:var(--amber); margin:26px 0 8px;}
+  p{font-size:14px; color:var(--txt); margin-bottom:10px;}
+  ul{margin:0 0 10px 20px;} li{font-size:14px; margin-bottom:6px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 17px; margin-top:8px;}
+  a{color:var(--blue);}
+  b{color:var(--txt);}
+  .foot{font-size:11px; color:var(--dim); margin-top:28px; border-top:1px solid var(--line); padding-top:12px; line-height:1.7;}
+  .note{font-size:12.5px; color:var(--dim); background:color-mix(in srgb, var(--amber) 8%, var(--card)); border:1px solid color-mix(in srgb, var(--amber) 40%, var(--line)); border-radius:10px; padding:11px 13px; margin-top:8px;}
+  .note b{color:var(--amber);}
+</style>
+</head>
+<body>
+
+<div class="backbar"><a class="back" href="index.html">&larr; Back to the app</a></div>
+
+<div class="wrap">
+  <header class="h">
+    <h1>Privacy Policy</h1>
+    <div class="sub">Code Blue Companion &middot; last updated 3 September 2026</div>
+  </header>
+
+  <div class="card">
+    <p>Code Blue Companion (&ldquo;the app&rdquo;) is a paediatric resuscitation decision-support tool created by <b>Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital</b> (&ldquo;we&rdquo;, &ldquo;us&rdquo;). This policy explains what information the app collects, how it is used and stored, and your choices. By using the app or the website at cbc.pediaos.com, you agree to this policy.</p>
+  </div>
+
+  <div class="note"><b>No patient-identifying information.</b> The app is designed so that it does <b>not</b> ask for or store any patient name, hospital number, or other patient identifier. Please do not enter patient-identifying details into any field.</div>
+
+  <h2>Information we collect</h2>
+  <p>Depending on how you use the app, we collect:</p>
+  <ul>
+    <li><b>Account information</b> — the email address and password you use to log in. Passwords are handled securely by Google Firebase Authentication and are never visible to us.</li>
+    <li><b>Code logs</b> — when you run and end a resuscitation, the app can save a log containing the timestamped sequence of actions (e.g. &ldquo;adrenaline given&rdquo;, &ldquo;shock delivered&rdquo;), the patient <b>weight</b> you entered, drug/shock counts, and an optional free-text &ldquo;recorded by&rdquo; name. These logs contain <b>no patient identifiers</b> unless you enter them (please do not).</li>
+    <li><b>Technical data</b> — standard authentication tokens and a unique account identifier needed to keep you signed in and to store your logs.</li>
+  </ul>
+  <p><b>Emergency mode</b> uses an anonymous session and collects no email or personal login details.</p>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li>To let you and your institution sign in and control who has access.</li>
+    <li>To save and let you retrieve your recent code logs for later review and quality improvement.</li>
+    <li>To manage institutional access and subscriptions (activating, renewing or ending access).</li>
+  </ul>
+  <p>We do <b>not</b> use your data for advertising, and we do <b>not</b> sell it.</p>
+
+  <h2>Where it is stored</h2>
+  <p>Account details and code logs are stored using <b>Google Firebase</b> (Authentication and Cloud Firestore), operated by Google. Data may be processed on Google&rsquo;s servers, which can be located outside your country. Google acts as our data processor; see Google&rsquo;s privacy terms at <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">firebase.google.com/support/privacy</a>.</p>
+
+  <h2>Retention</h2>
+  <p>The app keeps the most recent <b>100 code logs</b> per account; older logs are automatically deleted. You can ask us to delete your account and its data at any time (see Contact).</p>
+
+  <h2>On-device storage</h2>
+  <p>The app stores small items on your device (such as your theme choice, whether you have seen the guide, and an offline copy of the app so it works without internet). This stays on your device and is not sent to us.</p>
+
+  <h2>Sharing</h2>
+  <p>We share data only with the service providers needed to run the app (Google Firebase). Your institution&rsquo;s administrator can see the code logs saved under your institution&rsquo;s login. We may disclose information if required by law.</p>
+
+  <h2>Children</h2>
+  <p>The app is a professional tool intended for clinicians. It is not directed at children and is not intended for use by anyone under 18.</p>
+
+  <h2>Your choices</h2>
+  <ul>
+    <li>Use <b>Emergency mode</b> to use the tool without creating an account.</li>
+    <li>Ask us to delete your account and stored logs.</li>
+    <li>Uninstall the app or stop using the website at any time.</li>
+  </ul>
+
+  <h2>Changes</h2>
+  <p>We may update this policy; the &ldquo;last updated&rdquo; date above will change. Continued use after an update means you accept the revised policy.</p>
+
+  <h2>Contact</h2>
+  <p>For any privacy question or a request to delete your data, contact:<br>
+  Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital<br>
+  <a href="mailto:n.vignesh.1996@gmail.com">n.vignesh.1996@gmail.com</a></p>
+
+  <p class="foot">
+    &copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved.<br>
+    Code Blue Companion is a decision-support aid and not a substitute for clinical judgment.<br>
+    <a href="index.html">cbc.pediaos.com</a> &middot; <a href="about.html">About</a>
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
-const CACHE = 'cbc-v5.2.1';
-const CORE = ['./','index.html','about.html','dose-reference.html','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','favicon-32.png'];
+const CACHE = 'cbc-v5.2.2';
+const CORE = ['./','index.html','about.html','privacy.html','dose-reference.html','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','favicon-32.png'];
 self.addEventListener('install', e => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE).catch(()=>{})));
