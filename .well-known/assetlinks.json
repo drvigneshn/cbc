@@ -1,12 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.pediaos.cbc",
-      "sha256_cert_fingerprints": [
-        "REPLACE_WITH_SHA256_FINGERPRINT_FROM_PLAY_CONSOLE"
-      ]
-    }
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.pediaos.cbc.twa",
+    "sha256_cert_fingerprints": ["CD:34:75:45:9E:F2:40:40:A4:7C:D5:8A:AD:FB:C9:8B:35:B0:96:F0:62:B6:00:79:10:C0:7E:B8:87:F9:66:8D"]
   }
-]
+}]
