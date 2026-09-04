@@ -258,6 +258,8 @@
     border:none; border-radius:9px; font-weight:700; font-size:13px; cursor:pointer; padding:5px; line-height:1.12; text-align:center;}
   .rb{background:var(--card2); border:1px solid var(--line); color:var(--txt);}
   .rb span{font-size:9.5px; font-weight:400; color:var(--dim); text-transform:uppercase; letter-spacing:.4px;}
+  .act span{font-size:8.5px; font-weight:600; color:var(--dim); text-transform:uppercase; letter-spacing:.3px; line-height:1.05;}
+  .act.rosc.cue span{color:var(--green); opacity:.9;}
   #rbShock.on{background:var(--card2); background:color-mix(in srgb, var(--amber) 15%, var(--card2)); border-color:var(--amber); color:var(--amber);}
   #rbShock.on span{color:var(--amber); opacity:.85;}
   #rbNon.on{background:var(--card2); background:color-mix(in srgb, var(--red) 15%, var(--card2)); border-color:var(--red); color:var(--red);}
@@ -302,11 +304,13 @@
   .sugarutil{position:relative;}
   .sugarutil .dot{position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; background:var(--amber);}
   @keyframes blinkdot{0%,50%{opacity:1;}51%,100%{opacity:0;}}
-  .sugarutil:not(.done){border-color:var(--amber); color:var(--amber); animation:sugarglow 1s infinite;}
-  .sugarutil:not(.done) .dot{animation:blinkdot 1s steps(1,end) infinite;}
-  @keyframes sugarglow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,0);}50%{box-shadow:0 0 0 3px rgba(255,176,32,.35);}}
-  .sugarutil.done{border-color:var(--green); color:var(--green);}
-  .sugarutil.done .dot{background:var(--green); animation:none;}
+  .sugarutil:not(.done){background:var(--amber); border-color:var(--amber); color:var(--onwarm); font-weight:800; animation:sugarglow 1s infinite;}
+  body.theme-bright .sugarutil:not(.done){color:#fff;}
+  .sugarutil:not(.done) .dot{background:#fff; animation:blinkdot 1s steps(1,end) infinite;}
+  @keyframes sugarglow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,0);}50%{box-shadow:0 0 0 4px rgba(255,176,32,.5);}}
+  .sugarutil.done{background:var(--green); border-color:var(--green); color:#04240f;}
+  body.theme-bright .sugarutil.done{color:#fff;}
+  .sugarutil.done .dot{background:#fff; animation:none;}
   .util.intub-on{background:var(--green); border-color:var(--green); color:#04240f;}
   body.theme-bright .util.intub-on{color:#fff;}
 
@@ -478,7 +482,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.2.3</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.3.0</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -519,7 +523,7 @@
       <button class="act adr" id="bAdr">Adrenaline</button>
       <button class="act shock" id="bShock">Shock</button>
       <button class="act rhythm" id="bRhythm">Reassess + swap</button>
-      <button class="act rosc" id="bRosc">ROSC</button>
+      <button class="act rosc" id="bRosc" title="ROSC = spontaneous circulation returns (palpable pulse / heart rate above 60 with signs of life) — stop compressions and begin post-arrest care">ROSC<span>HR &gt;60 &middot; stop CPR</span></button>
     </div>
 
     <div class="utilrow">
@@ -531,7 +535,7 @@
       </div>
       <button class="util" id="bIntub">Intubated?</button>
       <div class="seg wtseg" id="wtSeg"><span class="wtdot"></span><span class="seglbl">WT</span><input id="wtMini" class="wmini" type="number" inputmode="decimal" placeholder="kg" min="0" max="120" step="0.1"></div>
-      <button class="util sugarutil" id="bSugar"><span class="dot"></span><span id="sugarTxt">Blood sugar</span></button>
+      <button class="util sugarutil" id="bSugar" title="Check blood glucose — treat if <60 mg/dL with Dextrose 10%, 5 mL/kg (0.5 g/kg)"><span class="dot"></span><span id="sugarTxt">Blood sugar</span></button>
     </div>
   </div>
 </div>
@@ -636,7 +640,7 @@
           <details class="cause"><summary>Hypovolaemia</summary><div class="chint">IV/IO fluid bolus 10&ndash;20 mL/kg. Control haemorrhage; consider blood if bleeding.</div></details>
           <details class="cause"><summary>Hydrogen ion (acidosis)</summary><div class="chint">Ensure effective ventilation and treat the cause. Sodium bicarbonate only if prolonged arrest or known metabolic acidosis / hyperkalaemia.</div></details>
           <details class="cause"><summary>Hypo / Hyperkalaemia &amp; metabolic</summary><div class="chint">Check ABG, electrolytes, glucose. Hyperkalaemia: calcium, bicarbonate, insulin&ndash;dextrose, salbutamol.</div></details>
-          <details class="cause"><summary>Hypoglycaemia</summary><div class="chint">Check blood glucose. Give Dextrose 10% 5 mL/kg (0.5 g/kg) if low.</div></details>
+          <details class="cause"><summary>Hypoglycaemia</summary><div class="chint">Check blood glucose. Give Dextrose 10% 5 mL/kg (0.5 g/kg) if glucose &lt;60 mg/dL.</div></details>
           <details class="cause"><summary>Hypothermia</summary><div class="chint">Check core temperature. Active rewarming; continue resuscitation until warm ("not dead until warm and dead").</div></details>
         </div>
 
@@ -699,7 +703,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.2.3 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.3.0 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -718,7 +722,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.2.3</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.3.0</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -848,6 +852,26 @@
     $('bCode').classList.remove('ready');
   }
 
+  /* Spoken walkthrough of the rapid assessment — announces the current step,
+     tracking the quick-assessment questions, and calls "start CPR" once the
+     verdict turns to an arrest (the START CPR button starts blinking). */
+  var assessVoiceKey=null;
+  function assessGuide(){
+    if(typeof voiceOn==='undefined' || !voiceOn || running) return;
+    var key=null, phrase='';
+    if($('bCode').classList.contains('ready')){
+      key='cpr'; phrase='Start C P R now. Tap the start C P R button to begin compressions.';
+    } else if(A[1]==null){
+      key='resp'; phrase='Check for responsiveness. Is the child responsive?';
+    } else if(A[1]==='unresp' && A[2]==null){
+      key='breath'; phrase='Check breathing. Normal, gasping, or not breathing?';
+    } else if(A[1]==='unresp' && A[2] && A[2]!=='normal' && A[3]==null){
+      key='pulse'; phrase='Check the central pulse. Feel for no more than ten seconds.';
+    }
+    if(key){ if(key!==assessVoiceKey){ assessVoiceKey=key; speak(phrase); } }
+    else { assessVoiceKey=null; }
+  }
+
   function evaluate(){
     $('q2').classList.toggle('off', A[1]!=='unresp');
     $('q3').classList.toggle('off', A[1]!=='unresp' || !A[2] || A[2]==='normal');
@@ -889,6 +913,7 @@
         else o.className='qb';
       });
       evaluate();
+      assessGuide();
     });
   });
   $('assessToggle').addEventListener('click',function(){ $('assessCard').classList.toggle('collapsed'); });
@@ -897,6 +922,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(o){o.className='qb';});
     $('q2').classList.add('off'); $('q3').classList.add('off');
     clearVerdict();
+    assessVoiceKey=null; assessGuide();
   });
 
   /* ---------- Doses ---------- */
@@ -906,17 +932,16 @@
     var w=wt, adr=Math.min(0.01*w,1);
     var ett = w<3.5?3.0 : w<6?3.5 : w<10?3.5 : w<12?4.0 : w<15?4.5 : w<19?5.0 : w<24?5.5 : w<30?6.0 : w<37?6.5 : 7.0;
     var blade = w<3.5?'Miller 0' : w<10?'Miller 1' : w<18?'Miller 1\u20132' : w<30?'Mac 2' : 'Mac 3';
-    var CMAP={'Adrenaline':'red','Defib':'amber','ETT size':'green','Blade':'green','Fentanyl':'blue','Ketamine':'blue','Midazolam':'blue','Vecuronium':'blue'};
+    var lma = w<5?'1' : w<10?'1.5' : w<20?'2' : w<30?'2.5' : w<50?'3' : '4';
+    var CMAP={'Adrenaline':'red','Defib':'amber','ETT size':'green','Blade':'green','LMA size':'green','Dextrose 10%':'green'};
     function cell(val,sub,lab){ return '<div class="qr '+(CMAP[lab]||'')+'"><b>'+val+'</b>'+(sub?'<u>'+sub+'</u>':'')+'<span>'+lab+'</span></div>'; }
     var g='<div class="grid">';
     g+=cell(fmt(adr*10,1)+' mL', fmt(adr,2)+' mg · 1:10,000', 'Adrenaline');
     g+=cell(fmt(2*w,0)+'\u2192'+fmt(4*w,0)+' J','2\u21924 J/kg','Defib');
-    g+=cell(fmt(ett,1),'cuffed','ETT size');
+    g+=cell(fmt(ett,1),'cuffed · depth '+fmt(ett*3,1)+' cm at lip','ETT size');
     g+=cell(blade,'','Blade');
-    g+=cell(fmt(Math.min(1*w,50),0)+'\u2013'+fmt(Math.min(2*w,100),0)+' \u00b5g','1\u20132 \u00b5g/kg','Fentanyl');
-    g+=cell(fmt(1*w,0)+'\u2013'+fmt(2*w,0)+' mg','1\u20132 mg/kg','Ketamine');
-    g+=cell(fmt(0.1*w,1)+'\u2013'+fmt(Math.min(0.2*w,10),1)+' mg','0.1\u20130.2/kg','Midazolam');
-    g+=cell(fmt(0.1*w,1)+' mg','0.1 mg/kg','Vecuronium');
+    g+=cell(lma,'supraglottic airway','LMA size');
+    g+=cell(fmt(5*w,0)+' mL','10% · 0.5 g/kg · if glucose <60','Dextrose 10%');
     g+='</div>';
     q.innerHTML='<div class="card"><h3>\u26a1 Quick reference \u2014 '+fmt(w,1)+' kg</h3>'+g+'</div>';
   }
@@ -965,7 +990,7 @@
     var lma = w<5?'1' : w<10?'1.5' : w<20?'2' : w<30?'2.5' : w<50?'3' : '4';
     s+=card('green','LMA size', lma, 'supraglottic airway');
     s+=card('green','Fluid bolus', fmt(10*w,0)+'–'+fmt(20*w,0)+' mL', '10–20 mL/kg NS, reassess');
-    s+=card('green','Dextrose 10%', fmt(5*w,0)+' mL', '0.5 g/kg if hypoglycemic');
+    s+=card('green','Dextrose 10%', fmt(5*w,0)+' mL', '0.5 g/kg if glucose <60 mg/dL (hypoglycemia)');
     var nal=cap(0.1*w,2);
     s+=card('green','Naloxone', fmt(nal.v,2)+' mg', '0.1 mg/kg IV/IO · max 2 mg', nal.capped);
     s+='</div>';
@@ -1255,10 +1280,12 @@
   $('bVoice').addEventListener('click',function(){
     voiceOn=!voiceOn; setVoiceBtn();
     try{ localStorage.setItem('cbcVoice',voiceOn?'1':'0'); }catch(e){}
-    if(voiceOn){ lastVoiceKey=null; speak('Voice guidance on.'); }   /* also primes speech on this user gesture */
+    if(voiceOn){ lastVoiceKey=null; speak('Voice guidance on.'); assessVoiceKey=null; setTimeout(assessGuide,1200); }   /* also primes speech on this user gesture */
     else { try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){} lastVoiceKey=null; }
   });
-  try{ if(localStorage.getItem('cbcVoice')==='1'){ voiceOn=true; setVoiceBtn(); } }catch(e){}
+  /* Voice guidance is ON by default; only a saved "off" preference disables it. */
+  try{ voiceOn = (localStorage.getItem('cbcVoice')!=='0'); }catch(e){ voiceOn=true; }
+  setVoiceBtn();
 
   /* ---------- Trophy chip ---------- */
   $('trophyChip').addEventListener('click',function(e){
@@ -1298,7 +1325,9 @@
   var AUTH = window.cbcAuth || null, DB = window.cbcDB || null;
   function fbReady(){ return !!(AUTH && DB); }
   function esc(s){ return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function showGate(v){ $('authGate').classList.toggle('hidden', !v); }
+  var appEntered=false;
+  function onAppEntered(){ if(appEntered) return; appEntered=true; setTimeout(function(){ if(typeof assessGuide==='function') assessGuide(); },500); }
+  function showGate(v){ $('authGate').classList.toggle('hidden', !v); if(!v) onAppEntered(); }
   function setEmgBanner(v){ $('emgBanner').classList.toggle('hidden', !v); }
   function doLogin(){
     if(!fbReady()){ $('authErr').textContent='Offline — cannot sign in right now.'; return; }
