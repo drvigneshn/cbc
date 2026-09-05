@@ -510,7 +510,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.4.5</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.4.6</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -738,7 +738,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.5 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.6 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -757,7 +757,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.5</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.6</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -890,9 +890,10 @@
   /* Spoken walkthrough of the rapid assessment — announces the current step,
      tracking the quick-assessment questions, and calls "start CPR" once the
      verdict turns to an arrest (the START CPR button starts blinking). */
-  var assessVoiceKey=null;
+  var assessVoiceKey=null, assessTimer=null, assessReps=0, assessPhrase='';
+  function clearAssessTimer(){ if(assessTimer){ clearInterval(assessTimer); assessTimer=null; } }
   function assessGuide(){
-    if(typeof voiceOn==='undefined' || !voiceOn || running) return;
+    if(typeof voiceOn==='undefined' || !voiceOn || running){ clearAssessTimer(); return; }
     var key=null, phrase='';
     if($('bCode').classList.contains('ready')){
       key='cpr'; phrase='Start C P R now. Tap the start C P R button to begin compressions.';
@@ -903,8 +904,16 @@
     } else if(A[1]==='unresp' && A[2] && A[2]!=='normal' && A[3]==null){
       key='pulse'; phrase='Check the central pulse. Feel for no more than ten seconds.';
     }
-    if(key){ if(key!==assessVoiceKey){ assessVoiceKey=key; speak(phrase); } }
-    else { assessVoiceKey=null; }
+    if(key){
+      if(key!==assessVoiceKey){
+        assessVoiceKey=key; assessPhrase=phrase; assessReps=0; clearAssessTimer();
+        speak(phrase);                       /* say it, then repeat twice more at 15 s (3 total) */
+        assessTimer=setInterval(function(){
+          if(!voiceOn || running || assessVoiceKey!==key || assessReps>=2){ clearAssessTimer(); return; }
+          assessReps++; speak(assessPhrase);
+        }, 15000);
+      }
+    } else { assessVoiceKey=null; clearAssessTimer(); }
   }
 
   function evaluate(){
@@ -1090,7 +1099,7 @@
   var ADR_INT=180, RHY_INT=120;
 
   /* ---------- Voice guidance (Web Speech API — on-device, no network/library) ---------- */
-  var voiceOn=false, lastVoiceKey=null, voiceRepeatAt=0, voiceRepeats=0;
+  var voiceOn=false, lastVoiceKey=null, voiceRepeatAt=0, voiceRepeats=0, roscReps=0, roscRepeatAt=0;
   function speak(text){
     if(!voiceOn || !('speechSynthesis' in window)) return;
     try{
@@ -1115,7 +1124,11 @@
       $('cycRhythm').classList.remove('due'); $('cycAdr').classList.remove('due');
       $('statusBar').className='statusbar codeonly s-rosc';
       $('statusBar').textContent='ROSC — reassess: airway · breathing · BP · glucose · temperature';
-      if(voiceOn && lastVoiceKey!=='rosc'){ lastVoiceKey='rosc'; speak('Return of circulation. Begin post arrest care. Check airway, breathing, blood pressure, glucose and temperature.'); }
+      var roscPhrase='Return of circulation. Begin post arrest care. Check airway, breathing, blood pressure, glucose and temperature.';
+      if(voiceOn){
+        if(lastVoiceKey!=='rosc'){ lastVoiceKey='rosc'; roscReps=0; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); }
+        else if(roscReps<2 && Math.floor(t)>=roscRepeatAt){ roscReps++; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); }
+      }
       return;
     }
     var rRem=lastRhythm===null?RHY_INT-t:RHY_INT-(t-lastRhythm);
@@ -1205,7 +1218,7 @@
 
   $('bCode').addEventListener('click',function(){
     if(!running){
-      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false; lastVoiceKey=null;
+      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false; lastVoiceKey=null; clearAssessTimer();
       startClock=new Date();
       $('wtMini').value=$('wt').value; $('wtSeg').classList.toggle('empty', !(wt>0));
       $('assessCard').classList.add('collapsed');   /* fold triage away once the code is running */
