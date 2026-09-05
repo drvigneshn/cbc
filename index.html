@@ -127,6 +127,16 @@
   .htstep .stt{font-size:13px; font-weight:700; color:var(--txt);}
   .htstep .sdd{font-size:11.5px; color:var(--dim); margin-top:1px; line-height:1.45;}
   .htgotit{width:100%; border:none; border-radius:11px; padding:12px; font-size:14px; font-weight:800; color:#fff; background:var(--green); cursor:pointer;}
+  /* Voice settings sheet */
+  .vcfg-lbl{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--dim); margin:14px 2px 6px; display:flex; justify-content:space-between; align-items:baseline;}
+  .vcfg-lbl span{color:var(--txt); font-weight:800; letter-spacing:0;}
+  .vseg{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px;}
+  .vseg .segb{border:1px solid var(--line); background:var(--card2); color:var(--dim); border-radius:9px; padding:11px 4px; font-size:12px; font-weight:700; cursor:pointer; text-align:center;}
+  .vseg .segb.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  #vRate{width:100%; margin:2px 0 2px; accent-color:var(--blue);}
+  .vnote{font-size:11px; color:var(--dim); background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:9px 11px; margin:12px 0 10px; line-height:1.5;}
+  .vnote b{color:var(--txt); font-weight:700;}
+  .vclose{width:100%; border:1px solid var(--line); background:transparent; color:var(--dim); border-radius:11px; padding:11px; font-size:14px; font-weight:700; cursor:pointer; margin-top:8px;}
   .htdont{display:flex; align-items:center; justify-content:center; gap:7px; font-size:11.5px; color:var(--dim); margin-top:12px; cursor:pointer;}
   .htdont .box{width:16px; height:16px; border:1.5px solid var(--dim); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--green); background:transparent;}
   .htdont.on .box{border-color:var(--green);}
@@ -510,12 +520,13 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.4.6</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.5.0</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
         <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel">&#128737;</button>
         <button class="helpbtn" id="bLogsTop" title="Saved logs &amp; account" aria-label="Saved logs and account">&#9729;</button>
+        <button class="helpbtn" id="bVoiceCfg" title="Voice settings" aria-label="Voice settings">&#128266;</button>
         <button class="helpbtn" id="bHelp" title="How to use this app" aria-label="How to use this app">?</button>
       </div>
     </div>
@@ -738,7 +749,36 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.6 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.5.0 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+
+<div class="htoverlay hidden" id="voiceOverlay">
+  <div class="htsheet">
+    <div class="hh"><span class="em">&#128266;</span><h2>Voice settings</h2></div>
+    <p class="subh">Voices come from your device &mdash; the picker uses the closest one available here.</p>
+
+    <div class="vcfg-lbl">Accent</div>
+    <div class="vseg" id="vAccent">
+      <button class="segb" type="button" data-acc="en-IN">Indian</button>
+      <button class="segb" type="button" data-acc="en-GB">UK</button>
+      <button class="segb" type="button" data-acc="en-US">US</button>
+      <button class="segb" type="button" data-acc="en-AU">Australian</button>
+    </div>
+
+    <div class="vcfg-lbl">Voice</div>
+    <div class="vseg" id="vGender">
+      <button class="segb" type="button" data-g="female">Female</button>
+      <button class="segb" type="button" data-g="male">Male</button>
+      <button class="segb" type="button" data-g="auto">Auto</button>
+    </div>
+
+    <div class="vcfg-lbl">Speed <span id="vRateVal">1.0&times;</span></div>
+    <input type="range" id="vRate" min="0.7" max="1.3" step="0.05" value="0.95" aria-label="Speech speed">
+
+    <div class="vnote" id="vMatch">&nbsp;</div>
+    <button class="htgotit" id="vTest" type="button">&#9654; Test voice</button>
+    <button class="vclose" id="vClose" type="button">Done</button>
+  </div>
+</div>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -757,7 +797,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.6</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.5.0</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -1100,15 +1140,49 @@
 
   /* ---------- Voice guidance (Web Speech API — on-device, no network/library) ---------- */
   var voiceOn=false, lastVoiceKey=null, voiceRepeatAt=0, voiceRepeats=0, roscReps=0, roscRepeatAt=0;
-  function speak(text){
-    if(!voiceOn || !('speechSynthesis' in window)) return;
+  /* ---- Voice selection: accent + gender + speed, using whatever voices the device has ---- */
+  var voiceAccent='en-IN', voiceGender='female', voiceRate=0.95, _voices=[];
+  try{ voiceAccent=localStorage.getItem('cbcVAccent')||'en-IN'; }catch(e){}
+  try{ voiceGender=localStorage.getItem('cbcVGender')||'female'; }catch(e){}
+  try{ var _r=parseFloat(localStorage.getItem('cbcVRate')); if(_r>=0.6&&_r<=1.4) voiceRate=_r; }catch(e){}
+  function loadVoices(){ try{ _voices=window.speechSynthesis.getVoices()||[]; }catch(e){ _voices=[]; } }
+  if('speechSynthesis' in window){ loadVoices(); try{ window.speechSynthesis.onvoiceschanged=function(){ loadVoices(); if(typeof updateVoiceMatch==='function') updateVoiceMatch(); }; }catch(e){} }
+  function guessGender(v){
+    var n=(v.name||'').toLowerCase();
+    if(/\bfemale\b/.test(n)||/\bwoman\b/.test(n)) return 'female';
+    if(/\bmale\b/.test(n)||/\bman\b/.test(n)) return 'male';
+    var f=['samantha','veena','tessa','fiona','moira','karen','serena','victoria','zira','susan','linda','heera','raveena','aria','jenny','michelle','sonia','catherine','amelie','anna','helena','martha','kate','allison','ava','joana','luciana','nicky','sara','swara','kajal','neerja','isha'];
+    var m=['daniel','rishi','aaron','fred','oliver','alex','arthur','gordon','ravi','hemant','prabhat','george','guy','ryan','david','mark','thomas','james','xander','rory','sean','madhur','prabhat'];
+    for(var i=0;i<f.length;i++) if(n.indexOf(f[i])>=0) return 'female';
+    for(var j=0;j<m.length;j++) if(n.indexOf(m[j])>=0) return 'male';
+    return 'unknown';
+  }
+  function normLang(v){ return (v.lang||'').toLowerCase().replace('_','-'); }
+  function pickVoice(){
+    if(!_voices.length) loadVoices();
+    if(!_voices.length) return null;
+    var acc=(voiceAccent||'en-GB').toLowerCase();
+    var byAccent=_voices.filter(function(v){ return normLang(v)===acc; });
+    var pool=byAccent.length?byAccent:_voices.filter(function(v){ return normLang(v).indexOf('en')===0; });
+    if(!pool.length) pool=_voices.slice();
+    if(voiceGender && voiceGender!=='auto'){
+      var g=pool.filter(function(v){ return guessGender(v)===voiceGender; });
+      if(g.length) pool=g;
+    }
+    return pool[0]||null;
+  }
+  function speakWith(text,force){
+    if((!voiceOn && !force) || !('speechSynthesis' in window)) return;
     try{
       window.speechSynthesis.cancel();
       var u=new SpeechSynthesisUtterance(text);
-      u.rate=0.95; u.pitch=1; u.volume=1; u.lang='en-GB';
+      u.rate=voiceRate; u.pitch=1; u.volume=1;
+      var v=pickVoice();
+      if(v){ u.voice=v; u.lang=v.lang; } else { u.lang=voiceAccent||'en-GB'; }
       window.speechSynthesis.speak(u);
     }catch(e){}
   }
+  function speak(text){ speakWith(text,false); }
   function mmss(s){ s=Math.max(0,Math.floor(s)); return (s<600?'0':'')+Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
   function now(){ return (Date.now()-t0)/1000; }
   function beep(){ try{ var c=beep.ctx||(beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
@@ -1334,6 +1408,39 @@
   /* Voice guidance is ON by default; only a saved "off" preference disables it. */
   try{ voiceOn = (localStorage.getItem('cbcVoice')!=='0'); }catch(e){ voiceOn=true; }
   setVoiceBtn();
+
+  /* ---------- Voice settings sheet (accent · gender · speed) ---------- */
+  function accentLabel(a){ return {'en-IN':'Indian','en-GB':'UK','en-US':'US','en-AU':'Australian'}[a]||a; }
+  function rateText(){ return voiceRate.toFixed(2)+'×'; }
+  function updateVoiceMatch(){
+    var el=$('vMatch'); if(!el) return;
+    if(!('speechSynthesis' in window)){ el.innerHTML='This browser has no speech support.'; return; }
+    var v=pickVoice();
+    if(!v){ el.innerHTML='No voices detected yet on this device.'; return; }
+    var exact=normLang(v)===(voiceAccent||'').toLowerCase(), g=guessGender(v);
+    el.innerHTML='Using <b>'+(v.name||'device voice')+'</b> ('+(v.lang||'')+(g==='unknown'?'':' · '+g)+')'
+      +(exact?'':' — no '+accentLabel(voiceAccent)+' English voice on this device, using the closest match. You can add more in your device settings.');
+  }
+  function syncVoiceUI(){
+    Array.prototype.forEach.call(document.querySelectorAll('#vAccent .segb'),function(b){ b.classList.toggle('on', b.getAttribute('data-acc')===voiceAccent); });
+    Array.prototype.forEach.call(document.querySelectorAll('#vGender .segb'),function(b){ b.classList.toggle('on', b.getAttribute('data-g')===voiceGender); });
+    var r=$('vRate'); if(r) r.value=voiceRate;
+    var rv=$('vRateVal'); if(rv) rv.innerHTML=rateText();
+    updateVoiceMatch();
+  }
+  function openVoiceCfg(){ loadVoices(); syncVoiceUI(); $('voiceOverlay').classList.remove('hidden'); }
+  function closeVoiceCfg(){ $('voiceOverlay').classList.add('hidden'); }
+  if($('bVoiceCfg')) $('bVoiceCfg').addEventListener('click',openVoiceCfg);
+  if($('vClose')) $('vClose').addEventListener('click',closeVoiceCfg);
+  if($('voiceOverlay')) $('voiceOverlay').addEventListener('click',function(e){ if(e.target===this) closeVoiceCfg(); });
+  Array.prototype.forEach.call(document.querySelectorAll('#vAccent .segb'),function(b){
+    b.addEventListener('click',function(){ voiceAccent=b.getAttribute('data-acc'); try{localStorage.setItem('cbcVAccent',voiceAccent);}catch(e){} syncVoiceUI(); speakWith(accentLabel(voiceAccent)+' English voice.',true); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#vGender .segb'),function(b){
+    b.addEventListener('click',function(){ voiceGender=b.getAttribute('data-g'); try{localStorage.setItem('cbcVGender',voiceGender);}catch(e){} syncVoiceUI(); speakWith('Adrenaline due. Deliver shock.',true); });
+  });
+  if($('vRate')) $('vRate').addEventListener('input',function(){ voiceRate=parseFloat(this.value)||0.95; try{localStorage.setItem('cbcVRate',voiceRate);}catch(e){} var rv=$('vRateVal'); if(rv) rv.innerHTML=rateText(); });
+  if($('vTest')) $('vTest').addEventListener('click',function(){ speakWith('Adrenaline due, zero point one two milligrams. Deliver shock. Two minutes, reassess the rhythm.',true); });
 
   /* ---------- Trophy chip ---------- */
   $('trophyChip').addEventListener('click',function(e){
