@@ -64,9 +64,15 @@
   .qref .qr.amber{border-left-color:var(--amber); background:var(--card2); background:color-mix(in srgb, var(--amber) 9%, var(--card2));} .qref .qr.amber u{color:var(--amber);}
   .qref .qr.green{border-left-color:var(--green); background:var(--card2); background:color-mix(in srgb, var(--green) 9%, var(--card2));} .qref .qr.green u{color:var(--green);}
   .qref .qr.blue{border-left-color:var(--blue); background:var(--card2); background:color-mix(in srgb, var(--blue) 9%, var(--card2));} .qref .qr.blue u{color:var(--blue);}
-  @media (min-width:720px){ body:not(.narrow) .qref{max-width:900px;} body:not(.narrow) .qref .grid{grid-template-columns:repeat(8,1fr);} }
+  @media (min-width:720px){ body:not(.narrow) .qref{max-width:900px;} body:not(.narrow) .qref .grid{grid-template-columns:repeat(6,1fr);} }
   @media (min-width:1000px){ body:not(.narrow) .qref{max-width:1240px;} }
   body.narrow .qref{max-width:560px;}
+  /* Reversible causes / MR SOPA / DOPE now sit just under the quick reference */
+  #rcSec{max-width:560px; margin:0 auto 12px;}
+  @media (min-width:720px){ body:not(.narrow) #rcSec{max-width:900px;} }
+  @media (min-width:1000px){ body:not(.narrow) #rcSec{max-width:1240px;} }
+  body.narrow #rcSec{max-width:560px;}
+  body.cockpit .stageright #rcSec{max-width:none; margin:0 0 10px;}
   /* Keep the top controls the same width as the content below, so it's symmetrical */
   .topstack, .topstack > *, .apphead{max-width:560px; margin-left:auto; margin-right:auto;}
   @media (min-width:720px){ body:not(.narrow) .topstack, body:not(.narrow) .topstack > *, body:not(.narrow) .apphead{max-width:900px;} }
@@ -351,10 +357,17 @@
     body:not(.narrow) .col-left{flex:1 1 45%; order:0;}
     body:not(.narrow) .col-right{flex:1 1 45%; order:0;}
   }
+  /* Desktop (Auto): the original three-column dashboard */
+  @media (min-width:1000px){
+    body:not(.narrow) .dash{flex-direction:row; align-items:flex-start; max-width:1240px;}
+    body:not(.narrow) .col-left{flex:1;} body:not(.narrow) .col-right{flex:1;}
+    body:not(.narrow) .col-center{flex:1; order:0;}
+  }
+
   .stage{display:block;} .stageright{min-width:0;}
 
   /* ---- Cockpit split: console pinned to a left rail, quick-reference + drug cards fill the right.
-     Toggled by JS (body.cockpit) on laptops, short-landscape phones, and forced Split mode. ---- */
+     Opt-in via the Split layout button (body.cockpit); Auto keeps the classic stacked layout. ---- */
   body.cockpit .stage{display:flex; align-items:flex-start; gap:14px; max-width:1400px; margin:0 auto; padding:0 10px;}
   body.cockpit .apphead{max-width:1400px;}
   body.cockpit .topstack, body.cockpit .topstack > *{max-width:none;}
@@ -378,10 +391,8 @@
   .ptab.on{background:var(--blue); border-color:var(--blue); color:#fff;}
   body.autonarrow.code-active .ptabs{display:grid;}
   body.autonarrow.code-active.pt-drugs #colRight,
-  body.autonarrow.code-active.pt-drugs #rcSec,
   body.autonarrow.code-active.pt-drugs .col-center{display:none;}
   body.autonarrow.code-active.pt-airway #colLeft,
-  body.autonarrow.code-active.pt-airway #rcSec,
   body.autonarrow.code-active.pt-airway .col-center{display:none;}
   body.autonarrow.code-active.pt-ref #colLeft,
   body.autonarrow.code-active.pt-ref #colRight{display:none;}
@@ -492,7 +503,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.4.0</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.4.1</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -552,6 +563,42 @@
 
 <div class="stageright">
 <div class="qref" id="quickRef"></div>
+
+    <details class="sec" id="rcSec" style="--accent:var(--violet)" open>
+      <summary>Reversible causes &mdash; 6 H's &amp; 5 T's</summary>
+      <div class="body">
+        <div class="seq">Tap a cause to see what to check &amp; do</div>
+
+        <div class="rcgrp">The 6 H's</div>
+        <div class="causegrid">
+          <details class="cause"><summary>Hypoxia</summary><div class="chint">Maximise oxygen. Confirm ETT position and bilateral air entry; ventilate effectively.</div></details>
+          <details class="cause"><summary>Hypovolaemia</summary><div class="chint">IV/IO fluid bolus 10&ndash;20 mL/kg. Control haemorrhage; consider blood if bleeding.</div></details>
+          <details class="cause"><summary>Hydrogen ion (acidosis)</summary><div class="chint">Ensure effective ventilation and treat the cause. Sodium bicarbonate only if prolonged arrest or known metabolic acidosis / hyperkalaemia.</div></details>
+          <details class="cause"><summary>Hypo / Hyperkalaemia &amp; metabolic</summary><div class="chint">Check ABG, electrolytes, glucose. Hyperkalaemia: calcium, bicarbonate, insulin&ndash;dextrose, salbutamol.</div></details>
+          <details class="cause"><summary>Hypoglycaemia</summary><div class="chint">Check blood glucose. Give Dextrose 10% 5 mL/kg (0.5 g/kg) if glucose &lt;60 mg/dL.</div></details>
+          <details class="cause"><summary>Hypothermia</summary><div class="chint">Check core temperature. Active rewarming; continue resuscitation until warm ("not dead until warm and dead").</div></details>
+        </div>
+
+        <div class="rcgrp">The 5 T's</div>
+        <div class="causegrid">
+          <details class="cause"><summary>Tension pneumothorax</summary><div class="chint">Absent breath sounds, tracheal shift. Needle decompression (2nd ICS, mid-clavicular line), then chest drain.</div></details>
+          <details class="cause"><summary>Tamponade (cardiac)</summary><div class="chint">Muffled heart sounds, distended neck veins. Echo if available; pericardiocentesis.</div></details>
+          <details class="cause"><summary>Toxins</summary><div class="chint">Consider ingestion / overdose. Specific antidote (e.g. naloxone for opioids); call poison centre.</div></details>
+          <details class="cause"><summary>Thrombosis &mdash; pulmonary (PE)</summary><div class="chint">Consider in sudden collapse with risk factors. Thrombolysis if strongly suspected.</div></details>
+          <details class="cause"><summary>Thrombosis &mdash; coronary</summary><div class="chint">Rare in children; consider with cardiac history or Kawasaki disease.</div></details>
+        </div>
+
+        <div class="acrocard">
+          <b>MR SOPA</b> <span class="cap">&mdash; bag-mask ventilation not working</span>
+          <div class="row"><b>M</b>ask seal &middot; <b>R</b>eposition airway &middot; <b>S</b>uction mouth/nose &middot; <b>O</b>pen mouth &middot; <b>P</b>ressure increase &middot; <b>A</b>irway (LMA/ETT)</div>
+        </div>
+        <div class="acrocard">
+          <b>DOPE</b> <span class="cap">&mdash; intubated patient suddenly deteriorates</span>
+          <div class="row"><b>D</b>isplacement of tube &middot; <b>O</b>bstruction (secretions/kink) &middot; <b>P</b>neumothorax &middot; <b>E</b>quipment failure (circuit, O&#8322;, bag)</div>
+        </div>
+      </div>
+    </details>
+
 
 <div class="dash">
 
@@ -645,41 +692,6 @@
   <div class="col col-right">
     <div id="colRight"></div>
 
-    <details class="sec" id="rcSec" style="--accent:var(--violet)" open>
-      <summary>Reversible causes &mdash; 6 H's &amp; 5 T's</summary>
-      <div class="body">
-        <div class="seq">Tap a cause to see what to check &amp; do</div>
-
-        <div class="rcgrp">The 6 H's</div>
-        <div class="causegrid">
-          <details class="cause"><summary>Hypoxia</summary><div class="chint">Maximise oxygen. Confirm ETT position and bilateral air entry; ventilate effectively.</div></details>
-          <details class="cause"><summary>Hypovolaemia</summary><div class="chint">IV/IO fluid bolus 10&ndash;20 mL/kg. Control haemorrhage; consider blood if bleeding.</div></details>
-          <details class="cause"><summary>Hydrogen ion (acidosis)</summary><div class="chint">Ensure effective ventilation and treat the cause. Sodium bicarbonate only if prolonged arrest or known metabolic acidosis / hyperkalaemia.</div></details>
-          <details class="cause"><summary>Hypo / Hyperkalaemia &amp; metabolic</summary><div class="chint">Check ABG, electrolytes, glucose. Hyperkalaemia: calcium, bicarbonate, insulin&ndash;dextrose, salbutamol.</div></details>
-          <details class="cause"><summary>Hypoglycaemia</summary><div class="chint">Check blood glucose. Give Dextrose 10% 5 mL/kg (0.5 g/kg) if glucose &lt;60 mg/dL.</div></details>
-          <details class="cause"><summary>Hypothermia</summary><div class="chint">Check core temperature. Active rewarming; continue resuscitation until warm ("not dead until warm and dead").</div></details>
-        </div>
-
-        <div class="rcgrp">The 5 T's</div>
-        <div class="causegrid">
-          <details class="cause"><summary>Tension pneumothorax</summary><div class="chint">Absent breath sounds, tracheal shift. Needle decompression (2nd ICS, mid-clavicular line), then chest drain.</div></details>
-          <details class="cause"><summary>Tamponade (cardiac)</summary><div class="chint">Muffled heart sounds, distended neck veins. Echo if available; pericardiocentesis.</div></details>
-          <details class="cause"><summary>Toxins</summary><div class="chint">Consider ingestion / overdose. Specific antidote (e.g. naloxone for opioids); call poison centre.</div></details>
-          <details class="cause"><summary>Thrombosis &mdash; pulmonary (PE)</summary><div class="chint">Consider in sudden collapse with risk factors. Thrombolysis if strongly suspected.</div></details>
-          <details class="cause"><summary>Thrombosis &mdash; coronary</summary><div class="chint">Rare in children; consider with cardiac history or Kawasaki disease.</div></details>
-        </div>
-
-        <div class="acrocard">
-          <b>MR SOPA</b> <span class="cap">&mdash; bag-mask ventilation not working</span>
-          <div class="row"><b>M</b>ask seal &middot; <b>R</b>eposition airway &middot; <b>S</b>uction mouth/nose &middot; <b>O</b>pen mouth &middot; <b>P</b>ressure increase &middot; <b>A</b>irway (LMA/ETT)</div>
-        </div>
-        <div class="acrocard">
-          <b>DOPE</b> <span class="cap">&mdash; intubated patient suddenly deteriorates</span>
-          <div class="row"><b>D</b>isplacement of tube &middot; <b>O</b>bstruction (secretions/kink) &middot; <b>P</b>neumothorax &middot; <b>E</b>quipment failure (circuit, O&#8322;, bag)</div>
-        </div>
-      </div>
-    </details>
-
     <div class="qcard codeonly">
       <h3>CPR quality &mdash; coach every cycle</h3>
       <div class="qlist">
@@ -719,7 +731,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.0 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.1 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -738,7 +750,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.0</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.1</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -1544,9 +1556,9 @@
      cockpit  = console pinned to a left rail (laptop, short-landscape phone, forced Split)
      autonarrow = phone-portrait, where a running code shows the Drugs/Airway/Reference tabs */
   function computeLayout(){
-    var b=document.body, w=window.innerWidth, h=window.innerHeight, land=w>h;
+    var b=document.body, w=window.innerWidth;
     var forcedNarrow=b.classList.contains('narrow'), forcedSplit=b.classList.contains('tab');
-    var cockpit = !forcedNarrow && ( w>=1000 || (forcedSplit && w>=700) || (land && h<=540 && w>=640) );
+    var cockpit = !forcedNarrow && forcedSplit && w>=700;
     b.classList.toggle('cockpit', cockpit);
     b.classList.toggle('autonarrow', !cockpit && (forcedNarrow || w<=719));
   }
