@@ -57,7 +57,7 @@
   .qref .card h3{font-size:11.5px; color:var(--txt); font-weight:800; letter-spacing:.2px; margin-bottom:9px;}
   .qref .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; align-items:stretch;}
   .qref .qr{background:var(--card2); border-left:3px solid var(--line); border-radius:6px; padding:7px 7px; text-align:left; display:flex; flex-direction:column; justify-content:flex-start; height:100%; min-height:52px; box-sizing:border-box;}
-  .qref .qr b{font-size:14.5px; display:block; font-variant-numeric:tabular-nums; line-height:1.1; color:var(--txt);}
+  .qref .qr b{font-size:16px; display:block; font-variant-numeric:tabular-nums; line-height:1.1; color:var(--txt);}
   .qref .qr u{font-size:9px; text-decoration:none; color:var(--dim); display:block; line-height:1.2; margin-top:1px;}
   .qref .qr span{font-size:9px; color:var(--txt); font-weight:700; text-transform:uppercase; letter-spacing:.3px; display:block; margin-top:1px;}
   .qref .qr.red{border-left-color:var(--red); background:var(--card2); background:color-mix(in srgb, var(--red) 9%, var(--card2));} .qref .qr.red u{color:var(--red);}
@@ -84,9 +84,9 @@
   body.narrow .bigbtn{padding:8px 26px;}
   body.narrow .statusbar{padding:6px 10px; font-size:13.5px;}
   body.narrow .rhythmbar, body.narrow .tactions{padding:4px 10px 0; gap:4px;}
-  body.narrow .rb, body.narrow .act{min-height:36px; font-size:12.5px;}
+  body.narrow .rb, body.narrow .act{min-height:42px; font-size:12.5px;}
   body.narrow .utilrow{padding:3px 10px 6px;}
-  body.narrow .util, body.narrow .seg{min-height:36px; height:36px;}
+  body.narrow .util, body.narrow .seg{min-height:42px; height:42px;}
   header{padding:8px 14px 10px; display:flex; flex-direction:column; gap:9px;}
   .headtop{display:flex; align-items:center; gap:10px;}
   .logo{width:30px; height:30px; border-radius:8px; background:var(--logo); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; color:#fff;}
@@ -270,7 +270,7 @@
   .rhythmbar{display:none; grid-template-columns:1fr 1fr; gap:5px; padding:5px 12px 0;}
   .tactions{display:none; grid-template-columns:repeat(2,1fr); gap:5px; padding:5px 12px 0;}
   .code-active .rhythmbar, .code-active .tactions{display:grid;}
-  .rb, .act{min-height:40px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+  .rb, .act{min-height:46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
     border:none; border-radius:9px; font-weight:700; font-size:13px; cursor:pointer; padding:5px; line-height:1.12; text-align:center;}
   .rb{background:var(--card2); border:1px solid var(--line); color:var(--txt);}
   .rb span{font-size:9.5px; font-weight:400; color:var(--dim); text-transform:uppercase; letter-spacing:.4px;}
@@ -302,10 +302,10 @@
 
   /* Secondary utility row */
   .utilrow{display:flex; flex-wrap:wrap; gap:5px; align-items:center; padding:4px 12px 7px; opacity:.92;}
-  .util{flex:1; min-width:80px; min-height:40px; height:40px; border:1px solid var(--line); background:var(--card2); color:var(--dim);
+  .util{flex:1; min-width:80px; min-height:44px; height:44px; border:1px solid var(--line); background:var(--card2); color:var(--dim);
     border-radius:7px; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;}
   .util.on{background:var(--blue); border-color:var(--blue); color:#fff;}
-  .seg{display:flex; align-items:stretch; min-height:40px; height:40px; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card2);}
+  .seg{display:flex; align-items:stretch; min-height:44px; height:44px; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card2);}
   .seg .seglbl{font-size:10px; color:var(--dim); font-weight:700; padding:0 8px; text-transform:uppercase; letter-spacing:.5px;}
   .segb{border:none; background:transparent; color:var(--dim); font-size:10.5px; font-weight:700; padding:6px 9px; cursor:pointer; border-left:1px solid var(--line);}
   .segb.on{background:var(--blue); color:#fff;}
@@ -316,7 +316,7 @@
   .wtdot{position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%; background:var(--amber);}
   .wtseg.empty .wtdot{animation:blinkdot 1s steps(1,end) infinite;}
   .wtseg:not(.empty) .wtdot{background:var(--green); animation:none;}
-  .wmini{border:none; background:transparent; color:var(--txt); font-size:13px; font-weight:800; width:52px; text-align:center; padding:5px 4px; outline:none; -moz-appearance:textfield;}
+  .wmini{border:none; background:transparent; color:var(--txt); font-size:18px; font-weight:800; width:56px; text-align:center; padding:5px 4px; outline:none; -moz-appearance:textfield;}
   .wmini::-webkit-outer-spin-button,.wmini::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
   .wmini::placeholder{color:var(--amber); font-weight:700;}
   .sugarutil{position:relative;}
@@ -438,6 +438,13 @@
   .chip{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:16px; padding:5px 10px; font-size:11.5px; cursor:pointer;}
   .chip:active{background:var(--blue); color:#fff;}
   .est{font-size:10.5px; color:var(--dim); margin-top:7px;}
+  .est.warn{font-size:12px; font-weight:700; color:var(--amber); background:color-mix(in srgb,var(--amber) 12%,var(--card)); border:1px solid var(--amber); border-radius:8px; padding:8px 10px; line-height:1.4;}
+  /* Photosensitivity / reduced-motion: keep cues visible but stop the strobing */
+  @media (prefers-reduced-motion: reduce){
+    .tcyc.due, .tring.due, .statusbar, .bigbtn.ready, .act.cue::after, .rb.cue::after,
+    .wtseg.empty, .wtseg.empty .wtdot, .sugarutil:not(.done), .sugarutil:not(.done) .dot,
+    .emgbanner .dot{ animation:none !important; }
+  }
 
   details.sec{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
   details.sec>summary{list-style:none; cursor:pointer; padding:9px 12px; font-size:11px; font-weight:700;
@@ -450,9 +457,9 @@
   .seq{font-size:10px; color:var(--dim); margin:0 2px 7px;}
   .doses{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
   .dose{background:var(--card2); border-radius:8px; padding:7px 9px; border-left:3px solid var(--line);}
-  .dose .n{font-size:10.5px; color:var(--txt); font-weight:700;}
-  .dose .v{font-size:16px; font-weight:800; margin-top:1px;}
-  .dose .s{font-size:9px; color:var(--dim); margin-top:1px; line-height:1.3;}
+  .dose .n{font-size:11.5px; color:var(--txt); font-weight:700;}
+  .dose .v{font-size:18px; font-weight:800; margin-top:1px;}
+  .dose .s{font-size:10px; color:var(--dim); margin-top:1px; line-height:1.35;}
   .dose.red{border-left-color:var(--red);} .dose.amber{border-left-color:var(--amber);}
   .dose.blue{border-left-color:var(--blue);} .dose.green{border-left-color:var(--green);}
   .capped{color:var(--amber); font-size:9.5px; font-weight:700;}
@@ -529,7 +536,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.5.5</span></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.6.0</span></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -760,7 +767,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.5.5 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.0 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -808,7 +815,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.5.5</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.6.0</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -819,6 +826,7 @@
     <div class="dgtext">
       <p>Code Blue Companion is a <b>decision-support aid for trained clinicians</b> during paediatric resuscitation. It performs weight-based dose calculations aligned with AHA PALS 2020/2025 and APLS estimates.</p>
       <p>A trained clinician must <b>independently verify every dose, energy and calculation before administration</b>. This tool assists recall and calculation only &mdash; it does not replace clinical judgment, is not a medical device, and does not diagnose or treat. The treating clinician remains fully responsible for all decisions.</p>
+      <p><b>Scope:</b> infants and children <b>beyond the newborn period</b>. Not for delivery-room or newborn (NRP) resuscitation, which uses different compression ratios and drugs.</p>
       <p>Do not enter patient-identifying information.</p>
     </div>
     <div class="dgwarn">Verify every dose before administration.</div>
@@ -1126,7 +1134,14 @@
 
   function wSum(){ $('wSummary').textContent = wt>0 ? fmt(wt,2)+' kg' : ''; }
   function collapseWeight(){ if(wt>0) $('wCard').classList.add('collapsed'); }
-  function applyWeight(v){ wt=parseFloat(v)||0; ageY=null; $('estnote').textContent=''; $('wtSeg').classList.toggle('empty', !(wt>0)); wSum(); if(!(wt>0)) $('wCard').classList.remove('collapsed'); if(typeof saveState==='function') saveState(); }
+  function weightWarn(){
+    var el=$('estnote'); if(!el) return;
+    if(wt>0 && (wt<2.5 || wt>80)){
+      el.textContent='⚠ '+fmt(wt,1)+' kg is unusual for a child — please confirm it is correct'+(wt<2.5?' (newborns use NRP, not this tool).':'.');
+      el.classList.add('warn');
+    } else { el.classList.remove('warn'); if(el.classList.contains('warn')) el.textContent=''; }
+  }
+  function applyWeight(v){ wt=parseFloat(v)||0; ageY=null; $('estnote').textContent=''; $('estnote').classList.remove('warn'); $('wtSeg').classList.toggle('empty', !(wt>0)); wSum(); weightWarn(); if(!(wt>0)) $('wCard').classList.remove('collapsed'); if(typeof saveState==='function') saveState(); }
   $('wt').addEventListener('blur', collapseWeight);
   $('wtMini').addEventListener('blur', collapseWeight);
   $('wLabel').addEventListener('click',function(){
@@ -1317,7 +1332,7 @@
       $('rbShock').classList.remove('on'); $('rbNon').classList.remove('on');
       document.body.classList.remove('rhythm-shock','rhythm-nonshock');
       $('bSugar').classList.remove('done'); $('sugarTxt').textContent='Blood sugar';
-      $('bIntub').classList.remove('intub-on'); $('bIntub').textContent='Intubated?';
+      $('bIntub').classList.remove('intub-on','act-off'); $('bIntub').textContent='Intubated?';
       ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
       $('statusBar').className='statusbar codeonly s-select'; $('statusBar').textContent='Check the monitor — Shockable or Non-shockable rhythm?';
       $('log').innerHTML=''; document.body.classList.add('code-active');
@@ -1434,16 +1449,21 @@
   });
 
   /* Intubated marker — auto-switches CPR to continuous compressions */
-  $('bIntub').addEventListener('click',function(){ if(!running)return;
-    intubated=!intubated;
-    this.classList.toggle('intub-on',intubated);
-    this.textContent=intubated?'Intubated ✓':'Intubated?';
-    if(intubated){
-      addLog('Intubated');
-      cprRatio='cont';
-      Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on', o.getAttribute('data-r')==='cont'); });
-      addLog('CPR ratio → continuous compressions (advanced airway)');
-    }
+  $('bIntub').addEventListener('click',function(){
+    if(!running || intubated || this.classList.contains('act-off')) return;   /* one-way; undo to reverse */
+    var pRatio=cprRatio, bi=this;
+    intubated=true;
+    bi.classList.add('intub-on','act-off');
+    bi.textContent='Intubated ✓';
+    cprRatio='cont';
+    Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on', o.getAttribute('data-r')==='cont'); });
+    addLog('Intubated · CPR ratio → continuous compressions (advanced airway)');
+    pushUndo(function(){
+      intubated=false;
+      bi.classList.remove('intub-on','act-off'); bi.textContent='Intubated?';
+      cprRatio=pRatio;
+      Array.prototype.forEach.call(document.querySelectorAll('#ratioSeg .segb'),function(o){ o.classList.toggle('on', o.getAttribute('data-r')===pRatio); });
+    });
     if(typeof saveState==='function') saveState();
   });
 
