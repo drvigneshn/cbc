@@ -3,6 +3,10 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.pediaos.cbc.twa",
-    "sha256_cert_fingerprints": ["CD:34:75:45:9E:F2:40:40:A4:7C:D5:8A:AD:FB:C9:8B:35:B0:96:F0:62:B6:00:79:10:C0:7E:B8:87:F9:66:8D"]
+    "sha256_cert_fingerprints": [
+      "93:E2:38:3F:98:0B:51:A1:9B:4E:9C:05:07:53:03:02:B3:E6:6B:E4:84:03:89:5F:20:8B:2C:72:B7:AA:4E:41",
+      "15:3D:4B:D8:AF:A6:C3:68:CE:2B:81:EC:3E:CF:FF:DA:13:9A:E5:07:21:87:64:11:24:76:A4:25:0B:BB:B0:B2",
+      "79:76:DE:1F:D4:EA:80:74:94:B3:D4:CC:C2:69:33:80:FF:F3:39:7B:05:81:48:CA:58:16:CB:EA:94:72:46:1F"
+    ]
   }
 }]
