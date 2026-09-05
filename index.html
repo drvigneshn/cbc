@@ -390,12 +390,17 @@
   .ptab{border:1px solid var(--line); background:var(--card2); color:var(--dim); border-radius:9px; padding:10px 6px; font-size:12.5px; font-weight:700; cursor:pointer;}
   .ptab.on{background:var(--blue); border-color:var(--blue); color:#fff;}
   body.autonarrow.code-active .ptabs{display:grid;}
+  /* Drugs = arrest drugs + electricity · Airway = airway/RSI/infusions · Log = weight, CPR quality, code log */
   body.autonarrow.code-active.pt-drugs #colRight,
-  body.autonarrow.code-active.pt-drugs .col-center{display:none;}
+  body.autonarrow.code-active.pt-drugs .col-center,
+  body.autonarrow.code-active.pt-drugs .qcard,
+  body.autonarrow.code-active.pt-drugs .logcard{display:none;}
   body.autonarrow.code-active.pt-airway #colLeft,
-  body.autonarrow.code-active.pt-airway .col-center{display:none;}
-  body.autonarrow.code-active.pt-ref #colLeft,
-  body.autonarrow.code-active.pt-ref #colRight{display:none;}
+  body.autonarrow.code-active.pt-airway .col-center,
+  body.autonarrow.code-active.pt-airway .qcard,
+  body.autonarrow.code-active.pt-airway .logcard{display:none;}
+  body.autonarrow.code-active.pt-log #colLeft,
+  body.autonarrow.code-active.pt-log #colRight{display:none;}
 
   .wcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
   .wcard label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px;}
@@ -450,15 +455,15 @@
   .bpdbp{font-size:10.5px; color:var(--amber); text-align:center; margin-top:8px;}
 
   /* Reversible causes */
-  .rcgrp{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; margin:8px 2px 4px;}
-  .causegrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0 18px;}
-  details.cause{border-bottom:1px solid var(--line);}
-  details.cause>summary{list-style:none; cursor:pointer; padding:8px 2px; font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:9px;}
+  .rcgrp{font-size:9.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; margin:9px 2px 3px;}
+  .causegrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); gap:0 16px; align-items:stretch;}
+  details.cause{border-bottom:1px solid var(--line); min-width:0;}
+  details.cause>summary{list-style:none; cursor:pointer; padding:6px 2px; min-height:36px; box-sizing:border-box; font-size:11px; font-weight:600; line-height:1.2; display:flex; align-items:center; gap:8px;}
   details.cause>summary::-webkit-details-marker{display:none;}
-  details.cause>summary::before{content:'+'; color:var(--blue); font-weight:800; font-size:14px; width:12px; text-align:center;}
+  details.cause>summary::before{content:'+'; color:var(--blue); font-weight:800; font-size:13px; width:11px; flex:0 0 auto; text-align:center;}
   details.cause[open]>summary::before{content:'\2013';}
   details.cause[open]>summary{color:var(--blue);}
-  .chint{font-size:11px; color:var(--dim); padding:0 2px 9px 23px; line-height:1.55;}
+  .chint{font-size:10.5px; color:var(--dim); padding:0 2px 8px 21px; line-height:1.5;}
   .acrocard{background:var(--card2); border-radius:9px; padding:9px 11px; margin-top:9px;}
   .acrocard b{font-size:12.5px; color:var(--txt);}
   .acrocard .cap{font-size:10px; color:var(--dim); font-weight:400;}
@@ -505,7 +510,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.4.2</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.4.4</span><button type="button" class="trophychip" id="trophyChip">&#127942; Medshark Champion<span class="trophypop"><b>Best Pitch &mdash; Medshark Champion 2026</b>Recognised for entrepreneurial spirit: to challenge, create, collaborate and turn ideas into action.<div class="venue">ANBAI LEAD National Conclave &middot; Bangalore Baptist Hospital &middot; 29&ndash;30 Aug 2026</div></span></button></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -607,7 +612,7 @@
   <div class="ptabs" id="ptabs" role="tablist" aria-label="Reference sections">
     <button class="ptab on" type="button" data-pt="drugs">Drugs</button>
     <button class="ptab" type="button" data-pt="airway">Airway</button>
-    <button class="ptab" type="button" data-pt="ref">Reference</button>
+    <button class="ptab" type="button" data-pt="log">Log</button>
   </div>
 
   <div class="col col-left precode-hide"><div id="colLeft"></div></div>
@@ -733,7 +738,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.2 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.4.4 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="howOverlay">
   <div class="htsheet">
@@ -752,7 +757,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.2</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.4.4</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -1573,7 +1578,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('.ptab'),function(btn){
     btn.addEventListener('click',function(){
       var g=btn.getAttribute('data-pt');
-      document.body.classList.remove('pt-drugs','pt-airway','pt-ref');
+      document.body.classList.remove('pt-drugs','pt-airway','pt-log');
       document.body.classList.add('pt-'+g);
       Array.prototype.forEach.call(document.querySelectorAll('.ptab'),function(o){ o.classList.toggle('on', o===btn); });
     });
