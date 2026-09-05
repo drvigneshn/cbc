@@ -105,6 +105,10 @@
   .trophypop .venue{color:var(--dim); font-size:10.5px; margin-top:4px;}
   header .credit{font-size:13px; color:var(--txt); font-weight:600; margin-top:1px;}
   header .subtl{font-size:10px; color:var(--dim);}
+  header .subtl .ver{opacity:.6;}
+  /* Voice-synced cue: a brief pop on the element the voice just named (helps in noisy rooms) */
+  @keyframes voxflash{0%{box-shadow:0 0 0 0 rgba(74,163,255,0);} 18%{box-shadow:0 0 0 4px rgba(74,163,255,.6);} 100%{box-shadow:0 0 0 0 rgba(74,163,255,0);}}
+  .voxflash{animation:voxflash 1.1s ease-out 1;}
   header .hosp{font-size:11px; color:var(--dim); font-weight:600; margin-top:1px;}
   .hbtns{display:flex; gap:6px;}
   .hbtns .hbtn{flex:1; text-align:center;}
@@ -444,6 +448,7 @@
     .tcyc.due, .tring.due, .statusbar, .bigbtn.ready, .act.cue::after, .rb.cue::after,
     .wtseg.empty, .wtseg.empty .wtdot, .sugarutil:not(.done), .sugarutil:not(.done) .dot,
     .emgbanner .dot{ animation:none !important; }
+    .voxflash{ animation:none !important; box-shadow:0 0 0 3px rgba(74,163,255,.6) !important; }
   }
 
   details.sec{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
@@ -529,6 +534,8 @@
 </style>
 </head>
 <body class="theme-bright">
+<script>/* Pick theme before paint: saved choice, else the device's light/dark setting */
+(function(){try{var t=localStorage.getItem('cbcTheme');var ti=(t!==null&&!isNaN(parseInt(t,10)))?parseInt(t,10):((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?0:2);document.body.classList.remove('theme-monitor','theme-bright');if(ti===1)document.body.classList.add('theme-monitor');if(ti===2)document.body.classList.add('theme-bright');}catch(e){}})();</script>
 
 <div class="emgbanner hidden" id="emgBanner"><span class="dot"></span><span>Emergency mode &mdash; not logged in</span><button class="lnk" id="emgLogin">Log in</button></div>
 
@@ -536,8 +543,8 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.6.0</span></h1>
-        <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
+        <h1>Code Blue Companion</h1>
+        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.6.1</span></p>
       </div>
       <div class="hdtopbtns">
         <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel">&#128737;</button>
@@ -767,7 +774,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.0 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.1 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -815,8 +822,8 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.6.0</span></div>
-    <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.6.1</span></div>
+    <p class="dgsub">Paediatric resuscitation decision-support &middot; 1 month&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
       <div class="r">Kanchi Kamakoti CHILDS Trust Hospital, Chennai</div>
@@ -965,13 +972,14 @@
     } else if(A[1]==='unresp' && A[2] && A[2]!=='normal' && A[3]==null){
       key='pulse'; phrase='Check the central pulse. Feel for no more than ten seconds.';
     }
+    var flashId={resp:'q1',breath:'q2',pulse:'q3',cpr:'bCode'}[key];
     if(key){
       if(key!==assessVoiceKey){
         assessVoiceKey=key; assessPhrase=phrase; assessReps=0; clearAssessTimer();
-        speak(phrase);                       /* say it, then repeat twice more at 15 s (3 total) */
+        speak(phrase); if(flashId) flashCue(flashId);   /* say it + flash the step, then repeat twice more at 15 s */
         assessTimer=setInterval(function(){
           if(!voiceOn || running || assessVoiceKey!==key || assessReps>=2){ clearAssessTimer(); return; }
-          assessReps++; speak(assessPhrase);
+          assessReps++; speak(assessPhrase); if(flashId) flashCue(flashId);
         }, 15000);
       }
     } else { assessVoiceKey=null; clearAssessTimer(); }
@@ -1211,6 +1219,10 @@
     }catch(e){}
   }
   function speak(text){ speakWith(text,false); }
+  /* Flash the on-screen element(s) the voice just named — visual backup in a noisy room */
+  function flashCue(){
+    for(var i=0;i<arguments.length;i++){ (function(id){ var el=$(id); if(!el) return; el.classList.remove('voxflash'); void el.offsetWidth; el.classList.add('voxflash'); setTimeout(function(){ el.classList.remove('voxflash'); },1150); })(arguments[i]); }
+  }
   function mmss(s){ s=Math.max(0,Math.floor(s)); return (s<600?'0':'')+Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
   function now(){ return (Date.now()-t0)/1000; }
   function beep(){ try{ var c=beep.ctx||(beep.ctx=new (window.AudioContext||window.webkitAudioContext)());
@@ -1229,8 +1241,8 @@
       $('statusBar').textContent='ROSC — reassess: airway · breathing · BP · glucose · temperature';
       var roscPhrase='Return of circulation. Begin post arrest care. Check airway, breathing, blood pressure, glucose and temperature.';
       if(voiceOn){
-        if(lastVoiceKey!=='rosc'){ lastVoiceKey='rosc'; roscReps=0; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); }
-        else if(roscReps<2 && Math.floor(t)>=roscRepeatAt){ roscReps++; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); }
+        if(lastVoiceKey!=='rosc'){ lastVoiceKey='rosc'; roscReps=0; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); flashCue('statusBar'); }
+        else if(roscReps<2 && Math.floor(t)>=roscRepeatAt){ roscReps++; roscRepeatAt=Math.floor(t)+15; speak(roscPhrase); flashCue('statusBar'); }
       }
       return;
     }
@@ -1317,8 +1329,13 @@
       else if(aDue){ vkey='adrenaline'; vphrase='Adrenaline due'+(wt>0?', '+fmt(Math.min(0.1*wt,10),1)+' M L of 1 in 10,000 dilution':'')+'.'; }
       var tSec=Math.floor(t);
       if(vkey){
-        if(vkey!==lastVoiceKey){ lastVoiceKey=vkey; voiceRepeats=0; voiceRepeatAt=tSec+15; speak(vphrase); }
-        else if(voiceRepeats<2 && tSec>=voiceRepeatAt){ voiceRepeats++; voiceRepeatAt=tSec+15; speak(vphrase); }
+        var spoke=false;
+        if(vkey!==lastVoiceKey){ lastVoiceKey=vkey; voiceRepeats=0; voiceRepeatAt=tSec+15; speak(vphrase); spoke=true; }
+        else if(voiceRepeats<2 && tSec>=voiceRepeatAt){ voiceRepeats++; voiceRepeatAt=tSec+15; speak(vphrase); spoke=true; }
+        if(spoke){                        /* flash the button(s) the voice is naming */
+          if(needRhythm){ flashCue('rbShock','rbNon'); }
+          else { if(rDue) flashCue('bRhythm'); if(shockDue) flashCue('bShock'); if(aDue) flashCue('bAdr'); }
+        }
       } else { lastVoiceKey=null; }
     }
   }
@@ -1788,12 +1805,19 @@
   }
 
   /* ---------- Toggles ---------- */
-  var themes=['Navy','Monitor','Bright'], ti=2;
-  $('bTheme').addEventListener('click',function(){
-    ti=(ti+1)%3; this.textContent=themes[ti];
+  var themes=['Navy','Monitor','Bright'], ti;
+  try{ var _st=localStorage.getItem('cbcTheme'); ti=(_st!==null && !isNaN(parseInt(_st,10)))?parseInt(_st,10):null; }catch(e){ ti=null; }
+  if(ti===null){ var _pd=false; try{ _pd=window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }catch(e){} ti=_pd?0:2; }  /* default from system: Navy(dark) / Bright(light) */
+  function applyTheme(){
     document.body.classList.remove('theme-monitor','theme-bright');
     if(ti===1) document.body.classList.add('theme-monitor');
     if(ti===2) document.body.classList.add('theme-bright');
+    var b=$('bTheme'); if(b) b.textContent=themes[ti];
+  }
+  applyTheme();
+  $('bTheme').addEventListener('click',function(){
+    ti=(ti+1)%3; try{ localStorage.setItem('cbcTheme',ti); }catch(e){}
+    applyTheme();
   });
   var modes=['Auto','Portrait','Split'], mi=0;
   $('bLayout').addEventListener('click',function(){
