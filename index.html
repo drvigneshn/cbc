@@ -290,6 +290,7 @@
   .act.rhythm.cue{background:var(--card2); background:color-mix(in srgb, var(--blue) 15%, var(--card2)); border-color:var(--blue); color:var(--blue);}
   .act.rosc.cue{background:var(--card2); background:color-mix(in srgb, var(--green) 15%, var(--card2)); border-color:var(--green); color:var(--green);}
   .act.cue::after{content:''; position:absolute; top:5px; right:5px; width:9px; height:9px; border-radius:50%; background:currentColor; animation:dotblink 1s steps(1,end) infinite;}
+  .act.act-off{opacity:.38; pointer-events:none;}   /* action not currently applicable (e.g. shock on a non-shockable rhythm) */
   /* Rhythm buttons: neutral until one is needed, then cued (steady, not strobing) */
   .rb{position:relative;}
   .rb.cue{background:var(--card2); background:color-mix(in srgb, var(--blue) 15%, var(--card2)); border-color:var(--blue); color:var(--blue);}
@@ -522,7 +523,7 @@
     <div class="headtop">
       <div class="logo">&#9889;</div>
       <div style="flex:1">
-        <h1>Code Blue Companion <span class="vbadge">v5.5.3</span></h1>
+        <h1>Code Blue Companion <span class="vbadge">v5.5.4</span></h1>
         <p class="subtl">Paediatric resuscitation &middot; PALS-based</p>
       </div>
       <div class="hdtopbtns">
@@ -751,7 +752,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.5.3 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.5.4 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -799,7 +800,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.5.3</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.5.4</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 0&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -1248,12 +1249,13 @@
     $('rbNon').classList.toggle('cue', needRhythm);
     $('bRhythm').classList.toggle('cue', rDue);
     $('bShock').classList.toggle('cue', shockDue);
+    $('bShock').classList.toggle('act-off', rhythmType!=='shock' || shockedThisCheck);   /* not shockable, or already shocked this cycle → not pressable */
     $('bAdr').classList.toggle('cue', aDue);
     $('bRosc').classList.remove('cue');   /* ROSC is leader-judged — never auto-cued */
 
     /* Status line — one place to look; if several actions fall due it lists them in order */
     var cls, msg;
-    if(needRhythm){ cls='s-select'; msg='Check the monitor — Shockable or Non-shockable?'; }
+    if(needRhythm){ cls='s-select'; msg='Check the monitor — Shockable or Non-shockable rhythm?'; }
     else {
       var acts=[];
       if(rDue) acts.push('REASSESS');
@@ -1277,7 +1279,7 @@
       var vkey=null, vphrase='';
       var adrSay=' Give adrenaline'+(wt>0?', '+fmt(Math.min(0.1*wt,10),1)+' M L of 1 in 10,000 dilution':'')+'.';
       var shockSay=' Deliver shock'+(wt>0?', '+fmt((shockCount===0?2:4)*wt,0)+' joules':'')+'.';
-      if(needRhythm){ vkey='rhythm-select'; vphrase='Check the monitor. Shockable, or non-shockable?'; }
+      if(needRhythm){ vkey='rhythm-select'; vphrase='Check the monitor. Is the rhythm shockable, or non-shockable?'; }
       else if(rDue){
         vkey='reassess'+(shockDue?'-s':'')+(aDue?'-a':'');   /* key reflects what is chained, so a newly-due drug re-announces */
         vphrase='Two minutes. Reassess rhythm, check the pulse, and swap the compressor.';
@@ -1305,7 +1307,7 @@
       $('bSugar').classList.remove('done'); $('sugarTxt').textContent='Blood sugar';
       $('bIntub').classList.remove('intub-on'); $('bIntub').textContent='Intubated?';
       ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
-      $('statusBar').className='statusbar codeonly s-select'; $('statusBar').textContent='Check the monitor — Shockable or Non-shockable?';
+      $('statusBar').className='statusbar codeonly s-select'; $('statusBar').textContent='Check the monitor — Shockable or Non-shockable rhythm?';
       $('log').innerHTML=''; document.body.classList.add('code-active');
       this.textContent='END CODE'; this.classList.add('stop'); this.classList.remove('ready');
       addLog('CODE STARTED · '+startClock.toLocaleString([], {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+(wt?' · weight '+wt+' kg':'')+' · CPR '+cprRatio);
@@ -1337,7 +1339,11 @@
 
   $('bAdr').addEventListener('click',function(){ if(!running)return; lastAdr=now(); adrCount++;
     addLog('Adrenaline #'+adrCount+(wt?' ('+fmt(Math.min(0.01*wt,1),2)+' mg)':'')); loop(); });
-  $('bShock').addEventListener('click',function(){ if(!running)return; shockCount++; shockedThisCheck=true;
+  $('bShock').addEventListener('click',function(){
+    if(!running) return;
+    if(rhythmType!=='shock') return;      /* shock only counts for a shockable rhythm — never log otherwise */
+    if(shockedThisCheck) return;          /* one shock per 2-minute rhythm-check window (no double-logging) */
+    shockCount++; shockedThisCheck=true;
     var j=shockCount===1?2*wt:4*wt; addLog('Shock #'+shockCount+(wt?' ('+fmt(j,0)+' J)':'')); loop(); });
   $('bRhythm').addEventListener('click',function(){ if(!running)return; lastRhythm=now();
     addLog('Rhythm check + compressor swap · CPR quality checked'); loop(); });
@@ -1469,9 +1475,9 @@
   var htSeen=false; try{ htSeen=localStorage.getItem('cbcSeenGuide')==='1'; }catch(e){}
   if(!htSeen) htOpen();
 
-  /* ---------- Disclaimer acknowledgement gate (once per device) ---------- */
-  var dAcked=false; try{ dAcked=localStorage.getItem('cbcDisclaimerAck')==='1'; }catch(e){}
-  if(dAcked) $('dGate').classList.add('hidden');
+  /* ---------- Disclaimer acknowledgement gate — shown first on every launch ---------- */
+  /* dGate is visible by default in the markup, so it is the first screen on every open
+     (it sits above the login gate). "I understand" dismisses it for this session. */
   $('dgOk').addEventListener('click',function(){
     try{ localStorage.setItem('cbcDisclaimerAck','1'); }catch(e){}
     $('dGate').classList.add('hidden');
