@@ -1,0 +1,71 @@
+rules_version = '2';
+// Firestore security rules for Code Blue Companion.
+// Paste this into Firebase Console -> Firestore Database -> Rules -> Publish
+// (or deploy with:  firebase deploy --only firestore:rules ).
+//
+// Data model:
+//   codelogs/{id}   -> a saved resuscitation log. Field `owner` == the creator's auth uid.
+//   access/{email}  -> one approval record per user; the doc id is the user's lower-cased email.
+//
+// Security goals:
+//   * only signed-in users can touch anything;
+//   * a user can read and DELETE their own logs (needed for account deletion & the keep-last-100 prune);
+//   * logs are immutable once written (no edits);
+//   * a user may request access only as a *pending, free* record — never self-approve or grant a paid plan;
+//   * approvals / plan changes are admin-only;
+//   * everything else is denied.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() == 'n.vignesh.1996@gmail.com';
+    }
+
+    // ---------- Saved code logs ----------
+    match /codelogs/{logId} {
+      // Owner (or admin) can read and delete their own logs.
+      allow read, delete: if isSignedIn()
+        && (resource.data.owner == request.auth.uid || isAdmin());
+
+      // A user can only create a log stamped with their own uid.
+      allow create: if isSignedIn()
+        && request.resource.data.owner is string
+        && request.resource.data.owner == request.auth.uid;
+
+      // Logs are immutable for users; only admin may edit (cleanup).
+      allow update: if isAdmin();
+    }
+
+    // ---------- Access / approval records (doc id == lower-cased email) ----------
+    match /access/{email} {
+      function isOwner() {
+        return isSignedIn()
+          && request.auth.token.email != null
+          && request.auth.token.email.lower() == email;
+      }
+
+      allow read:   if isOwner() || isAdmin();
+      allow delete: if isOwner() || isAdmin();
+
+      // Self sign-up: only your own record, only pending + free (cannot self-approve).
+      allow create: if isOwner()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.plan == 'free'
+        && (!('expiresAt' in request.resource.data) || request.resource.data.expiresAt == null);
+
+      // Approving, extending, or changing a plan is admin-only.
+      allow update: if isAdmin();
+    }
+
+    // ---------- Deny everything else ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
