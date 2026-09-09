@@ -537,7 +537,7 @@
 <script>/* Pick theme before paint: saved choice, else the device's light/dark setting */
 (function(){try{var t=localStorage.getItem('cbcTheme');var ti=(t!==null&&!isNaN(parseInt(t,10)))?parseInt(t,10):((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?0:2);document.body.classList.remove('theme-monitor','theme-bright');if(ti===1)document.body.classList.add('theme-monitor');if(ti===2)document.body.classList.add('theme-bright');}catch(e){}})();</script>
 
-<div class="emgbanner hidden" id="emgBanner"><span class="dot"></span><span>Emergency mode &mdash; not logged in</span><button class="lnk" id="emgLogin">Log in</button></div>
+<div class="emgbanner hidden" id="emgBanner"><span class="dot"></span><span id="emgBannerTxt">Demo mode &mdash; not logged in</span><button class="lnk" id="emgLogin">Log in</button></div>
 
 <header class="apphead">
     <div class="headtop">
@@ -860,8 +860,8 @@
       <div class="authswitch">Access is granted by the administrator, valid 2 days. &nbsp;<button id="toLogin">&larr; Back to login</button></div>
     </div>
     <div class="authdiv"><span>or</span></div>
-    <button class="emgaccess" id="authEmg">&#128680; Emergency &mdash; use now</button>
-    <div class="emgnote">Instant access, no login. The code log is saved as an <b>emergency session</b>.</div>
+    <button class="emgaccess" id="authEmg">&#9203; Try Demo &mdash; no login</button>
+    <div class="emgnote">Try the tool without an account &mdash; up to <b>5 uses</b> on this device. After that, please log in or create an account.</div>
     <div class="authfoot">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital &middot; Decision-support aid &middot; a trained clinician verifies every dose.</div>
   </div>
 </div>
@@ -881,7 +881,7 @@
 <div class="authgate hidden" id="statusGate">
   <div class="authbox">
     <div class="authbrand"><div class="lg">&#9889;</div><h2 id="statusTitle">Awaiting approval</h2><div class="sb" id="statusMsg">&mdash;</div></div>
-    <button class="emgaccess" id="statusEmg">&#128680; Use Emergency mode</button>
+    <button class="emgaccess" id="statusEmg">&#9203; Try Demo mode</button>
     <div class="authdiv"><span>or</span></div>
     <button class="authbtn" id="statusLogout" style="background:var(--card2); color:var(--txt); border:1px solid var(--line)">Log out</button>
   </div>
@@ -1610,7 +1610,23 @@
         $('authErr').textContent = (/wrong-password|invalid-credential|user-not-found|invalid-email/.test(c)) ? 'Wrong login or password.' : (err.message||'Sign-in failed.');
       });
   }
-  function goEmergency(){ if(!fbReady()){ showGate(false); return; } AUTH.signInAnonymously().catch(function(err){ $('authErr').textContent='Emergency access failed: '+(err.message||err.code||''); }); }
+  /* ---------- Demo mode: up to DEMO_LIMIT uses per device, no login ---------- */
+  var DEMO_LIMIT=5, demoActive=false;
+  function getDemoUses(){ try{ return parseInt(localStorage.getItem('cbcDemoUses')||'0',10)||0; }catch(e){ return 0; } }
+  function demoRemaining(){ return Math.max(0, DEMO_LIMIT-getDemoUses()); }
+  function startDemo(){
+    if(demoRemaining()<=0){
+      var msg='Demo limit reached ('+DEMO_LIMIT+'/'+DEMO_LIMIT+' used). Please log in or create an account.';
+      $('authErr').textContent=msg; alert(msg); return;
+    }
+    try{ localStorage.setItem('cbcDemoUses', String(getDemoUses()+1)); }catch(e){}
+    demoActive=true; hideStatus(); showGate(false);
+    var left=demoRemaining();
+    $('emgBannerTxt').innerHTML='Demo mode &middot; '+left+' use'+(left===1?'':'s')+' left';
+    setEmgBanner(true);
+    setAcct('Demo session &middot; '+left+' use'+(left===1?'':'s')+' left');
+  }
+  function endDemo(){ demoActive=false; setEmgBanner(false); setAcct(''); showGate(true); }
   function collectEvents(){
     var out=[]; Array.prototype.forEach.call($('log').children,function(li){
       var b=li.querySelector('b'); var t=b?b.textContent:''; var e=li.textContent.replace(t,'').trim(); out.unshift({t:t,e:e});
@@ -1621,7 +1637,7 @@
     var u=AUTH.currentUser;
     try{
       DB.collection('codelogs').add({
-        owner:u.uid, sessionType:u.isAnonymous?'emergency':'account',
+        owner:u.uid, sessionType:'account',
         recordedBy:($('recBy')?$('recBy').value:'').trim(),
         weightKg:wt||null, startedAt:startClock?startClock.toISOString():null, endedAt:new Date().toISOString(),
         durationSec:Math.floor(now()), adrenaline:adrCount, shocks:shockCount, cprRatio:cprRatio,
@@ -1741,13 +1757,13 @@
   /* wiring */
   $('authLogin').addEventListener('click',doLogin);
   $('authPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
-  $('authEmg').addEventListener('click',goEmergency);
+  $('authEmg').addEventListener('click',startDemo);
   $('toSignup').addEventListener('click',function(){ $('authErr').textContent=''; showSignup(true); });
   $('toLogin').addEventListener('click',function(){ $('signupErr').textContent=''; showSignup(false); });
   $('doSignup').addEventListener('click',doSignup);
   $('suPass').addEventListener('keydown',function(e){ if(e.key==='Enter') doSignup(); });
-  $('emgLogin').addEventListener('click',function(){ if(fbReady()) AUTH.signOut(); });
-  $('statusEmg').addEventListener('click',function(){ if(fbReady()) AUTH.signInAnonymously(); });
+  $('emgLogin').addEventListener('click',endDemo);
+  $('statusEmg').addEventListener('click',startDemo);
   $('statusLogout').addEventListener('click',function(){ if(fbReady()) AUTH.signOut(); });
   $('btnLogout').addEventListener('click',function(){ if(fbReady() && confirm('Log out of this device?')){ AUTH.signOut(); $('logsOverlay').classList.add('hidden'); } });
   $('bLogsTop').addEventListener('click',openLogs);
@@ -1786,9 +1802,8 @@
   if(fbReady()){
     AUTH.onAuthStateChanged(function(user){
       showAdminBtn(false);
-      if(!user){ showGate(true); setEmgBanner(false); hideStatus(); setAcct(''); return; }
+      if(!user){ if(!demoActive) showGate(true); hideStatus(); return; }
       hideStatus();
-      if(user.isAnonymous){ showGate(false); setEmgBanner(true); setAcct('⚠ Emergency session'); return; }
       if(isAdmin(user)){ showGate(false); setEmgBanner(false); setAcct('Admin: <b>'+esc(user.email)+'</b>'); showAdminBtn(true); return; }
       DB.collection('access').doc((user.email||'').toLowerCase()).get().then(function(snap){
         if(!snap.exists){ showGate(false); setEmgBanner(false); setAcct('Signed in: <b>'+esc(user.email||'Institution')+'</b>'); return; }
