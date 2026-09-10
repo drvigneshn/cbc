@@ -409,17 +409,19 @@
   .ptab{border:1px solid var(--line); background:var(--card2); color:var(--dim); border-radius:9px; padding:10px 6px; font-size:12.5px; font-weight:700; cursor:pointer;}
   .ptab.on{background:var(--blue); border-color:var(--blue); color:#fff;}
   body.autonarrow.code-active .ptabs{display:grid;}
-  /* Drugs = arrest drugs + electricity · Airway = airway/RSI/infusions · Log = weight, CPR quality, code log */
+  /* Drugs = arrest drugs + electricity · Airway = airway/RSI/infusions · Log = weight, CPR quality, code log.
+     #wCard (patient weight) stays reachable on every tab — it must never become unreachable mid-code. */
   body.autonarrow.code-active.pt-drugs #colRight,
-  body.autonarrow.code-active.pt-drugs .col-center,
+  body.autonarrow.code-active.pt-drugs #assessCard,
   body.autonarrow.code-active.pt-drugs .qcard,
   body.autonarrow.code-active.pt-drugs .logcard{display:none;}
   body.autonarrow.code-active.pt-airway #colLeft,
-  body.autonarrow.code-active.pt-airway .col-center,
+  body.autonarrow.code-active.pt-airway #assessCard,
   body.autonarrow.code-active.pt-airway .qcard,
   body.autonarrow.code-active.pt-airway .logcard{display:none;}
   body.autonarrow.code-active.pt-log #colLeft,
   body.autonarrow.code-active.pt-log #colRight{display:none;}
+  body.autonarrow.code-active .col-center{margin-bottom:8px;}
 
   .wcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
   .wcard label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px;}
@@ -544,7 +546,7 @@
       <div class="logo">&#9889;</div>
       <div style="flex:1">
         <h1>Code Blue Companion</h1>
-        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.6.2</span></p>
+        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.6.3</span></p>
       </div>
       <div class="hdtopbtns">
         <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel">&#128737;</button>
@@ -774,7 +776,7 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; Kanchi Kamakoti CHILDS Trust Hospital &middot; <a href="about.html">About &amp; full details &rarr;</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.2 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.3 &middot; created by Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 Dr Vignesh N, Kanchi Kamakoti CHILDS Trust Hospital. All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -822,7 +824,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.6.2</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion</h2><span class="v">v5.6.3</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 1 month&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
@@ -1219,6 +1221,13 @@
     }catch(e){}
   }
   function speak(text){ speakWith(text,false); }
+  /* Unlock speech synthesis on a real user tap — mobile browsers silently drop
+     speak() calls issued outside a synchronous click handler until one such
+     call has fired once per page load. */
+  function primeVoice(){
+    if(!('speechSynthesis' in window)) return;
+    try{ var u=new SpeechSynthesisUtterance(' '); u.volume=0; window.speechSynthesis.speak(u); }catch(e){}
+  }
   /* Flash the on-screen element(s) the voice just named — visual backup in a noisy room */
   function flashCue(){
     for(var i=0;i<arguments.length;i++){ (function(id){ var el=$(id); if(!el) return; el.classList.remove('voxflash'); void el.offsetWidth; el.classList.add('voxflash'); setTimeout(function(){ el.classList.remove('voxflash'); },1150); })(arguments[i]); }
@@ -1230,8 +1239,28 @@
     g.gain.setValueAtTime(0.15,c.currentTime); o.start(); o.stop(c.currentTime+0.18);}catch(e){} }
   function addLog(t){ var li=document.createElement('li'); li.innerHTML='<b>'+mmss(now())+'</b>'+t; $('log').insertBefore(li,$('log').firstChild); if(typeof saveState==='function') saveState(); }
 
+  /* Voice reminder: weight still not entered during a running code — say it, then
+     repeat twice more at 15 s (3 total), independent of the action-due announcements. */
+  var wtVoiceKey=null, wtVoiceTimer=null, wtVoiceReps=0;
+  function clearWtVoiceTimer(){ if(wtVoiceTimer){ clearInterval(wtVoiceTimer); wtVoiceTimer=null; } }
+  function weightVoiceCheck(){
+    if(!voiceOn || !running || wt>0){
+      if(wtVoiceKey){ wtVoiceKey=null; clearWtVoiceTimer(); }
+      return;
+    }
+    if(wtVoiceKey==='noweight') return;
+    wtVoiceKey='noweight'; wtVoiceReps=0; clearWtVoiceTimer();
+    var phrase='Patient weight not entered. Please enter the weight for accurate drug dosing.';
+    speak(phrase); flashCue('wtSeg');
+    wtVoiceTimer=setInterval(function(){
+      if(!voiceOn || !running || wt>0 || wtVoiceReps>=2){ clearWtVoiceTimer(); return; }
+      wtVoiceReps++; speak(phrase); flashCue('wtSeg');
+    }, 15000);
+  }
+
   function loop(){
     var t=now(); $('clock').textContent=mmss(t);
+    weightVoiceCheck();
     if(typeof saveState==='function') saveState();
     if(rosc){
       ['bAdr','bShock','bRhythm','bRosc','rbShock','rbNon'].forEach(function(id){ $(id).classList.remove('cue','armed','blink'); });
@@ -1342,7 +1371,7 @@
 
   $('bCode').addEventListener('click',function(){
     if(!running){
-      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false; lastVoiceKey=null; clearAssessTimer(); undoStack=[]; updateUndoBtn();
+      running=true; t0=Date.now(); lastAdr=null; lastRhythm=null; adrCount=0; shockCount=0; rhythmType=null; rosc=false; intubated=false; shockedThisCheck=false; prevRDue=false; lastVoiceKey=null; clearAssessTimer(); undoStack=[]; updateUndoBtn(); wtVoiceKey=null; clearWtVoiceTimer();
       startClock=new Date();
       $('wtMini').value=$('wt').value; $('wtSeg').classList.toggle('empty', !(wt>0));
       $('assessCard').classList.add('collapsed');   /* fold triage away once the code is running */
@@ -1357,7 +1386,7 @@
       addLog('CODE STARTED · '+startClock.toLocaleString([], {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+(wt?' · weight '+wt+' kg':'')+' · CPR '+cprRatio);
       tick=setInterval(loop,500); loop();
     }else{
-      running=false; clearInterval(tick); lastVoiceKey=null;
+      running=false; clearInterval(tick); lastVoiceKey=null; wtVoiceKey=null; clearWtVoiceTimer();
       try{ if('speechSynthesis' in window) window.speechSynthesis.cancel(); }catch(e){}
       addLog('CODE ENDED · total '+mmss(now())+' · adrenaline ×'+adrCount+' · shocks ×'+shockCount);
       if(typeof saveLogToCloud==='function') saveLogToCloud();
@@ -1589,6 +1618,7 @@
   $('dgOk').addEventListener('click',function(){
     try{ localStorage.setItem('cbcDisclaimerAck','1'); }catch(e){}
     $('dGate').classList.add('hidden');
+    primeVoice();   /* this tap is the first gesture of every session — unlock speech here */
   });
 
   /* ---------- Cloud auth + central code logs (Firebase) ---------- */
@@ -1600,6 +1630,7 @@
   function showGate(v){ $('authGate').classList.toggle('hidden', !v); if(!v) onAppEntered(); }
   function setEmgBanner(v){ $('emgBanner').classList.toggle('hidden', !v); }
   function doLogin(){
+    primeVoice();
     if(!fbReady()){ $('authErr').textContent='Offline — cannot sign in right now.'; return; }
     var em=$('authEmail').value.trim(), pw=$('authPass').value;
     if(!em||!pw){ $('authErr').textContent='Enter the login and password.'; return; }
@@ -1615,6 +1646,7 @@
   function getDemoUses(){ try{ return parseInt(localStorage.getItem('cbcDemoUses')||'0',10)||0; }catch(e){ return 0; } }
   function demoRemaining(){ return Math.max(0, DEMO_LIMIT-getDemoUses()); }
   function startDemo(){
+    primeVoice();   /* defensive: unlock speech on this tap too, in case the disclaimer was skipped */
     if(demoRemaining()<=0){
       var msg='Demo limit reached ('+DEMO_LIMIT+'/'+DEMO_LIMIT+' used). Please log in or create an account.';
       $('authErr').textContent=msg; alert(msg); return;
