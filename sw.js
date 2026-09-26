@@ -1,4 +1,4 @@
-const CACHE = 'cbc-v5.6.4';
+const CACHE = 'cbc-v5.6.5';
 const CORE = ['./','index.html','about.html','privacy.html','dose-reference.html','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','favicon-32.png'];
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -6,7 +6,7 @@ self.addEventListener('install', e => {
 });
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('cbc-') && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
