@@ -22,17 +22,13 @@ no build step — plain HTML/CSS/JS. Read this before making changes.
 - Icons: `icon.svg`, `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`.
 - `store/feature-graphic.png` — Play Store graphic. `.well-known/assetlinks.json` — TWA verification.
 
-## Pediatric ER Companion (`er/`)
-- A second, separate app: weight-based paediatric ER protocols (status epilepticus, DKA,
-  septic/dengue shock, snake bite, etc.). **Live at https://cbc.pediaos.com/er/**.
-- Self-contained in `er/`: `index.html` (whole app — protocol data is the `P` array, references
-  in `REFS`, home groups in `G`, search keywords in `KW`), its own `sw.js` (scope `/er/`),
-  `manifest.webmanifest` and icons. Saves to `localStorage` key `perc` only — no Firebase/login.
-- **Versioning is separate from CBC:** bump the footer `<span class="vbadge">` in
-  `er/index.html` AND `const CACHE = 'perc-vX.Y.Z'` in `er/sw.js` on every ER change.
-  An ER-only change does not need a CBC version bump.
-- Both service workers share the origin's cache storage, so each must only delete its own
-  prefix on activate (`cbc-` / `perc-`). Keep it that way.
+## Pediatric ER Companion — moved to its own site
+- The ER app now lives in repo **`drvigneshn/er`**, live at **https://er.pediaos.com**. Edit it there.
+- `er/` in this repo is only a forwarder for the old cbc.pediaos.com/er/ address:
+  `er/index.html` redirects, and `er/sw.js` is a retired service worker that replaces the old
+  /er/ one on returning devices, clears its `perc-` cache and redirects /er/ page loads.
+  Don't put the app back here, and don't delete `er/sw.js` (returning devices need it).
+- CBC's `sw.js` must only delete its own `cbc-` caches on activate. Keep it that way.
 
 ## Versioning (IMPORTANT — do this on every change)
 Bump the version on every change, in ALL of these places, and keep them in sync:
