@@ -57,7 +57,8 @@ Never put a model identifier anywhere else (code, PRs). Do NOT open a PR unless 
   (currently `n.vignesh.1996@gmail.com`). Admin sees the 🛡 panel + all logs.
 - **Access model (email-keyed `access` collection in Firestore):**
   - Bare auth account with **no `access` doc** = free institution, works forever
-    (e.g. KKCTH: `kkcth@cbc.com` / `kkcth123`).
+    (e.g. the KKCTH login). **Never write passwords or other secrets in this repo — it is
+    public, and GitHub Pages also serves every file (including this one) on the live domain.**
   - **Individual sign-up** (in-app "Create an account") → `access` doc `status:'pending'`
     → blocked until admin approves.
   - **Paid institution** → admin sets an `access` doc with `plan:'paid'` + `expiresAt`;
