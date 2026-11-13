@@ -1,4 +1,4 @@
-const CACHE = 'cbc-v5.8.1';
+const CACHE = 'cbc-v5.8.2';
 const CORE = ['./','index.html','about.html','privacy.html','terms.html','dose-reference.html','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','favicon-32.png'];
 self.addEventListener('install', e => {
   self.skipWaiting();
