@@ -74,8 +74,10 @@ before any code had started.*
 
 - Split view (console rail left, reference right) on tablets, desktops and short landscape screens.
 - Stacked on portrait phones, with Drugs / Airway / Causes / Log tabs while a code runs.
-- During a code the reading order is: console → quick reference → dose cards → reversible causes.
-  *Trigger: at 1280×800 the H's and T's list pushed every arrest drug below the fold.*
+- During a code in split view the reading order is: console → quick reference → reversible causes
+  (with MR SOPA and DOPE) → dose cards. This is the owner's stated preference (v5.8.1): the causes
+  checklist stays beside the console; the quick reference above it carries the first-line doses.
+  On portrait phones causes remain a tab.
 - A sticky element must never be taller than the viewport. Under 560px height the stacked console
   is not sticky.
 

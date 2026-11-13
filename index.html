@@ -542,7 +542,7 @@
   .awardcard .dd, .ercard .dd{font-size:11px; color:var(--dim); margin-top:3px; line-height:1.55;}
   .awardcard .dd b{color:var(--amber);}
   .ercard .dd b{color:var(--green);}
-  /* ================= Correctness floor (v5.8.0 design pass) ================= */
+  /* ================= Correctness floor (v5.8.1 design pass) ================= */
   [hidden]{display:none !important;}   /* .agechips{display:flex} was defeating the hidden attribute */
   :focus-visible{outline:3px solid var(--blue); outline-offset:2px;}
   input:focus-visible{outline-offset:0;}
@@ -581,7 +581,7 @@
   .authgate, .dgate{align-items:flex-start;}
   .authbox, .dgbox{margin:auto;}
 
-  /* ================= Design pass L1 (v5.8.0) ================= */
+  /* ================= Design pass L1 (v5.8.1) ================= */
   /* Type: 11px is the floor; dose guidance (max doses, routes) is clinical content, not fine print */
   .dose .s{font-size:12px; line-height:1.4;}
   .dose .n{font-size:12px;}
@@ -629,7 +629,7 @@
   .stageright > .qref{order:0; width:100%;}
   .stageright > .dash{order:1; width:100%;}
   .stageright > #rcSec{order:2; width:calc(100% - 24px);}   /* inset like the cards above it; it used to run edge to edge */
-  body.cockpit .stageright > #rcSec{width:100%;}
+  body.cockpit .stageright > #rcSec{width:100%; order:0;}   /* split view: causes, MR SOPA and DOPE sit directly under the quick reference, beside the console (owner preference, v5.8.1) */
   /* Phone portrait: causes become a fourth tab instead of a wall above the tabs */
   .ptabs{grid-template-columns:repeat(4,1fr);}
   .ptab{padding:10px 2px;}
@@ -643,7 +643,7 @@
   body:not(.cockpit) .topstack{width:calc(100% - 16px);}        /* console was full-bleed while every card below is inset */
   @media (max-width:699px){ #bLayout{display:none;} }           /* Split needs >=700px, so the layout switch is dead weight on a phone */
   @media (max-width:419px){ .headtop .logo{display:none;} header h1{font-size:17px; white-space:nowrap;} }   /* keep the title on one line beside 44px icon buttons */
-  /* ================= v5.8.0: END CODE guard, once-per-version disclaimer, SVG icons ================= */
+  /* ================= v5.8.1: END CODE guard, once-per-version disclaimer, SVG icons ================= */
   .bigbtn.confirm{background:var(--red-fill); color:#fff; box-shadow:none; animation:none;}
   .verifystrip{max-width:560px; margin:-4px auto 4px; padding:0 14px; font-size:12px; color:var(--dim); display:flex; align-items:center; gap:8px;}
   .verifystrip b{color:var(--txt); font-weight:700;}
@@ -678,7 +678,7 @@
       <div class="logo"><svg class="ic fill" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div>
       <div style="flex:1">
         <h1>Code Blue Companion<sup class="tm">&trade;</sup></h1>
-        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.8.0</span></p>
+        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.8.1</span></p>
       </div>
       <div class="hdtopbtns">
         <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-shield"/></svg></button>
@@ -913,7 +913,7 @@
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:11px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; PediaOS &middot; <a href="about.html">About &amp; full details &rarr;</a><br>Contact &amp; feedback: <a href="mailto:contact@pediaos.com">contact@pediaos.com</a></p>
 <p class="pmarkrow"><a class="pmark" href="https://pediaos.com/" target="_blank" rel="noopener"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#0e3b4f"/><path d="M50 78C24 60 16 47 16 36c0-10 8-17 17-17 8 0 13 5 17 11 4-6 9-11 17-11 9 0 17 7 17 17 0 11-8 24-34 42z" fill="#ff7a59"/><polyline points="22,46 38,46 44,34 52,60 58,42 62,46 78,46" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A <b>PediaOS</b> product</span></a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.8.0 &middot; created by Dr Vignesh N, PediaOS. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions. Not affiliated with, or endorsed by, the American Heart Association or ALSG.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 PediaOS (Dr Vignesh N). All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.8.1 &middot; created by Dr Vignesh N, PediaOS. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions. Not affiliated with, or endorsed by, the American Heart Association or ALSG.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 PediaOS (Dr Vignesh N). All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -961,7 +961,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg"><svg class="ic fill" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div><h2>Code Blue Companion&trade;</h2><span class="v">v5.8.0</span></div>
+    <div class="dghead"><div class="lg"><svg class="ic fill" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div><h2>Code Blue Companion&trade;</h2><span class="v">v5.8.1</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 1 month&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
