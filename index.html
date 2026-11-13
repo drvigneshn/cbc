@@ -622,6 +622,23 @@
   #bVoice.on{background:color-mix(in srgb, var(--green) 12%, transparent);}
   header{padding-bottom:8px; gap:6px;}
   header h1{font-size:18px; line-height:1.2;}
+  /* ================= L2-B: during a code, doses come before the reversible-causes list =================
+     The H's & T's block sat between the console and the arrest drugs, pushing every dose below the fold
+     (desktop) and behind a long scroll before the Drugs/Airway/Log tabs (phone). */
+  .stageright{display:flex; flex-direction:column;}
+  .stageright > .qref{order:0; width:100%;}
+  .stageright > .dash{order:1; width:100%;}
+  .stageright > #rcSec{order:2; width:calc(100% - 24px);}   /* inset like the cards above it; it used to run edge to edge */
+  body.cockpit .stageright > #rcSec{width:100%;}
+  /* Phone portrait: causes become a fourth tab instead of a wall above the tabs */
+  .ptabs{grid-template-columns:repeat(4,1fr);}
+  .ptab{padding:10px 2px;}
+  body.autonarrow.code-active:not(.pt-causes) #rcSec{display:none;}
+  body.autonarrow.code-active.pt-causes #colLeft,
+  body.autonarrow.code-active.pt-causes #colRight,
+  body.autonarrow.code-active.pt-causes #assessCard,
+  body.autonarrow.code-active.pt-causes .qcard,
+  body.autonarrow.code-active.pt-causes .logcard{display:none;}
 </style>
 </head>
 <body class="theme-bright">
@@ -739,6 +756,7 @@
   <div class="ptabs" id="ptabs" role="tablist" aria-label="Reference sections">
     <button class="ptab on" type="button" data-pt="drugs">Drugs</button>
     <button class="ptab" type="button" data-pt="airway">Airway</button>
+    <button class="ptab" type="button" data-pt="causes">Causes</button>
     <button class="ptab" type="button" data-pt="log">Log</button>
   </div>
 
@@ -1485,6 +1503,7 @@
       startClock=new Date();
       $('wtMini').value=$('wt').value; $('wtSeg').classList.toggle('empty', !(wt>0));
       $('assessCard').classList.add('collapsed');   /* fold triage away once the code is running */
+      collapseWeight();   /* and the weight card, once a weight is in */
       $('rbShock').classList.remove('on'); $('rbNon').classList.remove('on');
       document.body.classList.remove('rhythm-shock','rhythm-nonshock');
       $('bSugar').classList.remove('done'); $('sugarTxt').textContent='Blood sugar';
@@ -1539,7 +1558,7 @@
   function openPostRosc(){
     try{
       if(document.body.classList.contains('autonarrow')){
-        document.body.classList.remove('pt-drugs','pt-log'); document.body.classList.add('pt-airway');
+        document.body.classList.remove('pt-drugs','pt-causes','pt-log'); document.body.classList.add('pt-airway');
         Array.prototype.forEach.call(document.querySelectorAll('.ptab'),function(o){ o.classList.toggle('on', o.getAttribute('data-pt')==='airway'); });
       }
       var secs=document.querySelectorAll('#colRight details.sec');
@@ -2006,7 +2025,7 @@
   Array.prototype.forEach.call(document.querySelectorAll('.ptab'),function(btn){
     btn.addEventListener('click',function(){
       var g=btn.getAttribute('data-pt');
-      document.body.classList.remove('pt-drugs','pt-airway','pt-log');
+      document.body.classList.remove('pt-drugs','pt-airway','pt-causes','pt-log');
       document.body.classList.add('pt-'+g);
       Array.prototype.forEach.call(document.querySelectorAll('.ptab'),function(o){ o.classList.toggle('on', o===btn); });
     });
