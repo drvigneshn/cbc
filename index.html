@@ -613,6 +613,15 @@
     .bigbtn:hover, .htgotit:hover, .authbtn:hover, .dgok:hover{filter:brightness(1.06);}
   }
   @media (prefers-reduced-motion: reduce){ button{transition:none;} }
+  /* ================= L2-A: header becomes a quiet toolbar =================
+     Four full-width outlined buttons were competing with START CPR for the top of the page.
+     Now: compact ghost buttons, "New patient" alone on the left, settings grouped on the right. */
+  .hbtns{flex-wrap:wrap; align-items:center; gap:6px;}
+  .hbtns .hbtn{flex:0 1 auto; padding:7px 14px; background:transparent; font-size:12px;}
+  #bResetAll{margin-right:auto; border-color:var(--line); color:var(--red);}
+  #bVoice.on{background:color-mix(in srgb, var(--green) 12%, transparent);}
+  header{padding-bottom:8px; gap:6px;}
+  header h1{font-size:18px; line-height:1.2;}
 </style>
 </head>
 <body class="theme-bright">
