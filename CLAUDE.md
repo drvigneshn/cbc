@@ -30,6 +30,13 @@ no build step — plain HTML/CSS/JS. Read this before making changes.
   Don't put the app back here, and don't delete `er/sw.js` (returning devices need it).
 - CBC's `sw.js` must only delete its own `cbc-` caches on activate. Keep it that way.
 
+## Design system
+- Read `DESIGN.md` before UI changes: colour-on-fill tokens (`--on-*`, `--red-fill`), 11px type floor,
+  three radii, 44px touch targets, and the reading order during a code.
+- The last `<script>` block before the service-worker registration is the accessibility layer. New sheets go in
+  its `MODALS` list; stateful controls must use the `.on` / `.act-off` / `.collapsed` classes it mirrors to ARIA.
+- The disclaimer gate shows once per version (keyed on the `.ver` text), so the version bump below also re-shows it.
+
 ## Versioning (IMPORTANT — do this on every change)
 Bump the version on every change, in ALL of these places, and keep them in sync:
 1. Header badge in `index.html`: `<span class="vbadge">vX.Y.Z</span>`
