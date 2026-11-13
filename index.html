@@ -10,7 +10,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Code Blue Companion</title>
 <meta name="description" content="Paediatric resuscitation decision-support — PALS-based weight-calculated doses, arrest console and timers.">
 <link rel="manifest" href="manifest.webmanifest">
@@ -29,6 +29,7 @@
     --red:#ff4757; --amber:#ffb020; --green:#2ed573; --blue:#4aa3ff;
     --txt:#eef2fb; --dim:#8fa0c2; --clock:#eef2fb; --logo:#ff4757; --onwarm:#3a2600; --violet:#8b7cff;
     --console:#18233d; --consoleline:#33456f;
+    --red-fill:#d92d3c; --on-red:#fff; --on-green:#04240f; --on-blue:#04162e;
   }
   /* Theme 2 — Monitor black */
   body.theme-monitor{
@@ -36,13 +37,15 @@
     --red:#ff3b3b; --amber:#efa020; --green:#22e06a; --blue:#3f9dff;
     --txt:#e9f6ec; --dim:#7d9184; --clock:#22e06a; --logo:#22e06a; --onwarm:#2a1c00; --violet:#9d8bff;
     --console:#121712; --consoleline:#26331f;
+    --red-fill:#d92d3c; --on-red:#fff; --on-green:#04240f; --on-blue:#04162e;
   }
   /* Theme 3 — Bright */
   body.theme-bright{
     --bg:#eef1f6; --card:#ffffff; --card2:#f3f5f9; --line:#d3dae5;
-    --red:#d92d3c; --amber:#b8770f; --green:#12855f; --blue:#1668c4;
+    --red:#d92d3c; --amber:#94600a; --green:#12855f; --blue:#1668c4;
     --txt:#131a26; --dim:#5c6879; --clock:#131a26; --logo:#d92d3c; --onwarm:#ffffff; --violet:#6d28d9;
     --console:#ece9e3; --consoleline:#d6d1c6;
+    --red-fill:#d92d3c; --on-red:#fff; --on-green:#fff; --on-blue:#fff;
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
   body{background:var(--bg); color:var(--txt); font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif; padding-bottom:24px;}
@@ -127,10 +130,10 @@
   .htsheet .subh{font-size:11.5px; color:var(--dim); margin:0 0 15px;}
   .htsteps{display:flex; flex-direction:column; gap:12px; margin-bottom:16px;}
   .htstep{display:flex; gap:11px; align-items:flex-start;}
-  .htstep .num{flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--blue); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .htstep .num{flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--blue); color:var(--on-blue); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;}
   .htstep .stt{font-size:13px; font-weight:700; color:var(--txt);}
   .htstep .sdd{font-size:11.5px; color:var(--dim); margin-top:1px; line-height:1.45;}
-  .htgotit{width:100%; border:none; border-radius:11px; padding:12px; font-size:14px; font-weight:800; color:#fff; background:var(--green); cursor:pointer;}
+  .htgotit{width:100%; border:none; border-radius:11px; padding:12px; font-size:14px; font-weight:800; color:var(--on-green); background:var(--green); cursor:pointer;}
   .dangerbtn{width:100%; border:1px solid var(--red); background:transparent; color:var(--red); border-radius:11px; padding:11px; font-size:13px; font-weight:700; cursor:pointer; margin-top:8px;}
   .dangerbtn:disabled{opacity:.6; cursor:default;}
   /* Voice settings sheet */
@@ -138,7 +141,7 @@
   .vcfg-lbl span{color:var(--txt); font-weight:800; letter-spacing:0;}
   .vseg{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:6px;}
   .vseg .segb{border:1px solid var(--line); background:var(--card2); color:var(--dim); border-radius:9px; padding:11px 4px; font-size:12px; font-weight:700; cursor:pointer; text-align:center;}
-  .vseg .segb.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .vseg .segb.on{background:var(--blue); border-color:var(--blue); color:var(--on-blue);}
   #vRate{width:100%; margin:2px 0 2px; accent-color:var(--blue);}
   .vnote{font-size:11px; color:var(--dim); background:var(--card2); border:1px solid var(--line); border-radius:9px; padding:9px 11px; margin:12px 0 10px; line-height:1.5;}
   .vnote b{color:var(--txt); font-weight:700;}
@@ -153,19 +156,19 @@
   .authgate.hidden{display:none;}
   .authbox{width:100%; max-width:340px; display:flex; flex-direction:column;}
   .authbrand{display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; margin-bottom:22px;}
-  .authbrand .lg{width:56px; height:56px; border-radius:15px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;}
+  .authbrand .lg{width:56px; height:56px; border-radius:15px; background:var(--red-fill); display:flex; align-items:center; justify-content:center; font-size:28px; color:#fff;}
   .authbrand h2{font-size:19px; margin:0; color:var(--txt);}
   .authbrand .sb{font-size:11px; color:var(--dim);}
   .authfield{margin-bottom:10px;}
   .authfield label{display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--dim); margin-bottom:5px;}
   .authfield input{width:100%; background:var(--card2); border:1.5px solid var(--line); border-radius:10px; color:var(--txt); font-size:15px; padding:11px 12px; outline:none;}
   .authfield input:focus{border-color:var(--blue);}
-  .authbtn{width:100%; border:none; border-radius:11px; padding:13px; font-size:15px; font-weight:800; color:#fff; background:var(--green); cursor:pointer; letter-spacing:.3px; margin-top:4px;}
+  .authbtn{width:100%; border:none; border-radius:11px; padding:13px; font-size:15px; font-weight:800; color:var(--on-green); background:var(--green); cursor:pointer; letter-spacing:.3px; margin-top:4px;}
   .autherr{font-size:11.5px; color:var(--red); text-align:center; margin-top:10px; min-height:15px;}
   .authdiv{display:flex; align-items:center; gap:10px; margin:18px 0;}
   .authdiv::before,.authdiv::after{content:''; height:1px; flex:1; background:var(--line);}
   .authdiv span{font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:1px;}
-  .emgaccess{width:100%; border:2px solid var(--red); border-radius:12px; padding:14px; font-size:15px; font-weight:800; color:#fff; background:var(--red); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;}
+  .emgaccess{width:100%; border:2px solid var(--red); border-radius:12px; padding:14px; font-size:15px; font-weight:800; color:#fff; background:var(--red-fill); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;}
   .emgnote{font-size:10.5px; color:var(--dim); text-align:center; margin-top:9px; line-height:1.5;}
   .authfoot{margin-top:24px; font-size:9.5px; color:var(--dim); text-align:center; line-height:1.5;}
 
@@ -174,7 +177,7 @@
   .dgate.hidden{display:none;}
   .dgbox{width:100%; max-width:440px; background:var(--card); border:2px solid var(--red); border-radius:18px; padding:18px 18px 16px; max-height:94vh; overflow-y:auto; box-shadow:0 22px 55px rgba(0,0,0,.45);}
   .dghead{display:flex; align-items:center; gap:10px; margin-bottom:2px;}
-  .dghead .lg{width:34px; height:34px; border-radius:9px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; flex-shrink:0;}
+  .dghead .lg{width:34px; height:34px; border-radius:9px; background:var(--red-fill); display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; flex-shrink:0;}
   .dghead h2{font-size:19px; margin:0; color:var(--txt);}
   .dghead .v{font-size:10.5px; font-weight:700; color:var(--blue); border:1px solid var(--blue); border-radius:20px; padding:1px 8px;}
   .dgsub{font-size:11.5px; color:var(--dim); margin:0 0 13px;}
@@ -187,13 +190,12 @@
   .dgtext p{margin:0 0 8px;}
   .dgtext b{color:var(--txt);}
   .dgwarn{font-size:12.5px; font-weight:800; color:var(--red); margin:2px 0 12px;}
-  .dgok{width:100%; border:none; border-radius:11px; padding:13px; font-size:15px; font-weight:800; color:#fff; background:var(--green); cursor:pointer; letter-spacing:.3px;}
-  body.theme-bright .dgok{color:#fff;}
+  .dgok{width:100%; border:none; border-radius:11px; padding:13px; font-size:15px; font-weight:800; color:var(--on-green); background:var(--green); cursor:pointer; letter-spacing:.3px;}
   .dgfoot{font-size:9.5px; color:var(--dim); text-align:center; margin-top:10px; line-height:1.5;}
   .dgfoot a{color:var(--blue);}
   sup.tm{font-size:.45em; font-weight:600; vertical-align:super; margin-left:1px;}
 
-  .emgbanner{display:flex; align-items:center; gap:9px; background:var(--red); color:#fff; padding:7px 13px; font-size:11.5px; font-weight:700;}
+  .emgbanner{display:flex; align-items:center; gap:9px; background:var(--red-fill); color:#fff; padding:7px 13px; font-size:11.5px; font-weight:700;}
   .emgbanner.hidden{display:none;}
   .emgbanner .dot{width:9px; height:9px; border-radius:50%; background:#fff; flex-shrink:0; animation:blinkdot 1.1s steps(1,end) infinite;}
   .emgbanner .lnk{margin-left:auto; text-decoration:underline; cursor:pointer; white-space:nowrap; background:none; border:none; color:#fff; font:inherit; font-weight:700; padding:0;}
@@ -257,7 +259,7 @@
   @keyframes dotblink{0%,60%{opacity:1;}61%,100%{opacity:0;}}
 
   .startrow{display:flex; justify-content:center; padding:5px 12px 2px;}
-  .bigbtn{border:none; border-radius:10px; padding:9px 30px; font-size:13px; font-weight:800; color:#fff;
+  .bigbtn{border:none; border-radius:10px; padding:9px 30px; font-size:13px; font-weight:800; color:var(--on-green);
     background:var(--green); cursor:pointer; letter-spacing:.4px; white-space:nowrap; min-width:180px;}
   .bigbtn:disabled{opacity:.35; cursor:not-allowed;}
   .bigbtn.ready{animation:pulse 1.4s infinite;}
@@ -267,9 +269,9 @@
   .statusbar.s-cpr{background:#1c2735; color:#ffc247;}
   .statusbar.s-select{background:#1c2735; color:#ffc247; animation:pulse 1.2s infinite;}
   .statusbar.s-rhythm{background:var(--amber); color:var(--onwarm); animation:pulse 1.3s infinite;}
-  .statusbar.s-adr{background:var(--red); color:#fff; animation:pulse 1.1s infinite;}
+  .statusbar.s-adr{background:var(--red-fill); color:#fff; animation:pulse 1.1s infinite;}
   .statusbar.s-shock{background:var(--amber); color:var(--onwarm); animation:pulse 1.3s infinite;}
-  .statusbar.s-rosc{background:var(--green); color:#04240f;}
+  .statusbar.s-rosc{background:var(--green); color:var(--on-green);}
   .ctlwrap{display:none;} .code-active .ctlwrap{display:block;}
 
   /* Uniform control buttons — rhythm bar + action buttons share one size */
@@ -310,11 +312,11 @@
   .utilrow{display:flex; flex-wrap:wrap; gap:5px; align-items:center; padding:4px 12px 7px; opacity:.92;}
   .util{flex:1; min-width:80px; min-height:44px; height:44px; border:1px solid var(--line); background:var(--card2); color:var(--dim);
     border-radius:7px; font-size:10.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;}
-  .util.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .util.on{background:var(--blue); border-color:var(--blue); color:var(--on-blue);}
   .seg{display:flex; align-items:stretch; min-height:44px; height:44px; gap:0; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:var(--card2);}
   .seg .seglbl{font-size:10px; color:var(--dim); font-weight:700; padding:0 8px; text-transform:uppercase; letter-spacing:.5px;}
   .segb{border:none; background:transparent; color:var(--dim); font-size:10.5px; font-weight:700; padding:6px 9px; cursor:pointer; border-left:1px solid var(--line);}
-  .segb.on{background:var(--blue); color:#fff;}
+  .segb.on{background:var(--blue); color:var(--on-blue);}
   .wtseg{flex:0 0 auto; position:relative;}
   .wtseg.empty{border-color:var(--amber); color:var(--amber); animation:sugarglow 1s infinite;}
   .wtseg:not(.empty){border-color:var(--green);}
@@ -332,11 +334,9 @@
   body.theme-bright .sugarutil:not(.done){color:#fff;}
   .sugarutil:not(.done) .dot{background:#fff; animation:blinkdot 1s steps(1,end) infinite;}
   @keyframes sugarglow{0%,100%{box-shadow:0 0 0 0 rgba(255,176,32,0);}50%{box-shadow:0 0 0 4px rgba(255,176,32,.5);}}
-  .sugarutil.done{background:var(--green); border-color:var(--green); color:#04240f;}
-  body.theme-bright .sugarutil.done{color:#fff;}
+  .sugarutil.done{background:var(--green); border-color:var(--green); color:var(--on-green);}
   .sugarutil.done .dot{background:#fff; animation:none;}
-  .util.intub-on{background:var(--green); border-color:var(--green); color:#04240f;}
-  body.theme-bright .util.intub-on{color:#fff;}
+  .util.intub-on{background:var(--green); border-color:var(--green); color:var(--on-green);}
 
   /* ---- Assessment ---- */
   .assess{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px;}
@@ -351,20 +351,18 @@
   .qopts{display:flex; gap:6px; flex-wrap:wrap;}
   .qb{flex:1; min-width:78px; background:var(--card2); border:1px solid var(--line); color:var(--txt);
     border-radius:9px; padding:9px 6px; font-size:11.5px; font-weight:600; cursor:pointer;}
-  .qb.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .qb.on{background:var(--blue); border-color:var(--blue); color:var(--on-blue);}
   .qb.on.warn{background:var(--amber); border-color:var(--amber); color:var(--onwarm);}
-  .qb.on.bad{background:var(--red); border-color:var(--red); color:#fff;}
-  .qb.on.good{background:var(--green); border-color:var(--green); color:#04240f;}
-  body.theme-bright .qb.on.good{color:#fff;}
+  .qb.on.bad{background:var(--red-fill); border-color:var(--red); color:#fff;}
+  .qb.on.good{background:var(--green); border-color:var(--green); color:var(--on-green);}
   .qrow.off{opacity:.35; pointer-events:none;}
   .verdict{border-radius:10px; padding:11px 12px; font-size:12.5px; font-weight:600; margin-top:4px; display:none;}
   .verdict.show{display:block;}
   .verdict b{display:block; font-size:14px; margin-bottom:3px;}
-  .v-red{background:var(--red); color:#fff;}
+  .v-red{background:var(--red-fill); color:#fff;}
   .v-amber{background:var(--amber); color:var(--onwarm);}
-  .v-green{background:var(--green); color:#04240f;}
-  .v-blue{background:var(--blue); color:#fff;}
-  body.theme-bright .v-green{color:#fff;}
+  .v-green{background:var(--green); color:var(--on-green);}
+  .v-blue{background:var(--blue); color:var(--on-blue);}
   .resetb{background:none; border:none; color:var(--blue); font-size:11px; font-weight:700; cursor:pointer; padding:0; margin-top:8px;}
 
   /* ---- Dashboard ---- */
@@ -409,7 +407,7 @@
   /* ---- Portrait P-B: during a code on a phone, the dashboard becomes a Drugs / Airway / Reference tab panel ---- */
   .ptabs{display:none; grid-template-columns:1fr 1fr 1fr; gap:6px; padding:2px 0 4px;}
   .ptab{border:1px solid var(--line); background:var(--card2); color:var(--dim); border-radius:9px; padding:10px 6px; font-size:12.5px; font-weight:700; cursor:pointer;}
-  .ptab.on{background:var(--blue); border-color:var(--blue); color:#fff;}
+  .ptab.on{background:var(--blue); border-color:var(--blue); color:var(--on-blue);}
   body.autonarrow.code-active .ptabs{display:grid;}
   /* Drugs = arrest drugs + electricity · Airway = airway/RSI/infusions · Log = weight, CPR quality, code log.
      #wCard (patient weight) stays reachable on every tab — it must never become unreachable mid-code. */
@@ -444,7 +442,7 @@
   .agechips{display:flex; flex-wrap:wrap; gap:5px; margin-top:9px;}
   .grouplbl{width:100%; font-size:9.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.8px; margin-top:3px;}
   .chip{background:var(--card2); border:1px solid var(--line); color:var(--dim); border-radius:16px; padding:5px 10px; font-size:11.5px; cursor:pointer;}
-  .chip:active{background:var(--blue); color:#fff;}
+  .chip:active{background:var(--blue); color:var(--on-blue);}
   .est{font-size:10.5px; color:var(--dim); margin-top:7px;}
   .est.warn{font-size:12px; font-weight:700; color:var(--amber); background:color-mix(in srgb,var(--amber) 12%,var(--card)); border:1px solid var(--amber); border-radius:8px; padding:8px 10px; line-height:1.4;}
   /* Photosensitivity / reduced-motion: keep cues visible but stop the strobing */
@@ -543,6 +541,44 @@
   .awardcard .dd, .ercard .dd{font-size:10.5px; color:var(--dim); margin-top:3px; line-height:1.55;}
   .awardcard .dd b{color:var(--amber);}
   .ercard .dd b{color:var(--green);}
+  /* ================= Correctness floor (v5.7.0 design pass) ================= */
+  [hidden]{display:none !important;}   /* .agechips{display:flex} was defeating the hidden attribute */
+  :focus-visible{outline:3px solid var(--blue); outline-offset:2px;}
+  input:focus-visible{outline-offset:0;}
+  [tabindex="-1"]:focus{outline:none;}
+  button:disabled{cursor:not-allowed;}
+  /* Touch targets: 44px for controls, 40px floor for dense secondary chips */
+  .helpbtn{width:44px; height:44px; font-size:18px;}
+  .hbtn{min-height:44px;}
+  .bigbtn{min-height:48px; font-size:15px;}
+  .ptab{min-height:44px;}
+  .chip{min-height:40px; padding:8px 13px;}
+  .agetoggle button, .copy, .logoutbtn{min-height:40px; padding:8px 14px;}
+  .resetb{min-height:40px; padding:0 4px;}
+  .authswitch button{min-height:40px; padding:0 6px;}
+  .emgbanner .lnk{padding:10px 6px; margin:-10px -6px -10px auto;}
+  .htdont{min-height:44px;}
+  details.sec>summary, details.cause>summary{min-height:44px;}
+  #assessCard h3, #wLabel{min-height:36px; display:flex; align-items:center;}
+  #assessCard h3::after{float:none; margin-left:auto;}
+  /* Attention cues must not dim the text they point at: pulse a frame, not the opacity */
+  @keyframes attn{0%,100%{box-shadow:inset 0 0 0 0 rgba(255,255,255,0);}50%{box-shadow:inset 0 0 0 4px rgba(255,255,255,.65);}}
+  .statusbar.s-select, .statusbar.s-rhythm, .statusbar.s-adr, .statusbar.s-shock{animation:attn 1.2s infinite;}
+  @keyframes readyring{0%,100%{box-shadow:0 0 0 0 transparent;}50%{box-shadow:0 0 0 6px color-mix(in srgb, var(--green) 45%, transparent);}}
+  .bigbtn.ready{animation:readyring 1.2s infinite;}
+  /* Dose grids: let tracks shrink instead of pushing the page sideways (tablet split view) */
+  .doses{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .dose, .qref .qr{min-width:0; overflow-wrap:anywhere;}
+  body.cockpit .tactions{grid-template-columns:repeat(2,1fr);}   /* 4-up clipped ROSC inside the 38% rail */
+  @media (max-width:1099px){
+    body.cockpit .stageright .dash .col{flex:1 1 100%;}
+    body.cockpit .stageright .qref .grid{grid-template-columns:repeat(3,1fr);}
+  }
+  /* A sticky console taller than the viewport hides everything under it (phone landscape, 200% zoom) */
+  @media (max-height:560px){ body:not(.cockpit) .topstack{position:static;} }
+  /* Centered full-screen gates clipped their top when content was taller than the screen */
+  .authgate, .dgate{align-items:flex-start;}
+  .authbox, .dgbox{margin:auto;}
 </style>
 </head>
 <body class="theme-bright">
@@ -579,13 +615,13 @@
   <div class="tblock">
     <div class="trow">
       <div class="tring" id="cycAdr"><svg viewBox="0 0 72 72"><circle class="rtrack" cx="36" cy="36" r="29"></circle><circle class="rprog" id="ringAdr" cx="36" cy="36" r="29" transform="rotate(-90 36 36)"></circle><text class="rtime" id="tAdr" x="36" y="41" font-size="15">--:--</text></svg><span>next adrenaline</span></div>
-      <div class="tclock" id="clock">00:00</div>
+      <div class="tclock" id="clock" role="timer" aria-label="Elapsed time">00:00</div>
       <div class="tring" id="cycRhythm"><svg viewBox="0 0 72 72"><circle class="rtrack" cx="36" cy="36" r="29"></circle><circle class="rprog" id="ringRhythm" cx="36" cy="36" r="29" transform="rotate(-90 36 36)"></circle><text class="rtime" id="tRhythm" x="36" y="41" font-size="15">2:00</text></svg><span>reassess + swap</span></div>
     </div>
     <div class="startrow"><button class="bigbtn" id="bCode">START CPR</button></div>
   </div>
 
-  <div class="statusbar codeonly s-cpr" id="statusBar">CPR in progress</div>
+  <div class="statusbar codeonly s-cpr" id="statusBar" role="status" aria-live="polite">CPR in progress</div>
 
   <div class="ctlwrap codeonly">
     <div class="rhythmbar">
@@ -608,7 +644,7 @@
         <button class="segb" data-r="cont">Cont.</button>
       </div>
       <button class="util" id="bIntub">Intubated?</button>
-      <div class="seg wtseg" id="wtSeg"><span class="wtdot"></span><span class="seglbl">WT</span><input id="wtMini" class="wmini" type="number" inputmode="decimal" placeholder="kg" min="0" max="120" step="0.1"></div>
+      <div class="seg wtseg" id="wtSeg"><span class="wtdot"></span><span class="seglbl">WT</span><input id="wtMini" class="wmini" aria-label="Patient weight in kilograms" type="number" inputmode="decimal" placeholder="kg" min="0" max="120" step="0.1"></div>
       <button class="util sugarutil" id="bSugar" title="Check blood glucose — treat if <60 mg/dL with Dextrose 10%, 5 mL/kg (0.5 g/kg)"><span class="dot"></span><span id="sugarTxt">Blood sugar</span></button>
       <button class="util undobtn act-off" id="bUndo" title="Undo the last logged action">&#8630; Undo</button>
     </div>
@@ -696,14 +732,14 @@
         </div>
       </div>
 
-      <div class="verdict" id="verdict"></div>
+      <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
       <button class="resetb" id="bReset">Reset assessment</button>
     </div>
 
     <div class="wcard" id="wCard">
       <label id="wLabel">Patient weight <b id="wSummary"></b><span class="wcaret"></span></label>
       <div class="wrow">
-        <input id="wt" type="number" inputmode="decimal" placeholder="0.0" min="0" max="120" step="0.1">
+        <input id="wt" aria-label="Patient weight in kilograms" type="number" inputmode="decimal" placeholder="0.0" min="0" max="120" step="0.1">
         <span class="unit">kg</span>
       </div>
       <div class="agetoggle">
@@ -761,7 +797,7 @@
 
     <div class="logcard codeonly">
       <h3>Code log <span class="logbtns"><button class="copy" id="bPrint">Print</button><button class="copy" id="bCopy">Copy</button></span></h3>
-      <div class="recby"><label>Recorded by</label><input id="recBy" type="text" placeholder="team leader / name (optional)"></div>
+      <div class="recby"><label for="recBy">Recorded by</label><input id="recBy" type="text" placeholder="team leader / name (optional)"></div>
       <ul id="log"></ul>
     </div>
   </div>
@@ -868,17 +904,17 @@
   <div class="authbox">
     <div class="authbrand"><div class="lg">&#9889;</div><h2>Code Blue Companion&trade;</h2><div class="sb">Sign in to continue</div></div>
     <div id="loginForm">
-      <div class="authfield"><label>Login</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@hospital.org"></div>
-      <div class="authfield"><label>Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+      <div class="authfield"><label for="authEmail">Login</label><input id="authEmail" type="email" autocomplete="username" placeholder="you@hospital.org"></div>
+      <div class="authfield"><label for="authPass">Password</label><input id="authPass" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
       <button class="authbtn" id="authLogin">Log in</button>
-      <div class="autherr" id="authErr"></div>
+      <div class="autherr" id="authErr" role="alert"></div>
       <div class="authswitch">New user? <button id="toSignup">Create an account</button></div>
     </div>
     <div id="signupForm" class="hidden">
-      <div class="authfield"><label>Your email</label><input id="suEmail" type="email" autocomplete="email" placeholder="you@hospital.org"></div>
-      <div class="authfield"><label>Choose a password</label><input id="suPass" type="password" autocomplete="new-password" placeholder="6+ characters"></div>
+      <div class="authfield"><label for="suEmail">Your email</label><input id="suEmail" type="email" autocomplete="email" placeholder="you@hospital.org"></div>
+      <div class="authfield"><label for="suPass">Choose a password</label><input id="suPass" type="password" autocomplete="new-password" placeholder="6+ characters"></div>
       <button class="authbtn" id="doSignup">Request access</button>
-      <div class="autherr" id="signupErr"></div>
+      <div class="autherr" id="signupErr" role="alert"></div>
       <div class="authswitch">Access is granted by the administrator, valid 2 days. &nbsp;<button id="toLogin">&larr; Back to login</button></div>
     </div>
     <div class="authdiv"><span>or</span></div>
@@ -919,7 +955,7 @@
       <select id="instDur"><option value="free">Free &#8734;</option><option value="30">Paid +1 month</option><option value="365">Paid +1 year</option></select>
       <button class="copy" id="instAdd">Set</button>
     </div>
-    <div class="autherr" id="instErr" style="min-height:0; margin:0 0 8px;"></div>
+    <div class="autherr" id="instErr" role="alert" style="min-height:0; margin:0 0 8px;"></div>
     <div id="adminList"><div class="logempty">Loading&hellip;</div></div>
     <button class="htgotit" id="adminClose" style="margin-top:6px">Close</button>
   </div>
@@ -1913,7 +1949,7 @@
     var b=document.body, w=window.innerWidth, h=window.innerHeight;
     var forcedNarrow=b.classList.contains('narrow'), forcedSplit=b.classList.contains('tab');
     /* Auto: split by default on tablets & PCs (>=768 wide and >=600 tall); phones stay stacked */
-    var autoSplit = w>=768 && h>=600;
+    var autoSplit = (w>=768 && h>=600) || (w>=640 && h<=540 && w>h);   /* also short-landscape phones and 200% zoom */
     var cockpit = !forcedNarrow && (forcedSplit ? w>=700 : autoSplit);
     b.classList.toggle('cockpit', cockpit);
     b.classList.toggle('autonarrow', !cockpit && (forcedNarrow || w<=719));
@@ -2001,6 +2037,62 @@
       if(!counted){ try{ localStorage.setItem('cbc_counted','1'); }catch(e){} }
     }
   }).catch(function(){});
+})();
+</script>
+<script>
+/* ---- Accessibility layer: dialog semantics, inert background, Esc, focus return, ARIA state mirroring ---- */
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var each=function(sel,fn,root){ Array.prototype.forEach.call((root||document).querySelectorAll(sel),fn); };
+  var MODALS=['dGate','authGate','statusGate','howOverlay','voiceOverlay','logsOverlay','adminOverlay'];   /* top-most first */
+  var CLOSE={howOverlay:'howGotit',voiceOverlay:'vClose',logsOverlay:'logsClose',adminOverlay:'adminClose'};
+  var opener=null, current=null;
+  MODALS.forEach(function(id){
+    var m=$(id); if(!m) return;
+    m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+    var h=m.querySelector('h2'); if(h){ if(!h.id) h.id=id+'Title'; m.setAttribute('aria-labelledby',h.id); }
+    if(m.firstElementChild) m.firstElementChild.setAttribute('tabindex','-1');
+    if(CLOSE[id]) m.addEventListener('click',function(e){ if(e.target===m) $(CLOSE[id]).click(); });
+  });
+  function topModal(){ for(var i=0;i<MODALS.length;i++){ var m=$(MODALS[i]); if(m && !m.classList.contains('hidden')) return m; } return null; }
+  function syncModals(){
+    var t=topModal();
+    Array.prototype.forEach.call(document.body.children,function(el){ if(el.tagName!=='SCRIPT') el.inert=!!t && el!==t; });
+    if(t===current) return;
+    if(t){
+      if(!current) opener=document.activeElement;
+      if(t.firstElementChild && !t.contains(document.activeElement)) t.firstElementChild.focus({preventScroll:true});
+    } else if(opener && opener!==document.body && document.contains(opener)){ opener.focus(); opener=null; }
+    current=t;
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ var t=topModal(); if(t && CLOSE[t.id]){ e.preventDefault(); $(CLOSE[t.id]).click(); } return; }
+    if((e.key==='Enter'||e.key===' ') && e.target.matches && e.target.matches('#assessToggle,#wLabel,#howDont')){ e.preventDefault(); e.target.click(); }
+  });
+
+  /* Non-button toggles become real controls */
+  [['assessToggle','button'],['wLabel','button'],['howDont','checkbox']].forEach(function(p){
+    var el=$(p[0]); if(el){ el.setAttribute('role',p[1]); el.setAttribute('tabindex','0'); }
+  });
+  each('.qrow',function(r){ var g=r.querySelector('.qopts'), l=r.querySelector('.qlab'); if(g&&l){ g.setAttribute('role','group'); g.setAttribute('aria-label',l.textContent); } });
+  each('.ptab',function(t){ t.setAttribute('role','tab'); });
+
+  /* The app expresses state with classes; mirror it into ARIA / disabled so keyboard and AT users get the same state */
+  function mirror(el){
+    if(!el.matches) return;
+    if(el.matches('.qb,.rb,.segb')) el.setAttribute('aria-pressed', el.classList.contains('on')?'true':'false');
+    if(el.matches('.ptab')) el.setAttribute('aria-selected', el.classList.contains('on')?'true':'false');
+    if(el.matches('.act,.util')) el.disabled=el.classList.contains('act-off');
+    if(el.matches('.qrow')) each('button',function(b){ b.disabled=el.classList.contains('off'); },el);
+    if(el.id==='assessCard') $('assessToggle').setAttribute('aria-expanded', el.classList.contains('collapsed')?'false':'true');
+    if(el.id==='wCard') $('wLabel').setAttribute('aria-expanded', el.classList.contains('collapsed')?'false':'true');
+    if(el.id==='howDont') el.setAttribute('aria-checked', el.classList.contains('on')?'true':'false');
+    if(MODALS.indexOf(el.id)>=0) syncModals();
+  }
+  each('.qb,.rb,.segb,.ptab,.act,.util,.qrow,#assessCard,#wCard,#howDont',mirror);
+  syncModals();
+  new MutationObserver(function(ms){ ms.forEach(function(m){ mirror(m.target); }); })
+    .observe(document.body,{subtree:true, attributes:true, attributeFilter:['class']});
 })();
 </script>
 <script>
