@@ -529,6 +529,10 @@
   .footcredit{text-align:center; font-size:11.5px; color:var(--dim); padding:8px 20px 2px; line-height:1.6;}
   .footcredit a{color:var(--blue); font-weight:700; text-decoration:none;}
   .footcredit a:hover{text-decoration:underline;}
+  .pmarkrow{text-align:center; margin:2px 0 0;}
+  .pmark{display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 8px; color:var(--dim); font-size:12px; text-decoration:none; border-radius:8px;}
+  .pmark svg{width:22px; height:22px; flex:none;}
+  .pmark b{color:var(--txt); font-weight:700;}
   .awardcard{display:flex; gap:11px; align-items:flex-start; background:var(--card); border:1px solid var(--amber);
     border-radius:12px; padding:12px 13px; margin:14px auto 4px; max-width:520px;}
   .ercard{display:flex; gap:11px; align-items:center; background:var(--card); border:1px solid var(--green);
@@ -552,7 +556,7 @@
       <div class="logo">&#9889;</div>
       <div style="flex:1">
         <h1>Code Blue Companion<sup class="tm">&trade;</sup></h1>
-        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.6.11</span></p>
+        <p class="subtl">Paediatric resuscitation &middot; PALS-based &middot; <span class="ver">v5.6.12</span></p>
       </div>
       <div class="hdtopbtns">
         <button class="helpbtn hidden" id="bAdmin" title="Admin panel" aria-label="Admin panel">&#128737;</button>
@@ -790,7 +794,8 @@
 </div>
 <p class="usecount" id="useCountWrap" style="display:none; text-align:center; font-size:10.5px; color:var(--dim); padding:2px 20px 0;"><span id="useCount"></span></p>
 <p class="footcredit">Created by Dr Vignesh N &middot; PediaOS &middot; <a href="about.html">About &amp; full details &rarr;</a><br>Contact &amp; feedback: <a href="mailto:contact@pediaos.com">contact@pediaos.com</a></p>
-<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.11 &middot; created by Dr Vignesh N, PediaOS. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions. Not affiliated with, or endorsed by, the American Heart Association or ALSG.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 PediaOS (Dr Vignesh N). All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="privacy.html">Privacy</a></span></p>
+<p class="pmarkrow"><a class="pmark" href="https://pediaos.com/" target="_blank" rel="noopener"><svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#0e3b4f"/><path d="M50 78C24 60 16 47 16 36c0-10 8-17 17-17 8 0 13 5 17 11 4-6 9-11 17-11 9 0 17 7 17 17 0 11-8 24-34 42z" fill="#ff7a59"/><polyline points="22,46 38,46 44,34 52,60 58,42 62,46 78,46" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A <b>PediaOS</b> product</span></a></p>
+<p class="disclaimer">Decision-support prototype, aligned with AHA PALS 2020/2025 &amp; APLS weight estimates &middot; v5.6.12 &middot; created by Dr Vignesh N, PediaOS. A trained clinician must verify every dose before administration &mdash; this tool assists recall and calculation, it does not replace clinical judgment, and the treating clinician remains responsible for all decisions. Not affiliated with, or endorsed by, the American Heart Association or ALSG.<br>Official guidelines: <a href="https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines" target="_blank" rel="noopener">AHA PALS (cpr.heart.org)</a> &middot; <a href="https://iapindia.org" target="_blank" rel="noopener">IAP India — BLS/PALS (iapindia.org)</a><br><span class="copyr">&copy; 2026 PediaOS (Dr Vignesh N). All rights reserved. &ldquo;Code Blue Companion&rdquo; &middot; Not for reuse or redistribution without written permission. &middot; <a href="about.html">About</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="privacy.html">Privacy</a></span></p>
 
 <div class="htoverlay hidden" id="voiceOverlay">
   <div class="htsheet">
@@ -838,7 +843,7 @@
 
 <div class="dgate" id="dGate">
   <div class="dgbox">
-    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion&trade;</h2><span class="v">v5.6.11</span></div>
+    <div class="dghead"><div class="lg">&#9889;</div><h2>Code Blue Companion&trade;</h2><span class="v">v5.6.12</span></div>
     <p class="dgsub">Paediatric resuscitation decision-support &middot; 1 month&ndash;18 yr &middot; PALS-based</p>
     <div class="dgcred">
       <div class="n">Created by Dr Vignesh N</div>
