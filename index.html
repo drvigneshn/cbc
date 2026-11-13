@@ -639,6 +639,10 @@
   body.autonarrow.code-active.pt-causes #assessCard,
   body.autonarrow.code-active.pt-causes .qcard,
   body.autonarrow.code-active.pt-causes .logcard{display:none;}
+  /* ================= Phone polish (found on the 375px re-walk) ================= */
+  body:not(.cockpit) .topstack{width:calc(100% - 16px);}        /* console was full-bleed while every card below is inset */
+  @media (max-width:699px){ #bLayout{display:none;} }           /* Split needs >=700px, so the layout switch is dead weight on a phone */
+  @media (max-width:419px){ .headtop .logo{display:none;} header h1{font-size:17px; white-space:nowrap;} }   /* keep the title on one line beside 44px icon buttons */
 </style>
 </head>
 <body class="theme-bright">
